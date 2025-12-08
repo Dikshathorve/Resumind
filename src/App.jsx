@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './App.css'
 import Header from './components/Header'
 import HeroSection from './components/HeroSection'
+import ResumePreview from './components/ResumePreview'
 import FeaturesSection from './components/FeaturesSection'
 import HowItWorks from './components/HowItWorks'
 import FAQ from './components/FAQ'
@@ -13,6 +14,7 @@ function App() {
     <div className="app">
       <Header />
       <HeroSection />
+      <ResumePreview />
       <FeaturesSection />
       <HowItWorks />
       <FAQ />
