@@ -1,11 +1,12 @@
 import './HeroSection.css'
+import { Users } from 'lucide-react'
 
 export default function HeroSection() {
   return (
     <section className="hero" id="home">
       <div className="hero-badge">
-        <span className="badge-icon">👥</span>
-        <span>Trusted by 100,000+ professionals worldwide</span>
+        <Users size={18} color="#8b5cf6" strokeWidth={2} />
+        <span>Trusted by <span className="badge-number">100,000+</span> professionals worldwide</span>
       </div>
 
       <div className="hero-content">

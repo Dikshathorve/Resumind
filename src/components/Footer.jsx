@@ -1,4 +1,5 @@
 import './Footer.css'
+import { Sparkles } from 'lucide-react'
 
 export default function Footer() {
   return (
@@ -6,7 +7,7 @@ export default function Footer() {
       <div className="footer-content">
         <div className="footer-section footer-main">
           <div className="footer-logo">
-            <div className="logo-icon">✨</div>
+            <Sparkles size={24} color="#ffffff"     />
             <h4>Resumind</h4>
           </div>
           <p>Build professional resumes in minutes with AI-powered tools. Land your dream job faster.</p>
