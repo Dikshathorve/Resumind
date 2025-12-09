@@ -7,17 +7,26 @@ import HowItWorks from './components/HowItWorks'
 import FAQ from './components/FAQ'
 import CTASection from './components/CTASection'
 import Footer from './components/Footer'
+import BuildResume from './components/BuildResume'
 
 function App() {
+  const [showBuilder, setShowBuilder] = useState(false)
+
   return (
     <div className="app">
-      <Header />
-      <HeroSection />
-      <FeaturesSection />
-      <HowItWorks />
-      <FAQ />
-      <CTASection />
-      <Footer />
+      {!showBuilder && <Header />}
+      {!showBuilder ? (
+        <>
+          <HeroSection onStart={() => setShowBuilder(true)} />
+          <FeaturesSection />
+          <HowItWorks />
+          <FAQ />
+          <CTASection onStart={() => setShowBuilder(true)} />
+          <Footer />
+        </>
+      ) : (
+        <BuildResume onClose={() => setShowBuilder(false)} />
+      )}
     </div>
   )
 }
