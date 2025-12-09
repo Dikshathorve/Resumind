@@ -295,6 +295,94 @@ skills-list{ margin-top:10px; display:flex; gap:8px; flex-wrap:wrap }
 /* keep preview near top while left scrolls */
 .preview-card{ position: sticky; top: 24px }
 
+/* AI Suggestions Styles */
+.section-header-with-ai {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.section-header-with-ai h3 {
+  margin: 0;
+  flex: 1;
+}
+
+.ai-assist-btn {
+  background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.ai-assist-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.4);
+}
+
+.ai-assist-btn:active {
+  transform: scale(0.95);
+}
+
+.input-with-ai,
+.textarea-with-ai {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.input-with-ai input,
+.textarea-with-ai textarea {
+  flex: 1;
+}
+
+.ai-assist-btn-inline,
+.ai-assist-btn-textarea {
+  background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.ai-assist-btn-inline {
+  margin-top: 8px;
+}
+
+.ai-assist-btn-textarea {
+  margin-top: 8px;
+}
+
+.ai-assist-btn-inline:hover,
+.ai-assist-btn-textarea:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.4);
+}
+
+.ai-assist-btn-inline:active,
+.ai-assist-btn-textarea:active {
+  transform: scale(0.95);
+}
+
 /* small responsive tweaks */
 @media (max-width: 900px){
   .build-inner{ grid-template-columns: 1fr 16px; }

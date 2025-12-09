@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Briefcase, FileText, Sparkles, Download, Mail, Phone, MapPin, FileText as FileDocument, Briefcase as WorkBriefcase, GraduationCap, Settings, Award } from 'lucide-react'
 import './BuildResume.css'
+import AISuggestions from './AISuggestions'
 
 export default function BuildResume({ onClose }) {
   const leftRef = useRef(null)
@@ -29,6 +30,10 @@ export default function BuildResume({ onClose }) {
 
   const [certifications, setCertifications] = useState([])
   const [certInput, setCertInput] = useState('')
+
+  const [aiFieldType, setAiFieldType] = useState('')
+  const [aiFieldValue, setAiFieldValue] = useState('')
+  const [aiFieldIndex, setAiFieldIndex] = useState(null)
 
   useEffect(() => {
     const left = leftRef.current
@@ -103,7 +108,23 @@ export default function BuildResume({ onClose }) {
             <h3>Personal Information</h3>
             <div className="row">
               <input placeholder="Full Name" value={personal.fullName} onChange={e => setPersonal({...personal, fullName: e.target.value})} />
-              <input placeholder="Job Title" value={personal.jobTitle} onChange={e => setPersonal({...personal, jobTitle: e.target.value})} />
+              <div className="input-with-ai">
+                <input placeholder="Job Title" value={personal.jobTitle} onChange={e => {
+                  setPersonal({...personal, jobTitle: e.target.value})
+                  setAiFieldType('jobTitle')
+                  setAiFieldValue(e.target.value)
+                }} />
+                <button 
+                  className="ai-assist-btn-inline"
+                  onClick={() => {
+                    setAiFieldType('jobTitle')
+                    setAiFieldValue(personal.jobTitle)
+                  }}
+                  title="Get AI suggestions"
+                >
+                  ✨
+                </button>
+              </div>
             </div>
             <div className="row">
               <input placeholder="Email" value={personal.email} onChange={e => setPersonal({...personal, email: e.target.value})} />
@@ -117,23 +138,87 @@ export default function BuildResume({ onClose }) {
           </section>
 
           <section className="panel">
-            <h3>Professional Summary <span className="hint">AI Enhance</span></h3>
-            <textarea placeholder="Write a brief professional summary..." rows={6} value={summary} onChange={e => setSummary(e.target.value)} />
+            <div className="section-header-with-ai">
+              <h3>Professional Summary <span className="hint">AI Enhance</span></h3>
+              <button 
+                className="ai-assist-btn"
+                onClick={() => {
+                  setAiFieldType('description')
+                  setAiFieldValue(summary)
+                }}
+                title="Get AI suggestions"
+              >
+                ✨
+              </button>
+            </div>
+            <textarea placeholder="Write a brief professional summary..." rows={6} value={summary} onChange={e => {
+              setSummary(e.target.value)
+              setAiFieldType('description')
+              setAiFieldValue(e.target.value)
+            }} />
           </section>
 
           <section className="panel">
             <h3>Experience</h3>
             {experiences.map((exp, idx) => (
               <div className="exp-item" key={idx}>
-                <input placeholder="Company" value={exp.company} onChange={e => {
-                  const copy = [...experiences]; copy[idx].company = e.target.value; setExperiences(copy)
-                }} />
-                <input placeholder="Role" value={exp.role} onChange={e => {
-                  const copy = [...experiences]; copy[idx].role = e.target.value; setExperiences(copy)
-                }} />
-                <textarea placeholder="Describe your responsibilities..." rows={4} value={exp.desc} onChange={e => {
-                  const copy = [...experiences]; copy[idx].desc = e.target.value; setExperiences(copy)
-                }} />
+                <div className="input-with-ai">
+                  <input placeholder="Company" value={exp.company} onChange={e => {
+                    const copy = [...experiences]; copy[idx].company = e.target.value; setExperiences(copy)
+                    setAiFieldType('company')
+                    setAiFieldValue(e.target.value)
+                    setAiFieldIndex(idx)
+                  }} />
+                  <button 
+                    className="ai-assist-btn-inline"
+                    onClick={() => {
+                      setAiFieldType('company')
+                      setAiFieldValue(exp.company)
+                      setAiFieldIndex(idx)
+                    }}
+                    title="Get AI suggestions"
+                  >
+                    ✨
+                  </button>
+                </div>
+                <div className="input-with-ai">
+                  <input placeholder="Role" value={exp.role} onChange={e => {
+                    const copy = [...experiences]; copy[idx].role = e.target.value; setExperiences(copy)
+                    setAiFieldType('role')
+                    setAiFieldValue(e.target.value)
+                    setAiFieldIndex(idx)
+                  }} />
+                  <button 
+                    className="ai-assist-btn-inline"
+                    onClick={() => {
+                      setAiFieldType('role')
+                      setAiFieldValue(exp.role)
+                      setAiFieldIndex(idx)
+                    }}
+                    title="Get AI suggestions"
+                  >
+                    ✨
+                  </button>
+                </div>
+                <div className="textarea-with-ai">
+                  <textarea placeholder="Describe your responsibilities..." rows={4} value={exp.desc} onChange={e => {
+                    const copy = [...experiences]; copy[idx].desc = e.target.value; setExperiences(copy)
+                    setAiFieldType('description')
+                    setAiFieldValue(e.target.value)
+                    setAiFieldIndex(idx)
+                  }} />
+                  <button 
+                    className="ai-assist-btn-textarea"
+                    onClick={() => {
+                      setAiFieldType('description')
+                      setAiFieldValue(exp.desc)
+                      setAiFieldIndex(idx)
+                    }}
+                    title="Get AI suggestions"
+                  >
+                    ✨
+                  </button>
+                </div>
               </div>
             ))}
           </section>
@@ -191,6 +276,23 @@ export default function BuildResume({ onClose }) {
               <span className="status-text">Updating in real-time</span>
             </div>
           </div>
+          
+          {aiFieldValue && (
+            <AISuggestions
+              fieldType={aiFieldType}
+              currentValue={aiFieldValue}
+              onApply={(suggestion) => {
+                if (aiFieldType === 'jobTitle') {
+                  setPersonal({...personal, jobTitle: suggestion})
+                } else if (aiFieldType === 'description' && summary === aiFieldValue) {
+                  setSummary(suggestion)
+                }
+                setAiFieldValue('')
+                setAiFieldType('')
+              }}
+            />
+          )}
+
           <div className="preview-card">
             <div className="preview-header">
               {(personal.fullName || personal.jobTitle) && (
