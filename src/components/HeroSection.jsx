@@ -1,7 +1,7 @@
 import './HeroSection.css'
 import { Users } from 'lucide-react'
 
-export default function HeroSection() {
+export default function HeroSection({ onStart }) {
   return (
     <section className="hero" id="home">
       <div className="hero-badge">
@@ -19,7 +19,7 @@ export default function HeroSection() {
           Get matched with the right keywords, tone, and layout — in minutes.
         </p>
         <div className="hero-buttons">
-          <button className="primary-button">Build my CV</button>
+          <button className="primary-button" onClick={onStart}>Build my CV</button>
           <button className="secondary-button">Request demo</button>
         </div>
       </div>
