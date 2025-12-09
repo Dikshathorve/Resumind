@@ -1,13 +1,9 @@
 import { useState } from 'react'
 import './Header.css'
 import { Sparkles } from 'lucide-react'
-import LoginForm from './LoginForm'
-import SignUpForm from './SignUpForm'
 
-export default function Header() {
+export default function Header({ onSignIn, onSignUp }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [showLoginForm, setShowLoginForm] = useState(false)
-  const [showSignUpForm, setShowSignUpForm] = useState(false)
 
   return (
     <header className="header">
@@ -25,8 +21,8 @@ export default function Header() {
           <a href="#faq">FAQ</a>
         </nav>
         <div className="header-actions">
-          <button className="login-button" onClick={() => setShowLoginForm(true)}>Sign In</button>
-          <button className="cta-button" onClick={() => setShowSignUpForm(true)}>Sign Up</button>
+          <button className="login-button" onClick={onSignIn}>Sign In</button>
+          <button className="cta-button" onClick={onSignUp}>Sign Up</button>
         </div>
         <button className="hamburger" onClick={() => setIsMenuOpen(!isMenuOpen)}>
           <span></span>
@@ -34,9 +30,6 @@ export default function Header() {
           <span></span>
         </button>
       </div>
-
-      {showLoginForm && <LoginForm onClose={() => setShowLoginForm(false)} />}
-      {showSignUpForm && <SignUpForm onClose={() => setShowSignUpForm(false)} />}
     </header>
   )
 }
