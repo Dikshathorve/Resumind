@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Briefcase, FileText, Sparkles, Download, Mail, Phone, MapPin, FileText as FileDocument, Briefcase as WorkBriefcase, GraduationCap, Settings, Award } from 'lucide-react'
 import './BuildResume.css'
 import AISuggestions from './AISuggestions'
 
@@ -76,21 +77,21 @@ export default function BuildResume({ onClose }) {
         </div>
         <div className="nav-center">
           <button className="nav-item">
-            <span className="nav-icon">◎</span>
+            <Briefcase size={20} className="nav-icon-svg" />
             <span className="nav-label">Job Matcher</span>
           </button>
           <button className="nav-item">
-            <span className="nav-icon">📄</span>
+            <FileText size={20} className="nav-icon-svg" />
             <span className="nav-label">ATS Analyzer</span>
           </button>
           <button className="nav-pill">
-            <span className="nav-icon">✨</span>
+            <Sparkles size={20} className="nav-icon-svg" />
             <span className="nav-label">AI Assist</span>
           </button>
         </div>
         <div className="nav-right">
           <button className="download-button">
-            <span className="download-icon">⬇️</span>
+            <Download size={20} className="nav-icon-svg" />
             <span>Download PDF</span>
           </button>
         </div>
@@ -304,29 +305,29 @@ export default function BuildResume({ onClose }) {
               <div className="contact-row">
                 <span className="contact-item">
                   <span className="contact-text">{personal.email || ''}</span>
-                  <span className="contact-icon">✉️</span>
+                  <Mail size={16} className="contact-icon" />
                 </span>
 
                 <span className="contact-item">
                   <span className="contact-text">{personal.phone || ''}</span>
-                  <span className="contact-icon">📞</span>
+                  <Phone size={16} className="contact-icon" />
                 </span>
 
                 <span className="contact-item">
                   <span className="contact-text">{personal.location || ''}</span>
-                  <span className="contact-icon">📍</span>
+                  <MapPin size={16} className="contact-icon" />
                 </span>
               </div>
             </div>
             <div className="preview-body">
 
               <div className="section">
-                <h4><span className="section-icon">📝</span> Professional Summary</h4>
+                <h4><FileDocument size={20} className="section-icon" /> Professional Summary</h4>
                 <p className="section-text">{summary || 'Write a brief professional summary...'}</p>
               </div>
 
               <div className="section">
-                <h4><span className="section-icon">💼</span> Experience</h4>
+                <h4><WorkBriefcase size={20} className="section-icon" /> Experience</h4>
                 {experiences.every(e => !e.company && !e.role && !e.desc) ? (
                   <p className="section-text">No experience added yet.</p>
                 ) : (
@@ -345,19 +346,19 @@ export default function BuildResume({ onClose }) {
               </div>
 
               <div className="section">
-                <h4><span className="section-icon">🎓</span> Education</h4>
+                <h4><GraduationCap size={20} className="section-icon" /> Education</h4>
                 <div className="section-text">{education.school || 'School name'}, {education.degree || 'Degree'}</div>
               </div>
 
               <div className="section">
-                <h4><span className="section-icon">⚙️</span> Skills</h4>
+                <h4><Settings size={20} className="section-icon" /> Skills</h4>
                 <div className="skills-list">
                   {skills.length ? skills.map((s, i) => <span key={i} className="skill-badge">{s}</span>) : <div className="section-text">No skills added yet.</div>}
                 </div>
               </div>
 
               <div className="section">
-                <h4><span className="section-icon">🏆</span> Certifications</h4>
+                <h4><Award size={20} className="section-icon" /> Certifications</h4>
                 <div className="skills-list">
                   {certifications.length ? certifications.map((c, i) => <span key={i} className="skill-badge">{c}</span>) : <div className="section-text">No certifications added yet.</div>}
                 </div>

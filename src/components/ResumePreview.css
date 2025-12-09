@@ -51,34 +51,35 @@
 }
 
 .floating-card-1 {
-  left: -60px;
-  top: 20%;
-  animation-delay: 0s;
-  width: 140px;
+    left: -130px;
+    top: 20%;
+    animation-delay: 0s;
+    width: 170px;
 }
 
 .floating-card-2 {
-  right: -60px;
-  top: 30%;
-  animation-delay: 1.5s;
-  width: 150px;
+    right: -115px;
+    top: 30%;
+    animation-delay: 1.5s;
+    width: 130px;
 }
 
 .floating-card-3 {
-  right: 10%;
-  bottom: 10%;
-  animation-delay: 0.8s;
-  width: 180px;
+    right: -7%;
+    bottom: 7%;
+    animation-delay: 0.8s;
+    width: 362px;
 }
 
 .floating-card-4 {
-  left: 5%;
-  bottom: 15%;
+  left: -11%;
+  bottom: 10%;
   animation-delay: 1.2s;
-  width: 190px;
+  width: 290px;
 }
 
 .card-content {
+  
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -86,6 +87,8 @@
 
 .card-icon {
   flex-shrink: 0;
+  width: 16px !important;
+  height: 16px !important;
 }
 
 .card-icon.accent {
@@ -128,7 +131,7 @@
 }
 
 .resume-card {
-  background: rgba(15, 15, 30, 0.95);
+  background: rgb(8 8 8 / 80%) !important;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(99, 102, 241, 0.2);
   border-radius: 1.25rem;
