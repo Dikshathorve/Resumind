@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './Header.css'
+import { Sparkles } from 'lucide-react'
 import LoginForm from './LoginForm'
 import SignUpForm from './SignUpForm'
 
@@ -12,7 +13,9 @@ export default function Header() {
     <header className="header">
       <div className="header-container">
         <div className="logo">
-          <div className="logo-icon">✨</div>
+          <div className="logo-icon">
+            <Sparkles size={20} color="#ffffff" />
+          </div>
           <h1>Resumind</h1>
         </div>
         <nav className={`nav ${isMenuOpen ? 'active' : ''}`}>
