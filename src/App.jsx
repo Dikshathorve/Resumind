@@ -3,11 +3,14 @@ import './App.css'
 import LandingPage from './pages/LandingPage'
 import BuildResume from './pages/BuildResume'
 import ProjectsPage from './pages/ProjectsPage'
+import BuildATSAnalyzer from './pages/BuildATSAnalyzer'
+import ATSAnalyzer from './pages/ATSAnalyzer'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('landing') // landing, landing-signin, landing-signup, projects, builder
+  const [currentPage, setCurrentPage] = useState('landing') // landing, landing-signin, landing-signup, projects, builder, build-ats, ats-analyzer
+  const [resumeData, setResumeData] = useState(null)
 
   useEffect(() => {
     if (currentPage === 'landing-signin' || currentPage === 'landing-signup' || currentPage === 'signin' || currentPage === 'signup') {
@@ -31,10 +34,28 @@ function App() {
           />
         )}
         {currentPage === 'projects' && (
-          <ProjectsPage onStart={() => setCurrentPage('builder')} onClose={() => setCurrentPage('landing')} />
+          <ProjectsPage 
+            onStart={() => setCurrentPage('builder')} 
+            onClose={() => setCurrentPage('landing')}
+          />
         )}
         {currentPage === 'builder' && (
-          <BuildResume onClose={() => setCurrentPage('projects')} />
+          <BuildResume 
+            onClose={() => setCurrentPage('projects')}
+            onATSAnalyzer={(data) => {
+              setResumeData(data)
+              setCurrentPage('build-ats')
+            }}
+          />
+        )}
+        {currentPage === 'build-ats' && (
+          <BuildATSAnalyzer 
+            onClose={() => setCurrentPage('builder')}
+            onAnalyze={() => setCurrentPage('ats-analyzer')}
+          />
+        )}
+        {currentPage === 'ats-analyzer' && (
+          <ATSAnalyzer onClose={() => setCurrentPage('projects')} resumeData={resumeData} />
         )}
       </div>
 
