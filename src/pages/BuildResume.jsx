@@ -3,7 +3,7 @@ import { Briefcase, FileText, Sparkles, Download, Mail, Phone, MapPin, FileText 
 import './BuildResume.css'
 import AISuggestions from '../components/AISuggestions'
 
-export default function BuildResume({ onClose }) {
+export default function BuildResume({ onClose, onATSAnalyzer }) {
   const leftRef = useRef(null)
   const proxyRef = useRef(null)
   // form state for live preview
@@ -81,7 +81,7 @@ export default function BuildResume({ onClose }) {
             <Briefcase size={20} className="nav-icon-svg" />
             <span className="nav-label">Job Matcher</span>
           </button>
-          <button className="nav-item">
+          <button className="nav-item" onClick={() => onATSAnalyzer({ personal, summary, experiences, education, skills, certifications })}>
             <FileText size={20} className="nav-icon-svg" />
             <span className="nav-label">ATS Analyzer</span>
           </button>

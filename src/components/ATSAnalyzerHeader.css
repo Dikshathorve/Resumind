@@ -1,0 +1,66 @@
+.ats-analyzer-header-section {
+  padding: 4rem 2.5rem;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.05) 100%);
+  border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+  position: relative;
+  z-index: 1;
+}
+
+.ats-analyzer-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(99, 102, 241, 0.15);
+  padding: 8px 16px;
+  border-radius: 20px;
+  margin-bottom: 1.5rem;
+  font-size: 14px;
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  font-weight: 500;
+}
+
+.ats-analyzer-header-badge svg {
+  color: #667eea;
+}
+
+.ats-analyzer-header-content h2 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  color: #fff;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+.ats-analyzer-header-content .score-highlight {
+  background: linear-gradient(135deg, #667eea 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.ats-analyzer-header-content p {
+  font-size: 1rem;
+  color: #cbd5e1;
+  margin: 0;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .ats-analyzer-header-section {
+    padding: 2.5rem 1.5rem;
+  }
+
+  .ats-analyzer-header-content h2 {
+    font-size: 2rem;
+  }
+
+  .ats-analyzer-header-content p {
+    font-size: 0.95rem;
+  }
+}

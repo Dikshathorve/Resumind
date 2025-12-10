@@ -1,0 +1,84 @@
+.ats-analyzer-main-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, hsl(230, 35%, 7%) 0%, hsl(240, 30%, 10%) 50%, hsl(270, 40%, 8%) 100%);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.ats-analyzer-main-page::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 1000px;
+  height: 1000px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ats-analyzer-nav {
+  padding: 1.5rem 2.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(15, 30, 61, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+.ats-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.ats-back-btn:hover {
+  background: rgba(99, 102, 241, 0.1);
+  color: #a78bfa;
+  transform: translateX(-2px);
+}
+
+.ats-nav-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ats-nav-title h1 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .ats-analyzer-nav {
+    padding: 1rem 1.5rem;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ats-back-btn {
+    align-self: flex-start;
+  }
+
+  .ats-nav-title {
+    align-self: flex-start;
+  }
+}
