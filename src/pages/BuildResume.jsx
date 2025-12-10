@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Briefcase, FileText, Sparkles, Download, Mail, Phone, MapPin, FileText as FileDocument, Briefcase as WorkBriefcase, GraduationCap, Settings, Award } from 'lucide-react'
 import './BuildResume.css'
-import AISuggestions from './AISuggestions'
+import AISuggestions from '../components/AISuggestions'
 
 export default function BuildResume({ onClose }) {
   const leftRef = useRef(null)
@@ -34,6 +34,7 @@ export default function BuildResume({ onClose }) {
   const [aiFieldType, setAiFieldType] = useState('')
   const [aiFieldValue, setAiFieldValue] = useState('')
   const [aiFieldIndex, setAiFieldIndex] = useState(null)
+  const [aiSidebarOpen, setAiSidebarOpen] = useState(false)
 
   useEffect(() => {
     const left = leftRef.current
@@ -84,7 +85,13 @@ export default function BuildResume({ onClose }) {
             <FileText size={20} className="nav-icon-svg" />
             <span className="nav-label">ATS Analyzer</span>
           </button>
-          <button className="nav-pill">
+          <button className="nav-pill" onClick={() => {
+            setAiSidebarOpen(true)
+            // default to jobTitle context
+            setAiFieldType('jobTitle')
+            setAiFieldValue(personal.jobTitle || '')
+            setAiFieldIndex(null)
+          }}>
             <Sparkles size={20} className="nav-icon-svg" />
             <span className="nav-label">AI Assist</span>
           </button>
@@ -117,8 +124,9 @@ export default function BuildResume({ onClose }) {
                 <button 
                   className="ai-assist-btn-inline"
                   onClick={() => {
-                    setAiFieldType('jobTitle')
-                    setAiFieldValue(personal.jobTitle)
+                      setAiFieldType('jobTitle')
+                      setAiFieldValue(personal.jobTitle)
+                      setAiSidebarOpen(true)
                   }}
                   title="Get AI suggestions"
                 >
@@ -145,6 +153,7 @@ export default function BuildResume({ onClose }) {
                 onClick={() => {
                   setAiFieldType('description')
                   setAiFieldValue(summary)
+                  setAiSidebarOpen(true)
                 }}
                 title="Get AI suggestions"
               >
@@ -175,6 +184,7 @@ export default function BuildResume({ onClose }) {
                       setAiFieldType('company')
                       setAiFieldValue(exp.company)
                       setAiFieldIndex(idx)
+                      setAiSidebarOpen(true)
                     }}
                     title="Get AI suggestions"
                   >
@@ -194,6 +204,7 @@ export default function BuildResume({ onClose }) {
                       setAiFieldType('role')
                       setAiFieldValue(exp.role)
                       setAiFieldIndex(idx)
+                      setAiSidebarOpen(true)
                     }}
                     title="Get AI suggestions"
                   >
@@ -213,6 +224,7 @@ export default function BuildResume({ onClose }) {
                       setAiFieldType('description')
                       setAiFieldValue(exp.desc)
                       setAiFieldIndex(idx)
+                      setAiSidebarOpen(true)
                     }}
                     title="Get AI suggestions"
                   >
@@ -277,19 +289,29 @@ export default function BuildResume({ onClose }) {
             </div>
           </div>
           
-          {aiFieldValue && (
+          {aiSidebarOpen && (
             <AISuggestions
               fieldType={aiFieldType}
               currentValue={aiFieldValue}
               onApply={(suggestion) => {
-                if (aiFieldType === 'jobTitle') {
-                  setPersonal({...personal, jobTitle: suggestion})
-                } else if (aiFieldType === 'description' && summary === aiFieldValue) {
-                  setSummary(suggestion)
+                if (aiFieldIndex !== null && typeof aiFieldIndex === 'number') {
+                  const copy = [...experiences]
+                  if (aiFieldType === 'company') copy[aiFieldIndex].company = suggestion
+                  if (aiFieldType === 'role') copy[aiFieldIndex].role = suggestion
+                  if (aiFieldType === 'description') copy[aiFieldIndex].desc = suggestion
+                  setExperiences(copy)
+                } else {
+                  if (aiFieldType === 'jobTitle') setPersonal(p => ({...p, jobTitle: suggestion}))
+                  if (aiFieldType === 'description') setSummary(suggestion)
+                  if (aiFieldType === 'school') setEducation(e => ({...e, school: suggestion}))
+                  if (aiFieldType === 'degree') setEducation(e => ({...e, degree: suggestion}))
                 }
                 setAiFieldValue('')
                 setAiFieldType('')
+                setAiFieldIndex(null)
+                setAiSidebarOpen(false)
               }}
+              onClose={() => setAiSidebarOpen(false)}
             />
           )}
 
