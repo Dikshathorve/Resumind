@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Briefcase, FileText, Sparkles, Download, Mail, Phone, MapPin, FileText as FileDocument, Briefcase as WorkBriefcase, GraduationCap, Settings, Award } from 'lucide-react'
 import './BuildResume.css'
-import AISuggestions from './AISuggestions'
+import AISuggestions from '../components/AISuggestions'
 
 export default function BuildResume({ onClose }) {
   const leftRef = useRef(null)
