@@ -3,6 +3,8 @@ import { Briefcase, FileText, Sparkles, Download, Mail, Phone, MapPin, FileText 
 import './BuildResume.css'
 import AISuggestions from '../components/AISuggestions'
 import HeaderWithUser from '../components/HeaderWithUser'
+import ResumeTemplate1 from '../components/ResumeTemplate1'
+import AccentColorPicker from '../components/AccentColorPicker'
 
 export default function BuildResume({ onClose, onATSAnalyzer }) {
   // Step management for step-wise form
@@ -46,6 +48,30 @@ export default function BuildResume({ onClose, onATSAnalyzer }) {
   const [aiFieldValue, setAiFieldValue] = useState('')
   const [aiFieldIndex, setAiFieldIndex] = useState(null)
   const [aiSidebarOpen, setAiSidebarOpen] = useState(false)
+
+  // Accent color state
+  const [accentColor, setAccentColor] = useState('#3B82F6')
+  const [colorPickerOpen, setColorPickerOpen] = useState(false)
+  const accentButtonRef = useRef(null)
+  const templateRef = useRef(null)
+
+  // Print handler for download
+  const handleDownload = () => {
+    if (templateRef.current) {
+      // Add print class to hide non-essential elements
+      document.body.classList.add('print-mode')
+      
+      // Trigger print dialog after a brief delay to ensure styles are applied
+      setTimeout(() => {
+        window.print()
+      }, 300)
+      
+      // Remove print class after longer timeout to account for print dialog
+      setTimeout(() => {
+        document.body.classList.remove('print-mode')
+      }, 1000)
+    }
+  }
 
   // Step navigation handlers
   const handleNextStep = () => {
@@ -607,9 +633,17 @@ export default function BuildResume({ onClose, onATSAnalyzer }) {
 
   return (
     <div className="build-page">
+      <AccentColorPicker 
+        isOpen={colorPickerOpen}
+        selectedColor={accentColor}
+        onColorSelect={(color) => setAccentColor(color)}
+        onClose={() => setColorPickerOpen(false)}
+        buttonRef={accentButtonRef}
+      />
+
       <HeaderWithUser 
         onLogout={onClose} 
-        userName="Avinosh"
+        userName="User"
         navActions={
           <>
             <button className="nav-item">
@@ -643,7 +677,7 @@ export default function BuildResume({ onClose, onATSAnalyzer }) {
             <button className="btn-private" onClick={() => alert('Private mode')}>
               🔒 Private
             </button>
-            <button className="btn-download">
+            <button className="btn-download" onClick={handleDownload}>
               <Download size={20} />
               Download
             </button>
@@ -661,7 +695,11 @@ export default function BuildResume({ onClose, onATSAnalyzer }) {
               <button className="btn-template" onClick={() => alert('Template selector')}>
                 📋 Template
               </button>
-              <button className="btn-accent" onClick={() => alert('Accent color picker')}>
+              <button 
+                ref={accentButtonRef}
+                className="btn-accent" 
+                onClick={() => setColorPickerOpen(true)}
+              >
                 🎨 Accent
               </button>
             </div>
@@ -716,102 +754,17 @@ export default function BuildResume({ onClose, onATSAnalyzer }) {
         </div>
 
         <div className="builder-right">
-          <div className="preview-section-header">
-            <h3>Live Preview</h3>
-            <div className="live-status">
-              <span className="status-dot"></span>
-              <span className="status-text">Updating in real-time</span>
-            </div>
-          </div>
-          
-          <div className="preview-card">
-            <div className="preview-header">
-              {(personal.fullName || personal.jobTitle) && (
-                <div className="header-left">
-                  <div className="name">{personal.fullName}</div>
-                  <div className="title">{personal.jobTitle}</div>
-                </div>
-              )}
-
-              <div className="contact-row">
-                <span className="contact-item">
-                  <Mail size={16} className="contact-icon" />
-                  <span className="contact-text">{personal.email || ''}</span>
-                </span>
-
-                <span className="contact-item">
-                  <Phone size={16} className="contact-icon" />
-                  <span className="contact-text">{personal.phone || ''}</span>
-                </span>
-
-                <span className="contact-item">
-                  <MapPin size={16} className="contact-icon" />
-                  <span className="contact-text">{personal.location || ''}</span>
-                </span>
-              </div>
-
-              {(personal.linkedin || personal.website) && (
-                <div className="contact-row">
-                  {personal.linkedin && (
-                    <span className="contact-item">
-                      <Linkedin size={16} className="contact-icon" />
-                      <span className="contact-text">{personal.linkedin}</span>
-                    </span>
-                  )}
-                  {personal.website && (
-                    <span className="contact-item">
-                      <Globe size={16} className="contact-icon" />
-                      <span className="contact-text">{personal.website}</span>
-                    </span>
-                  )}
-                </div>
-              )}
-            </div>
-            <div className="preview-body">
-
-              <div className="section">
-                <h4><FileDocument size={20} className="section-icon" /> Professional Summary</h4>
-                <p className="section-text">{summary || 'Write a brief professional summary...'}</p>
-              </div>
-
-              <div className="section">
-                <h4><WorkBriefcase size={20} className="section-icon" /> Experience</h4>
-                {experiences.every(e => !e.company && !e.role && !e.desc) ? (
-                  <p className="section-text">No experience added yet.</p>
-                ) : (
-                  experiences.map((e, i) => (
-                    (e.company || e.role || e.desc) && (
-                      <div key={i} className="preview-exp">
-                        <div className="two-col">
-                          <div className="job-title">{e.role ? `${e.role}` : ''}{e.role && e.company ? ' • ' : ''}{e.company}</div>
-                          <div className="job-dates">{/* optional dates */}</div>
-                        </div>
-                        {e.desc && <div className="preview-exp-desc">{e.desc}</div>}
-                      </div>
-                    )
-                  ))
-                )}
-              </div>
-
-              <div className="section">
-                <h4><GraduationCap size={20} className="section-icon" /> Education</h4>
-                <div className="section-text">{education.school || 'School name'}, {education.degree || 'Degree'}</div>
-              </div>
-
-              <div className="section">
-                <h4><Settings size={20} className="section-icon" /> Skills</h4>
-                <div className="skills-list">
-                  {skills.length ? skills.map((s, i) => <span key={i} className="skill-badge">{s}</span>) : <div className="section-text">No skills added yet.</div>}
-                </div>
-              </div>
-
-              <div className="section">
-                <h4><Award size={20} className="section-icon" /> Certifications</h4>
-                <div className="skills-list">
-                  {certifications.length ? certifications.map((c, i) => <span key={i} className="skill-badge">{c}</span>) : <div className="section-text">No certifications added yet.</div>}
-                </div>
-              </div>
-            </div>
+          <div className="template-container" ref={templateRef}>
+            <ResumeTemplate1 
+              personal={personal}
+              summary={summary}
+              experiences={experiences}
+              education={education}
+              projects={projects}
+              skills={skills}
+              certifications={certifications}
+              accentColor={accentColor}
+            />
           </div>
         </div>
       </div>
