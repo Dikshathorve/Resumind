@@ -2,7 +2,7 @@
   min-height: 100vh;
   background: linear-gradient(135deg, hsl(230, 35%, 7%) 0%, hsl(240, 30%, 10%) 50%, hsl(270, 40%, 8%) 100%);
   color: #fff;
-  padding: 3rem 2rem 2rem 2rem;
+
   position: relative;
   overflow: hidden;
 }
@@ -21,11 +21,13 @@
 
 .projects-header {
   position: relative;
-  margin-bottom: 5rem;
+  margin-bottom: 2rem;
   display: flex;
+  /* flex-direction: column; */
   align-items: flex-start;
-  gap: 2.5rem;
+  gap: 1rem;
   z-index: 1;
+  padding: 1rem 3rem;
 }
 
 .close-btn {
@@ -51,6 +53,26 @@
 
 .close-btn svg {
   stroke-width: 2;
+}
+
+.back-btn {
+  background: transparent;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  color: #a78bfa;
+  padding: 10px 16px;
+  margin-top: 0.4rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.back-btn:hover {
+  border-color: rgba(139, 92, 246, 0.6);
+  background: rgba(139, 92, 246, 0.1);
+  color: #d8b4ff;
 }
 
 .header-content h1 {
@@ -178,9 +200,73 @@
 
 .resumes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 2.5rem;
   min-height: 400px;
+}
+
+.no-resumes-text {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 1.1rem;
+  margin: 2rem 0;
+}
+
+.resume-card-temp {
+  background: linear-gradient(135deg, rgba(200, 180, 255, 0.15) 0%, rgba(168, 140, 255, 0.1) 100%);
+  border: 2px solid rgba(168, 140, 255, 0.3);
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.resume-card-temp::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, transparent 0%, rgba(200, 180, 255, 0.1) 100%);
+  pointer-events: none;
+}
+
+.resume-card-temp:hover {
+  border-color: rgba(168, 140, 255, 0.6);
+  background: linear-gradient(135deg, rgba(200, 180, 255, 0.25) 0%, rgba(168, 140, 255, 0.15) 100%);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(168, 140, 255, 0.2);
+}
+
+.resume-card-icon {
+  font-size: 3rem;
+  position: relative;
+  z-index: 1;
+}
+
+.resume-card-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #d8b4ff;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.resume-card-date {
+  font-size: 0.85rem;
+  color: rgba(216, 180, 255, 0.65);
+  margin: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .empty-state {
