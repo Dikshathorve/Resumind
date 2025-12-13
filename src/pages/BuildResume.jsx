@@ -1,25 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
-import { Briefcase, FileText, Sparkles, Download, Mail, Phone, MapPin, FileText as FileDocument, Briefcase as WorkBriefcase, GraduationCap, Settings, Award, User, Briefcase as BriefcaseIcon, Globe, Linkedin } from 'lucide-react'
+import { Briefcase, FileText, Sparkles, Download, Mail, Phone, MapPin, FileText as FileDocument, Briefcase as WorkBriefcase, GraduationCap, Settings, Award } from 'lucide-react'
 import './BuildResume.css'
 import AISuggestions from '../components/AISuggestions'
-import HeaderWithUser from '../components/HeaderWithUser'
-import ResumeTemplate1 from '../components/ResumeTemplate1'
-import AccentColorPicker from '../components/AccentColorPicker'
-import TemplateSelector from '../components/TemplateSelector'
 
-export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher }) {
-  // Step management for step-wise form
-  const [currentStep, setCurrentStep] = useState(1)
-  const steps = [
-    { id: 1, label: 'Personal Information' },
-    { id: 2, label: 'Professional Summary' },
-    { id: 3, label: 'Experience' },
-    { id: 4, label: 'Education' },
-    { id: 5, label: 'Projects' },
-    { id: 6, label: 'Skills' },
-    { id: 7, label: 'Certifications' }
-  ]
-
+export default function BuildResume({ onClose, onATSAnalyzer }) {
+  const leftRef = useRef(null)
+  const proxyRef = useRef(null)
+  const [selectedTemplate, setSelectedTemplate] = useState('template1')
+  const [profilePhoto, setProfilePhoto] = useState(null)
+  const [accentColor, setAccentColor] = useState('#6366f1')
+  const [selectorTab, setSelectorTab] = useState('templates')
   // form state for live preview
   const [personal, setPersonal] = useState({
     fullName: '',
@@ -33,11 +23,11 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher }) {
 
   const [summary, setSummary] = useState('')
 
-  const [experiences, setExperiences] = useState([])
+  const [experiences, setExperiences] = useState([
+    { company: '', role: '', desc: '' }
+  ])
 
-  const [education, setEducation] = useState([])
-
-  const [projects, setProjects] = useState([])
+  const [education, setEducation] = useState({ school: '', degree: '' })
 
   const [skills, setSkills] = useState([])
   const [skillInput, setSkillInput] = useState('')
@@ -50,103 +40,199 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher }) {
   const [aiFieldIndex, setAiFieldIndex] = useState(null)
   const [aiSidebarOpen, setAiSidebarOpen] = useState(false)
 
-  // Accent color state
-  const [accentColor, setAccentColor] = useState('#3B82F6')
-  const [colorPickerOpen, setColorPickerOpen] = useState(false)
-  const accentButtonRef = useRef(null)
-  const templateRef = useRef(null)
+  useEffect(() => {
+    const left = leftRef.current
+    const proxy = proxyRef.current
+    if (!left || !proxy) return
 
-  // Template selector state
-  const [selectedTemplate, setSelectedTemplate] = useState('template1')
-  const [templateSelectorOpen, setTemplateSelectorOpen] = useState(false)
-  const templateButtonRef = useRef(null)
-
-  // AI Assist modal state
-  const [aiAssistOpen, setAiAssistOpen] = useState(false)
-
-  // Print handler for download
-  const handleDownload = () => {
-    if (templateRef.current) {
-      // Add print class to hide non-essential elements
-      document.body.classList.add('print-mode')
-      
-      // Trigger print dialog after a brief delay to ensure styles are applied
-      setTimeout(() => {
-        window.print()
-      }, 300)
-      
-      // Remove print class after longer timeout to account for print dialog
-      setTimeout(() => {
-        document.body.classList.remove('print-mode')
-      }, 1000)
-    }
-  }
-
-  // Render template based on selection
-  const renderTemplate = () => {
-    const templateProps = {
-      personal,
-      summary,
-      experiences,
-      education,
-      projects,
-      skills,
-      certifications,
-      accentColor
+    // set proxy spacer height to match left scrollable height
+    const updateProxy = () => {
+      const spacer = proxy.querySelector('.proxy-spacer')
+      if (spacer) spacer.style.height = left.scrollHeight + 'px'
     }
 
-    switch (selectedTemplate) {
-      case 'template1':
-        return <ResumeTemplate1 {...templateProps} />
-      case 'template2':
-        // return <ResumeTemplate2 {...templateProps} /> // Will be created later
-        return <ResumeTemplate1 {...templateProps} /> // Fallback to Template1 for now
-      case 'template3':
-        // return <ResumeTemplate3 {...templateProps} /> // Will be created later
-        return <ResumeTemplate1 {...templateProps} /> // Fallback to Template1 for now
-      case 'template4':
-        // return <ResumeTemplate4 {...templateProps} /> // Will be created later
-        return <ResumeTemplate1 {...templateProps} /> // Fallback to Template1 for now
-      default:
-        return <ResumeTemplate1 {...templateProps} />
-    }
-  }
+    updateProxy()
+    window.addEventListener('resize', updateProxy)
 
-  // Step navigation handlers
-  const handleNextStep = () => {
-    if (currentStep < steps.length) {
-      setCurrentStep(currentStep + 1)
+    const onProxyScroll = () => {
+      const ratio = proxy.scrollTop / (proxy.scrollHeight - proxy.clientHeight || 1)
+      left.scrollTop = ratio * (left.scrollHeight - left.clientHeight || 0)
     }
-  }
 
-  const handlePreviousStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1)
+    const onLeftScroll = () => {
+      const ratio = left.scrollTop / (left.scrollHeight - left.clientHeight || 1)
+      proxy.scrollTop = ratio * (proxy.scrollHeight - proxy.clientHeight || 0)
     }
-  }
 
-  // Render different step content
-  const renderStepContent = () => {
-    switch (currentStep) {
-      case 1:
-        return (
+    proxy.addEventListener('scroll', onProxyScroll)
+    left.addEventListener('scroll', onLeftScroll)
+
+    return () => {
+      proxy.removeEventListener('scroll', onProxyScroll)
+      left.removeEventListener('scroll', onLeftScroll)
+      window.removeEventListener('resize', updateProxy)
+    }
+  }, [])
+
+  return (
+    <div className="build-page">
+      <div className="build-nav-bar">
+        <div className="nav-left">
+          <button className="back-to-home" onClick={onClose}>← Back to Home</button>
+        </div>
+        <div className="nav-center">
+          <button className="nav-item">
+            <Briefcase size={20} className="nav-icon-svg" />
+            <span className="nav-label">Job Matcher</span>
+          </button>
+          <button className="nav-item" onClick={() => onATSAnalyzer({ personal, summary, experiences, education, skills, certifications })}>
+            <FileText size={20} className="nav-icon-svg" />
+            <span className="nav-label">ATS Analyzer</span>
+          </button>
+          <button className="nav-pill" onClick={() => {
+            setAiSidebarOpen(true)
+            // default to jobTitle context
+            setAiFieldType('jobTitle')
+            setAiFieldValue(personal.jobTitle || '')
+            setAiFieldIndex(null)
+          }}>
+            <Sparkles size={20} className="nav-icon-svg" />
+            <span className="nav-label">AI Assist</span>
+          </button>
+        </div>
+        <div className="nav-right">
+          <button className="download-button">
+            <Download size={20} className="nav-icon-svg" />
+            <span>Download PDF</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="build-content">
+        <div className="build-title">
+          <h1>Build Your Resume</h1>
+        </div>
+
+        <div className="template-selector">
+          {/* Selector Tabs */}
+          <div className="selector-tabs">
+            <button
+              className={`tab-button ${selectorTab === 'templates' ? 'active' : ''}`}
+              onClick={() => setSelectorTab('templates')}
+            >
+              Templates
+            </button>
+            <button
+              className={`tab-button ${selectorTab === 'accent' ? 'active' : ''}`}
+              onClick={() => setSelectorTab('accent')}
+            >
+              Accent Color
+            </button>
+          </div>
+
+          {/* Templates Tab Content */}
+          {selectorTab === 'templates' && (
+            <div className="tab-content">
+              <label className="template-label">Choose Template:</label>
+              <div className="template-options">
+                <button 
+                  className={`template-option ${selectedTemplate === 'template1' ? 'active' : ''}`}
+                  onClick={() => setSelectedTemplate('template1')}
+                >
+                  <span className="template-option-name">Classic</span>
+                  <span className="template-option-desc">Professional & Clean</span>
+                </button>
+                <button 
+                  className={`template-option ${selectedTemplate === 'template2' ? 'active' : ''}`}
+                  onClick={() => setSelectedTemplate('template2')}
+                >
+                  <span className="template-option-name">Modern</span>
+                  <span className="template-option-desc">Sidebar Layout</span>
+                </button>
+                <button 
+                  className={`template-option ${selectedTemplate === 'template3' ? 'active' : ''}`}
+                  onClick={() => setSelectedTemplate('template3')}
+                >
+                  <span className="template-option-name">Minimal</span>
+                  <span className="template-option-desc">Simple & Elegant</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Accent Color Tab Content */}
+          {selectorTab === 'accent' && (
+            <div className="tab-content">
+              <label className="template-label">Choose Accent Color:</label>
+              <div className="color-palette">
+                {[
+                  { name: 'Indigo', value: '#6366f1' },
+                  { name: 'Purple', value: '#a855f7' },
+                  { name: 'Blue', value: '#3b82f6' },
+                  { name: 'Cyan', value: '#06b6d4' },
+                  { name: 'Green', value: '#10b981' },
+                  { name: 'Red', value: '#ef4444' },
+                  { name: 'Orange', value: '#f97316' },
+                  { name: 'Pink', value: '#ec4899' },
+                ].map((color) => (
+                  <button
+                    key={color.value}
+                    className={`color-swatch ${accentColor === color.value ? 'active' : ''}`}
+                    style={{ backgroundColor: color.value }}
+                    onClick={() => setAccentColor(color.value)}
+                    title={color.name}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+      <div className="build-inner">
+        <div className="builder-left" ref={leftRef}>
           <section className="panel">
             <h3>Personal Information</h3>
-            <div className="form-group">
-              <label>
-                <User size={18} />
-                Full Name <span className="required">*</span>
-              </label>
-              <input placeholder="Enter your full name" value={personal.fullName} onChange={e => setPersonal({...personal, fullName: e.target.value})} />
-            </div>
-
-            <div className="form-group">
-              <label>
-                <BriefcaseIcon size={18} />
-                Profession <span className="required">*</span>
-              </label>
+            {selectedTemplate === 'template2' && (
+              <div className="photo-upload-section">
+                <input 
+                  type="file" 
+                  id="photo-upload" 
+                  accept="image/*" 
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      const reader = new FileReader()
+                      reader.onload = (event) => {
+                        setProfilePhoto(event.target.result)
+                      }
+                      reader.readAsDataURL(e.target.files[0])
+                    }
+                  }}
+                  className="photo-input"
+                />
+                <label htmlFor="photo-upload" className="photo-label">
+                  {profilePhoto ? (
+                    <img src={profilePhoto} alt="Profile" className="photo-preview" />
+                  ) : (
+                    <div className="photo-placeholder">
+                      <span>📷</span>
+                      <p>Add Photo</p>
+                    </div>
+                  )}
+                </label>
+                {profilePhoto && (
+                  <button 
+                    className="remove-photo-btn"
+                    onClick={() => setProfilePhoto(null)}
+                  >
+                    Remove Photo
+                  </button>
+                )}
+              </div>
+            )}
+            <div className="row">
+              <input placeholder="Full Name" value={personal.fullName} onChange={e => setPersonal({...personal, fullName: e.target.value})} />
               <div className="input-with-ai">
-                <input placeholder="Enter your profession" value={personal.jobTitle} onChange={e => {
+                <input placeholder="Job Title" value={personal.jobTitle} onChange={e => {
                   setPersonal({...personal, jobTitle: e.target.value})
                   setAiFieldType('jobTitle')
                   setAiFieldValue(e.target.value)
@@ -164,58 +250,22 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher }) {
                 </button>
               </div>
             </div>
-
-            <div className="form-group">
-              <label>
-                <Mail size={18} />
-                Email Address <span className="required">*</span>
-              </label>
-              <input placeholder="Enter your email address" type="email" value={personal.email} onChange={e => setPersonal({...personal, email: e.target.value})} />
+            <div className="row">
+              <input placeholder="Email" value={personal.email} onChange={e => setPersonal({...personal, email: e.target.value})} />
+              <input placeholder="Phone" value={personal.phone} onChange={e => setPersonal({...personal, phone: e.target.value})} />
             </div>
-
-            <div className="form-group">
-              <label>
-                <Phone size={18} />
-                Phone Number
-              </label>
-              <input placeholder="Enter your phone number" value={personal.phone} onChange={e => setPersonal({...personal, phone: e.target.value})} />
-            </div>
-
-            <div className="form-group">
-              <label>
-                <MapPin size={18} />
-                Location
-              </label>
-              <input placeholder="Enter your location" value={personal.location} onChange={e => setPersonal({...personal, location: e.target.value})} />
-            </div>
-
-            <div className="form-group">
-              <label>
-                <Linkedin size={18} />
-                LinkedIn URL
-              </label>
-              <input placeholder="Enter your LinkedIn profile URL" value={personal.linkedin} onChange={e => setPersonal({...personal, linkedin: e.target.value})} />
-            </div>
-
-            <div className="form-group">
-              <label>
-                <Globe size={18} />
-                Website
-              </label>
-              <input placeholder="Enter your website URL" value={personal.website} onChange={e => setPersonal({...personal, website: e.target.value})} />
+            <input className="full" placeholder="Location (City, State)" value={personal.location} onChange={e => setPersonal({...personal, location: e.target.value})} />
+            <div className="row">
+              <input placeholder="LinkedIn URL" value={personal.linkedin} onChange={e => setPersonal({...personal, linkedin: e.target.value})} />
+              <input placeholder="Website" value={personal.website} onChange={e => setPersonal({...personal, website: e.target.value})} />
             </div>
           </section>
-        )
-      case 2:
-        return (
+
           <section className="panel">
-            <div className="summary-header">
-              <div>
-                <h3>Professional Summary</h3>
-                <p className="summary-subtitle">Add summary for your resume here</p>
-              </div>
+            <div className="section-header-with-ai">
+              <h3>Professional Summary <span className="hint">AI Enhance</span></h3>
               <button 
-                className="ai-enhance-btn"
+                className="ai-assist-btn"
                 onClick={() => {
                   setAiFieldType('description')
                   setAiFieldValue(summary)
@@ -223,432 +273,106 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher }) {
                 }}
                 title="Get AI suggestions"
               >
-                ✨ AI Enhance
+                ✨
               </button>
             </div>
-            <textarea placeholder="Write a compelling professional summary that highlights your key strengths and career objectives..." rows={10} value={summary} onChange={e => {
+            <textarea placeholder="Write a brief professional summary..." rows={6} value={summary} onChange={e => {
               setSummary(e.target.value)
               setAiFieldType('description')
               setAiFieldValue(e.target.value)
             }} />
-            <p className="form-tip">Tip: Keep it concise (3-4 sentences) and focus on your most relevant achievements and skills.</p>
           </section>
-        )
-      case 3:
-        return (
+
           <section className="panel">
-            <div className="section-header">
-              <div>
-                <h3>Professional Experience</h3>
-                <p className="section-subtitle">Add your job experience</p>
-              </div>
-              <button 
-                className="add-btn"
-                onClick={() => {
-                  const newExp = { company: '', role: '', desc: '', startDate: '', endDate: '', currentlyWorking: false }
-                  setExperiences([...experiences, newExp])
-                }}
-              >
-                + Add Experience
-              </button>
-            </div>
-            {experiences.length === 0 ? (
-              <div className="empty-state-message">
-                <Briefcase size={48} className="empty-icon" />
-                <p className="empty-title">No work experience added yet.</p>
-                <p className="empty-desc">Click "Add Experience" to get started.</p>
-              </div>
-            ) : (
-              experiences.map((exp, idx) => (
-                <div className="exp-item" key={idx}>
-                  <div className="exp-header">
-                    <h4>Experience #{idx + 1}</h4>
-                    <button 
-                      className="delete-btn"
-                      onClick={() => {
-                        const copy = experiences.filter((_, i) => i !== idx)
-                        setExperiences(copy)
-                      }}
-                      title="Delete experience"
-                    >
-                      🗑️
-                    </button>
-                  </div>
-
-                  <div className="exp-row-two-cols">
-                    <div className="form-group">
-                      <label>Company Name</label>
-                      <input 
-                        type="text"
-                        placeholder="e.g., Google, Microsoft" 
-                        value={exp.company} 
-                        onChange={e => {
-                          const copy = [...experiences]
-                          copy[idx].company = e.target.value
-                          setExperiences(copy)
-                        }} 
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Job Title</label>
-                      <input 
-                        type="text"
-                        placeholder="e.g., Senior Developer" 
-                        value={exp.role} 
-                        onChange={e => {
-                          const copy = [...experiences]
-                          copy[idx].role = e.target.value
-                          setExperiences(copy)
-                        }} 
-                      />
-                    </div>
-                  </div>
-
-                  <div className="exp-row-two-cols">
-                    <div className="form-group">
-                      <label>Start Date</label>
-                      <input 
-                        type="month"
-                        value={exp.startDate || ''} 
-                        onChange={e => {
-                          const copy = [...experiences]
-                          copy[idx].startDate = e.target.value
-                          setExperiences(copy)
-                        }} 
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>End Date</label>
-                      <input 
-                        type="month"
-                        value={exp.endDate || ''} 
-                        onChange={e => {
-                          const copy = [...experiences]
-                          copy[idx].endDate = e.target.value
-                          setExperiences(copy)
-                        }} 
-                      />
-                    </div>
-                  </div>
-
-                  <div className="checkbox-group">
-                    <input 
-                      type="checkbox"
-                      id={`currently-working-${idx}`}
-                      checked={exp.currentlyWorking || false}
-                      onChange={e => {
-                        const copy = [...experiences]
-                        copy[idx].currentlyWorking = e.target.checked
-                        setExperiences(copy)
-                      }}
-                    />
-                    <label htmlFor={`currently-working-${idx}`}>Currently working here</label>
-                  </div>
-
-                  <div className="form-group">
-                    <div className="group-header">
-                      <label>Job Description</label>
-                      <button 
-                        className="ai-enhance-btn"
-                        onClick={() => {
-                          setAiFieldType('description')
-                          setAiFieldValue(exp.desc)
-                          setAiFieldIndex(idx)
-                          setAiSidebarOpen(true)
-                        }}
-                      >
-                        ✨ Enhance with AI
-                      </button>
-                    </div>
-                    <textarea 
-                      placeholder="Describe your key responsibilities and achievements..." 
-                      rows={4} 
-                      value={exp.desc} 
-                      onChange={e => {
-                        const copy = [...experiences]
-                        copy[idx].desc = e.target.value
-                        setExperiences(copy)
-                      }} 
-                    />
-                  </div>
+            <h3>Experience</h3>
+            {experiences.map((exp, idx) => (
+              <div className="exp-item" key={idx}>
+                <div className="input-with-ai">
+                  <input placeholder="Company" value={exp.company} onChange={e => {
+                    const copy = [...experiences]; copy[idx].company = e.target.value; setExperiences(copy)
+                    setAiFieldType('company')
+                    setAiFieldValue(e.target.value)
+                    setAiFieldIndex(idx)
+                  }} />
+                  <button 
+                    className="ai-assist-btn-inline"
+                    onClick={() => {
+                      setAiFieldType('company')
+                      setAiFieldValue(exp.company)
+                      setAiFieldIndex(idx)
+                      setAiSidebarOpen(true)
+                    }}
+                    title="Get AI suggestions"
+                  >
+                    ✨
+                  </button>
                 </div>
-              ))
-            )}
-          </section>
-        )
-      case 4:
-        return (
-          <section className="panel">
-            <div className="section-header">
-              <div>
-                <h3>Education</h3>
-                <p className="section-subtitle">Add your education details</p>
-              </div>
-              <button 
-                className="add-btn"
-                onClick={() => {
-                  const newEdu = { institution: '', degree: '', fieldOfStudy: '', graduationDate: '', gpa: '' }
-                  setEducation([...education, newEdu])
-                }}
-              >
-                + Add Education
-              </button>
-            </div>
-            {education.length === 0 ? (
-              <div className="empty-state-message">
-                <GraduationCap size={48} className="empty-icon" />
-                <p className="empty-title">No education added yet.</p>
-                <p className="empty-desc">Click "Add Education" to get started.</p>
-              </div>
-            ) : (
-              education.map((edu, idx) => (
-                <div className="exp-item" key={idx}>
-                  <div className="exp-header">
-                    <h4>Education #{idx + 1}</h4>
-                    <button 
-                      className="delete-btn"
-                      onClick={() => {
-                        const copy = education.filter((_, i) => i !== idx)
-                        setEducation(copy)
-                      }}
-                      title="Delete education"
-                    >
-                      🗑️
-                    </button>
-                  </div>
-
-                  <div className="exp-row-two-cols">
-                    <div className="form-group">
-                      <label>Institution Name</label>
-                      <input 
-                        type="text"
-                        placeholder="e.g., University of California" 
-                        value={edu.institution} 
-                        onChange={e => {
-                          const copy = [...education]
-                          copy[idx].institution = e.target.value
-                          setEducation(copy)
-                        }} 
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Degree</label>
-                      <input 
-                        type="text"
-                        placeholder="e.g., Bachelor's, Master's" 
-                        value={edu.degree} 
-                        onChange={e => {
-                          const copy = [...education]
-                          copy[idx].degree = e.target.value
-                          setEducation(copy)
-                        }} 
-                      />
-                    </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Field of Study</label>
-                    <input 
-                      type="text"
-                      placeholder="e.g., Computer Science" 
-                      value={edu.fieldOfStudy} 
-                      onChange={e => {
-                        const copy = [...education]
-                        copy[idx].fieldOfStudy = e.target.value
-                        setEducation(copy)
-                      }} 
-                    />
-                  </div>
-
-                  <div className="exp-row-two-cols">
-                    <div className="form-group">
-                      <label>Graduation Date</label>
-                      <input 
-                        type="month"
-                        value={edu.graduationDate || ''} 
-                        onChange={e => {
-                          const copy = [...education]
-                          copy[idx].graduationDate = e.target.value
-                          setEducation(copy)
-                        }} 
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>GPA (optional)</label>
-                      <input 
-                        type="text"
-                        placeholder="e.g., 3.8" 
-                        value={edu.gpa} 
-                        onChange={e => {
-                          const copy = [...education]
-                          copy[idx].gpa = e.target.value
-                          setEducation(copy)
-                        }} 
-                      />
-                    </div>
-                  </div>
+                <div className="input-with-ai">
+                  <input placeholder="Role" value={exp.role} onChange={e => {
+                    const copy = [...experiences]; copy[idx].role = e.target.value; setExperiences(copy)
+                    setAiFieldType('role')
+                    setAiFieldValue(e.target.value)
+                    setAiFieldIndex(idx)
+                  }} />
+                  <button 
+                    className="ai-assist-btn-inline"
+                    onClick={() => {
+                      setAiFieldType('role')
+                      setAiFieldValue(exp.role)
+                      setAiFieldIndex(idx)
+                      setAiSidebarOpen(true)
+                    }}
+                    title="Get AI suggestions"
+                  >
+                    ✨
+                  </button>
                 </div>
-              ))
-            )}
-          </section>
-        )
-      case 5:
-        return (
-          <section className="panel">
-            <div className="section-header">
-              <div>
-                <h3>Projects</h3>
-                <p className="section-subtitle">Add your projects</p>
-              </div>
-              <button 
-                className="add-btn"
-                onClick={() => {
-                  const newProject = { name: '', type: '', description: '' }
-                  setProjects([...projects, newProject])
-                }}
-              >
-                + Add Project
-              </button>
-            </div>
-            {projects.length === 0 ? (
-              <div className="empty-state-message">
-                <FileText size={48} className="empty-icon" />
-                <p className="empty-title">No projects added yet.</p>
-                <p className="empty-desc">Click "Add Project" to get started.</p>
-              </div>
-            ) : (
-              projects.map((proj, idx) => (
-                <div className="exp-item" key={idx}>
-                  <div className="exp-header">
-                    <h4>Project #{idx + 1}</h4>
-                    <button 
-                      className="delete-btn"
-                      onClick={() => {
-                        const copy = projects.filter((_, i) => i !== idx)
-                        setProjects(copy)
-                      }}
-                      title="Delete project"
-                    >
-                      🗑️
-                    </button>
-                  </div>
-
-                  <div className="exp-row-two-cols">
-                    <div className="form-group">
-                      <label>Project Name</label>
-                      <input 
-                        type="text"
-                        placeholder="e.g., E-commerce Platform" 
-                        value={proj.name} 
-                        onChange={e => {
-                          const copy = [...projects]
-                          copy[idx].name = e.target.value
-                          setProjects(copy)
-                        }} 
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Project Type</label>
-                      <input 
-                        type="text"
-                        placeholder="e.g., Web App, Mobile App" 
-                        value={proj.type} 
-                        onChange={e => {
-                          const copy = [...projects]
-                          copy[idx].type = e.target.value
-                          setProjects(copy)
-                        }} 
-                      />
-                    </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Project Description</label>
-                    <textarea 
-                      placeholder="Describe your project..." 
-                      rows={4} 
-                      value={proj.description} 
-                      onChange={e => {
-                        const copy = [...projects]
-                        copy[idx].description = e.target.value
-                        setProjects(copy)
-                      }} 
-                    />
-                  </div>
+                <div className="textarea-with-ai">
+                  <textarea placeholder="Describe your responsibilities..." rows={4} value={exp.desc} onChange={e => {
+                    const copy = [...experiences]; copy[idx].desc = e.target.value; setExperiences(copy)
+                    setAiFieldType('description')
+                    setAiFieldValue(e.target.value)
+                    setAiFieldIndex(idx)
+                  }} />
+                  <button 
+                    className="ai-assist-btn-textarea"
+                    onClick={() => {
+                      setAiFieldType('description')
+                      setAiFieldValue(exp.desc)
+                      setAiFieldIndex(idx)
+                      setAiSidebarOpen(true)
+                    }}
+                    title="Get AI suggestions"
+                  >
+                    ✨
+                  </button>
                 </div>
-              ))
-            )}
+              </div>
+            ))}
           </section>
-        )
-      case 6:
-        return (
+
           <section className="panel">
-            <div className="skills-header">
-              <div>
-                <h3>Skills</h3>
-                <p className="section-subtitle">Add your technical and soft skills</p>
-              </div>
-            </div>
+            <h3>Education</h3>
+            <input placeholder="School" value={education.school} onChange={e => setEducation({...education, school: e.target.value})} />
+            <input placeholder="Degree" value={education.degree} onChange={e => setEducation({...education, degree: e.target.value})} />
+          </section>
 
-            <div className="skills-input-group">
-              <input 
-                type="text"
-                placeholder="Enter a skill (e.g., JavaScript, Project Management)" 
-                value={skillInput} 
-                onChange={e => setSkillInput(e.target.value)} 
-                onKeyDown={e => {
-                  if(e.key === 'Enter' && skillInput.trim()){
-                    setSkills(prev => [...prev, skillInput.trim()])
-                    setSkillInput('')
-                    e.preventDefault()
-                  }
-                }} 
-              />
-              <button 
-                className="add-skill-btn"
-                onClick={() => {
-                  if(skillInput.trim()){
-                    setSkills(prev => [...prev, skillInput.trim()])
-                    setSkillInput('')
-                  }
-                }}
-              >
-                + Add
-              </button>
-            </div>
-
-            {skills.length === 0 ? (
-              <div className="empty-state-message">
-                <Settings size={48} className="empty-icon" />
-                <p className="empty-title">No skills added yet.</p>
-                <p className="empty-desc">Add your technical and soft skills above.</p>
-              </div>
-            ) : (
-              <div className="skills-list">
-                {skills.map((s, i) => (
-                  <span key={i} className="skill-badge">
-                    {s}
-                    <button 
-                      className="remove-skill"
-                      onClick={() => {
-                        setSkills(prev => prev.filter((_, idx) => idx !== i))
-                      }}
-                      title="Remove skill"
-                    >
-                      ✕
-                    </button>
-                  </span>
-                ))}
-              </div>
-            )}
-
-            <div className="form-tip">
-              <strong>Tip:</strong> Add 8-12 relevant skills. Include both technical skills (programming languages, tools) and soft skills (leadership, communication).
+          <section className="panel">
+            <h3>Skills</h3>
+            <input placeholder="Add a skill (press enter)" value={skillInput} onChange={e => setSkillInput(e.target.value)} onKeyDown={e => {
+              if(e.key === 'Enter' && skillInput.trim()){
+                setSkills(prev => [...prev, skillInput.trim()])
+                setSkillInput('')
+                e.preventDefault()
+              }
+            }} />
+            <div className="skills-list">
+              {skills.map((s, i) => (
+                <span key={i} className="skill-badge">{s}</span>
+              ))}
             </div>
           </section>
-        )
-      case 7:
-        return (
+
           <section className="panel">
             <h3>Certifications</h3>
             <input placeholder="Add a certification (press enter)" value={certInput} onChange={e => setCertInput(e.target.value)} onKeyDown={e => {
@@ -664,151 +388,318 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher }) {
               ))}
             </div>
           </section>
-        )
-      default:
-        return null
-    }
-  }
-
-  return (
-    <div className="build-page">
-      <AccentColorPicker 
-        isOpen={colorPickerOpen}
-        selectedColor={accentColor}
-        onColorSelect={(color) => setAccentColor(color)}
-        onClose={() => setColorPickerOpen(false)}
-        buttonRef={accentButtonRef}
-      />
-
-      <TemplateSelector
-        isOpen={templateSelectorOpen}
-        selectedTemplate={selectedTemplate}
-        onTemplateSelect={(template) => setSelectedTemplate(template)}
-        onClose={() => setTemplateSelectorOpen(false)}
-        buttonRef={templateButtonRef}
-      />
-
-      <AISuggestions
-        isOpen={aiSidebarOpen}
-        fieldType={aiFieldType}
-        currentValue={aiFieldValue}
-        onApply={(suggestion) => {
-          if (aiFieldIndex !== null && typeof aiFieldIndex === 'number') {
-            const copy = [...experiences]
-            if (aiFieldType === 'company') copy[aiFieldIndex].company = suggestion
-            if (aiFieldType === 'role') copy[aiFieldIndex].role = suggestion
-            if (aiFieldType === 'description') copy[aiFieldIndex].desc = suggestion
-            setExperiences(copy)
-          } else {
-            if (aiFieldType === 'jobTitle') setPersonal(p => ({...p, jobTitle: suggestion}))
-            if (aiFieldType === 'description') setSummary(suggestion)
-            if (aiFieldType === 'school') setEducation(e => ({...e, school: suggestion}))
-            if (aiFieldType === 'degree') setEducation(e => ({...e, degree: suggestion}))
-          }
-          setAiFieldValue('')
-          setAiFieldType('')
-          setAiFieldIndex(null)
-          setAiSidebarOpen(false)
-        }}
-        onClose={() => setAiSidebarOpen(false)}
-      />
-
-      <HeaderWithUser 
-        onLogout={onClose} 
-        userName="User"
-        navActions={
-          <>
-            <button 
-              className="nav-item"
-              onClick={() => onJobMatcher({ personal, summary, experiences, education, skills, certifications })}
-            >
-              <Briefcase size={20} className="nav-icon-svg" />
-              <span className="nav-label">Job Matcher</span>
-            </button>
-            <button className="nav-item" onClick={() => onATSAnalyzer({ personal, summary, experiences, education, skills, certifications })}>
-              <FileText size={20} className="nav-icon-svg" />
-              <span className="nav-label">ATS Analyzer</span>
-            </button>
-            <button className="nav-pill" onClick={() => {
-              setAiSidebarOpen(true)
-              setAiFieldType('jobTitle')
-              setAiFieldValue(personal.jobTitle || '')
-              setAiFieldIndex(null)
-            }}>
-              <Sparkles size={20} className="nav-icon-svg" />
-              <span className="nav-label">AI Assist</span>
-            </button>
-          </>
-        }
-      />
-      <div className="build-content">
-        <div className="build-title">
-          <div className="title-left">
-            <button className="back-to-dashboard" onClick={onClose}>
-              ← Back to Dashboard
-            </button>
-          </div>
-          <div className="title-right">
-            <button className="btn-private" onClick={() => alert('Private mode')}>
-              🔒 Private
-            </button>
-            <button className="btn-download" onClick={handleDownload}>
-              <Download size={20} />
-              Download
-            </button>
-          </div>
         </div>
 
-      <div className="build-inner">
-        <div className="builder-left">
-          <div className="progress-bar-container">
-            <div className="progress-bar-fill" style={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}></div>
-          </div>
-
-          <div className="step-indicator-bar">
-            <div className="step-bar-left">
-              <button 
-                ref={templateButtonRef}
-                className="btn-template" 
-                onClick={() => setTemplateSelectorOpen(true)}
-              >
-                📋 Template
-              </button>
-              <button 
-                ref={accentButtonRef}
-                className="btn-accent" 
-                onClick={() => setColorPickerOpen(true)}
-              >
-                🎨 Accent
-              </button>
-            </div>
-
-            <div className="step-bar-right">
-              <button 
-                className="btn-prev-top"
-                onClick={handlePreviousStep}
-                disabled={currentStep === 1}
-              >
-                ← Previous
-              </button>
-              <button 
-                className="btn-next-top"
-                onClick={handleNextStep}
-                disabled={currentStep === steps.length}
-              >
-                Next →
-              </button>
-            </div>
-          </div>
-
-          <div className="step-form-container">
-            {renderStepContent()}
+        <div className="center-gutter">
+          <div className="scroll-proxy" ref={proxyRef}>
+            <div className="proxy-spacer" />
           </div>
         </div>
 
         <div className="builder-right">
-          <div className="template-container" ref={templateRef}>
-            {renderTemplate()}
+          <div className="preview-section-header">
+            <h3>Live Preview</h3>
+            <div className="live-status">
+              <span className="status-dot"></span>
+              <span className="status-text">Updating in real-time</span>
+            </div>
+          </div>
+          
+          {aiSidebarOpen && (
+            <AISuggestions
+              fieldType={aiFieldType}
+              currentValue={aiFieldValue}
+              onApply={(suggestion) => {
+                if (aiFieldIndex !== null && typeof aiFieldIndex === 'number') {
+                  const copy = [...experiences]
+                  if (aiFieldType === 'company') copy[aiFieldIndex].company = suggestion
+                  if (aiFieldType === 'role') copy[aiFieldIndex].role = suggestion
+                  if (aiFieldType === 'description') copy[aiFieldIndex].desc = suggestion
+                  setExperiences(copy)
+                } else {
+                  if (aiFieldType === 'jobTitle') setPersonal(p => ({...p, jobTitle: suggestion}))
+                  if (aiFieldType === 'description') setSummary(suggestion)
+                  if (aiFieldType === 'school') setEducation(e => ({...e, school: suggestion}))
+                  if (aiFieldType === 'degree') setEducation(e => ({...e, degree: suggestion}))
+                }
+                setAiFieldValue('')
+                setAiFieldType('')
+                setAiFieldIndex(null)
+                setAiSidebarOpen(false)
+              }}
+              onClose={() => setAiSidebarOpen(false)}
+            />
+          )}
+
+          <div className="preview-card" style={{
+            '--accent-color': accentColor,
+            '--accent-color-trans': accentColor + '0a',
+            '--accent-color-light': accentColor + '14'
+          }}>
+            {selectedTemplate === 'template1' && (
+              <>
+                <div className="preview-header" style={{
+                  '--accent-color-start': accentColor,
+                  '--accent-color-end': accentColor + 'cc'
+                }}>
+                  {(personal.fullName || personal.jobTitle) && (
+                    <div className="header-left">
+                      <div className="name">{personal.fullName}</div>
+                      <div className="title">{personal.jobTitle}</div>
+                    </div>
+                  )}
+
+                  <div className="contact-row">
+                    <span className="contact-item">
+                      <span className="contact-text">{personal.email || ''}</span>
+                      <Mail size={16} className="contact-icon" />
+                    </span>
+
+                    <span className="contact-item">
+                      <span className="contact-text">{personal.phone || ''}</span>
+                      <Phone size={16} className="contact-icon" />
+                    </span>
+
+                    <span className="contact-item">
+                      <span className="contact-text">{personal.location || ''}</span>
+                      <MapPin size={16} className="contact-icon" />
+                    </span>
+                  </div>
+                </div>
+            <div className="preview-body">
+
+              <div className="section">
+                <h4><FileDocument size={20} className="section-icon" style={{ color: accentColor }} /> Professional Summary</h4>
+                <p className="section-text">{summary || 'Write a brief professional summary...'}</p>
+              </div>
+
+              <div className="section">
+                <h4><WorkBriefcase size={20} className="section-icon" style={{ color: accentColor }} /> Experience</h4>
+                {experiences.every(e => !e.company && !e.role && !e.desc) ? (
+                  <p className="section-text">No experience added yet.</p>
+                ) : (
+                  experiences.map((e, i) => (
+                    (e.company || e.role || e.desc) && (
+                      <div key={i} className="preview-exp">
+                        <div className="two-col">
+                          <div className="job-title">{e.role ? `${e.role}` : ''}{e.role && e.company ? ' • ' : ''}{e.company}</div>
+                          <div className="job-dates">{/* optional dates */}</div>
+                        </div>
+                        {e.desc && <div className="preview-exp-desc">{e.desc}</div>}
+                      </div>
+                    )
+                  ))
+                )}
+              </div>
+
+              <div className="section">
+                <h4><GraduationCap size={20} className="section-icon" style={{ color: accentColor }} /> Education</h4>
+                <div className="section-text">{education.school || 'School name'}, {education.degree || 'Degree'}</div>
+              </div>
+
+              <div className="section">
+                <h4><Settings size={20} className="section-icon" style={{ color: accentColor }} /> Skills</h4>
+                <div className="skills-list">
+                  {skills.length ? skills.map((s, i) => <span key={i} className="skill-badge" style={{ backgroundColor: accentColor + '24', color: accentColor, borderColor: accentColor + '4d' }}>{s}</span>) : <div className="section-text">No skills added yet.</div>}
+                </div>
+              </div>
+
+              <div className="section">
+                <h4><Award size={20} className="section-icon" style={{ color: accentColor }} /> Certifications</h4>
+                <div className="skills-list">
+                  {certifications.length ? certifications.map((c, i) => <span key={i} className="skill-badge" style={{ backgroundColor: accentColor + '24', color: accentColor, borderColor: accentColor + '4d' }}>{c}</span>) : <div className="section-text">No certifications added yet.</div>}
+                </div>
+              </div>
+            </div>
+              </>
+            )}
+
+            {selectedTemplate === 'template2' && (
+              <div className="preview-template2-layout" style={{
+                '--accent-color': accentColor,
+                '--accent-color-trans': accentColor + '0d',
+                '--accent-color-light': accentColor + '66'
+              }}>
+                <div className="template2-sidebar">
+                  <div className="template2-profile">
+                    <div className="template2-photo" style={{ backgroundColor: `${accentColor}20`, borderColor: `${accentColor}40` }}>
+                      {profilePhoto ? (
+                        <img src={profilePhoto} alt="Profile" className="template2-photo-img" />
+                      ) : (
+                        '👤'
+                      )}
+                    </div>
+                    <h2 className="template2-name">{personal.fullName || 'Your Name'}</h2>
+                    <p className="template2-jobtitle">{personal.jobTitle || 'Job Title'}</p>
+                  </div>
+
+                  <div className="template2-section">
+                    <h3 className="template2-heading" style={{ color: accentColor }}>CONTACT</h3>
+                    <div className="template2-item">
+                      <span className="template2-icon">📍</span>
+                      <div>
+                        <p>Address</p>
+                        <small>{personal.location || '123 Anywhere St., Any City'}</small>
+                      </div>
+                    </div>
+                    <div className="template2-item">
+                      <span className="template2-icon">📞</span>
+                      <div>
+                        <p>Phone</p>
+                        <small>{personal.phone || '+123-456-7890'}</small>
+                      </div>
+                    </div>
+                    <div className="template2-item">
+                      <span className="template2-icon">🌐</span>
+                      <div>
+                        <p>Web</p>
+                        <small>{personal.email || 'hello@email.com'}</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="template2-section">
+                    <h3 className="template2-heading" style={{ color: accentColor }}>EDUCATION</h3>
+                    {education.school || education.degree ? (
+                      <div>
+                        <p className="template2-edu-year">2024</p>
+                        <p className="template2-edu-name">{education.school || 'UNIVERSITY'}</p>
+                        <small>{education.degree || 'Degree'}</small>
+                      </div>
+                    ) : (
+                      <small className="template2-empty">Add education details</small>
+                    )}
+                  </div>
+
+                  <div className="template2-section">
+                    <h3 className="template2-heading" style={{ color: accentColor }}>PRO.SKILLS</h3>
+                    <ul className="template2-skills">
+                      {skills.length ? (
+                        skills.map((s, i) => <li key={i}>{s}</li>)
+                      ) : (
+                        <li><small>Add your skills</small></li>
+                      )}
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="template2-content">
+                  <div className="template2-header">
+                    <h1>{personal.fullName || 'Your Name'}</h1>
+                    <p>{personal.jobTitle || 'Job Title'}</p>
+                  </div>
+
+                  <div className="template2-body-section">
+                    <h3>PROFILE</h3>
+                    <div className="template2-divider"></div>
+                    <p>{summary || 'Write your professional summary here...'}</p>
+                  </div>
+
+                  <div className="template2-body-section">
+                    <h3>EXPERIENCE</h3>
+                    <div className="template2-divider"></div>
+                    {experiences.every(e => !e.company && !e.role && !e.desc) ? (
+                      <p className="template2-empty">Add your experience</p>
+                    ) : (
+                      <>
+                        <div className="template2-exp-container">
+                          {experiences.map((e, i) => (
+                            (e.company || e.role || e.desc) && (
+                              <div key={i} className="template2-exp">
+                                <p className="template2-exp-dates">2020-Present</p>
+                                <p className="template2-exp-company">{e.company || 'Company Name'} | Location</p>
+                                <h4>{e.role || 'Job Title'}</h4>
+                                <p className="template2-exp-desc">{e.desc || 'Experience description...'}</p>
+                              </div>
+                            )
+                          ))}
+                        </div>
+                        {experiences.reduce((total, e) => {
+                          const descLines = e.desc ? Math.ceil((e.desc.length / 70)) : 0
+                          return total + descLines + 3
+                        }, 0) > 15 && (
+                          <div className="experience-exceeded-warning">
+                            ⚠️ Experience content exceeds 15 lines. Content will be truncated in the final resume.
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {selectedTemplate === 'template3' && (
+              <>
+                <div className="preview-header template3" style={{
+                  '--accent-color': accentColor,
+                  '--accent-color-trans': accentColor + '0d',
+                  '--accent-color-light': accentColor + '66',
+                  '--accent-color-bold': accentColor + '99'
+                }}>
+                  {(personal.fullName || personal.jobTitle) && (
+                    <div className="header-left template3">
+                      <div className="name template3">{personal.fullName}</div>
+                      <div className="title template3" style={{ color: accentColor }}>{personal.jobTitle}</div>
+                    </div>
+                  )}
+
+                  <div className="contact-row template3">
+                    <span className="contact-item template3">{personal.email || ''}</span>
+                    <span className="contact-item template3">{personal.phone || ''}</span>
+                    <span className="contact-item template3">{personal.location || ''}</span>
+                  </div>
+                </div>
+                <div className="preview-body template3" style={{
+                  '--accent-color': accentColor,
+                  '--accent-color-trans': accentColor + '0d',
+                  '--accent-color-light': accentColor + '66',
+                  '--accent-color-trans-light': accentColor + '33'
+                }}>
+                  <div className="section template3">
+                    <h4 className="template3" style={{ color: accentColor }}><FileDocument size={20} className="section-icon" style={{ color: accentColor }} /> Professional Summary</h4>
+                    <p className="section-text template3">{summary || 'Write a brief professional summary...'}</p>
+                  </div>
+
+                  <div className="section template3">
+                    <h4 className="template3" style={{ color: accentColor }}><WorkBriefcase size={20} className="section-icon" style={{ color: accentColor }} /> Experience</h4>
+                    {experiences.every(e => !e.company && !e.role && !e.desc) ? (
+                      <p className="section-text template3">No experience added yet.</p>
+                    ) : (
+                      experiences.map((e, i) => (
+                        (e.company || e.role || e.desc) && (
+                          <div key={i} className="preview-exp template3">
+                            <div className="two-col">
+                              <div className="job-title template3">{e.role ? `${e.role}` : ''}{e.role && e.company ? ' • ' : ''}{e.company}</div>
+                            </div>
+                            {e.desc && <div className="preview-exp-desc template3">{e.desc}</div>}
+                          </div>
+                        )
+                      ))
+                    )}
+                  </div>
+
+                  <div className="section template3">
+                    <h4 className="template3" style={{ color: accentColor }}><GraduationCap size={20} className="section-icon" style={{ color: accentColor }} /> Education</h4>
+                    <div className="section-text template3">{education.school || 'School name'}, {education.degree || 'Degree'}</div>
+                  </div>
+
+                  <div className="section template3">
+                    <h4 className="template3" style={{ color: accentColor }}><Settings size={20} className="section-icon" style={{ color: accentColor }} /> Skills</h4>
+                    <div className="skills-list template3">
+                      {skills.length ? skills.map((s, i) => <span key={i} className="skill-badge template3" style={{ backgroundColor: accentColor + '24', color: accentColor, borderColor: accentColor + '4d' }}>{s}</span>) : <div className="section-text template3">No skills added yet.</div>}
+                    </div>
+                  </div>
+
+                  <div className="section template3">
+                    <h4 className="template3" style={{ color: accentColor }}><Award size={20} className="section-icon" style={{ color: accentColor }} /> Certifications</h4>
+                    <div className="skills-list template3">
+                      {certifications.length ? certifications.map((c, i) => <span key={i} className="skill-badge template3" style={{ backgroundColor: accentColor + '24', color: accentColor, borderColor: accentColor + '4d' }}>{c}</span>) : <div className="section-text template3">No certifications added yet.</div>}
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
