@@ -2,8 +2,10 @@ import { useState } from 'react'
 import './ProjectsPage.css'
 import { Plus, Upload } from 'lucide-react'
 import ResumeCard from '../components/ResumeCard'
+import HeaderWithUser from '../components/HeaderWithUser'
 
 export default function ProjectsPage({ onStart, onClose }) {
+
   const [resumes, setResumes] = useState([])
 
   const handleCreateNew = () => {
@@ -15,14 +17,17 @@ export default function ProjectsPage({ onStart, onClose }) {
     console.log('Upload functionality')
   }
 
+  const handleLogout = () => {
+    onClose()
+    // TODO: Implement logout functionality
+  }
+
   return (
     <div className="projects-page">
+      <HeaderWithUser onLogout={handleLogout} userName="Avinosh" />
       <div className="projects-header">
-        <button className="close-btn" onClick={onClose}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
+        <button className="back-btn" onClick={onClose}>
+          ← Back to Dashboard
         </button>
         <div className="header-content">
           <h1>My Resumes</h1>
@@ -55,9 +60,19 @@ export default function ProjectsPage({ onStart, onClose }) {
               <p>No resumes yet. Create one to get started!</p>
             </div>
           ) : (
-            resumes.map((resume) => (
-              <ResumeCard key={resume.id} resume={resume} />
-            ))
+            <>
+              {/* Sample resume card - only show when there are actual resumes */}
+              <div className="resume-card-temp">
+                <div className="resume-card-icon">
+                  📄
+                </div>
+                <h3 className="resume-card-title">My Resume</h3>
+                <p className="resume-card-date">Updated on 10/9/2025</p>
+              </div>
+              {resumes.map((resume) => (
+                <ResumeCard key={resume.id} resume={resume} />
+              ))}
+            </>
           )}
         </div>
       </div>
