@@ -5,11 +5,12 @@ import BuildResume from './pages/BuildResume'
 import ProjectsPage from './pages/ProjectsPage'
 import BuildATSAnalyzer from './pages/BuildATSAnalyzer'
 import ATSAnalyzer from './pages/ATSAnalyzer'
+import JobMatcher from './pages/JobMatcher'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('landing') // landing, landing-signin, landing-signup, projects, builder, build-ats, ats-analyzer
+  const [currentPage, setCurrentPage] = useState('landing') // landing, landing-signin, landing-signup, projects, builder, build-ats, ats-analyzer, job-matcher
   const [resumeData, setResumeData] = useState(null)
 
   useEffect(() => {
@@ -46,6 +47,16 @@ function App() {
               setResumeData(data)
               setCurrentPage('build-ats')
             }}
+            onJobMatcher={(data) => {
+              setResumeData(data)
+              setCurrentPage('job-matcher')
+            }}
+          />
+        )}
+        {currentPage === 'job-matcher' && (
+          <JobMatcher 
+            onClose={() => setCurrentPage('builder')} 
+            resumeData={resumeData}
           />
         )}
         {currentPage === 'build-ats' && (

@@ -5,8 +5,9 @@ import AISuggestions from '../components/AISuggestions'
 import HeaderWithUser from '../components/HeaderWithUser'
 import ResumeTemplate1 from '../components/ResumeTemplate1'
 import AccentColorPicker from '../components/AccentColorPicker'
+import TemplateSelector from '../components/TemplateSelector'
 
-export default function BuildResume({ onClose, onATSAnalyzer }) {
+export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher }) {
   // Step management for step-wise form
   const [currentStep, setCurrentStep] = useState(1)
   const steps = [
@@ -55,6 +56,14 @@ export default function BuildResume({ onClose, onATSAnalyzer }) {
   const accentButtonRef = useRef(null)
   const templateRef = useRef(null)
 
+  // Template selector state
+  const [selectedTemplate, setSelectedTemplate] = useState('template1')
+  const [templateSelectorOpen, setTemplateSelectorOpen] = useState(false)
+  const templateButtonRef = useRef(null)
+
+  // AI Assist modal state
+  const [aiAssistOpen, setAiAssistOpen] = useState(false)
+
   // Print handler for download
   const handleDownload = () => {
     if (templateRef.current) {
@@ -70,6 +79,36 @@ export default function BuildResume({ onClose, onATSAnalyzer }) {
       setTimeout(() => {
         document.body.classList.remove('print-mode')
       }, 1000)
+    }
+  }
+
+  // Render template based on selection
+  const renderTemplate = () => {
+    const templateProps = {
+      personal,
+      summary,
+      experiences,
+      education,
+      projects,
+      skills,
+      certifications,
+      accentColor
+    }
+
+    switch (selectedTemplate) {
+      case 'template1':
+        return <ResumeTemplate1 {...templateProps} />
+      case 'template2':
+        // return <ResumeTemplate2 {...templateProps} /> // Will be created later
+        return <ResumeTemplate1 {...templateProps} /> // Fallback to Template1 for now
+      case 'template3':
+        // return <ResumeTemplate3 {...templateProps} /> // Will be created later
+        return <ResumeTemplate1 {...templateProps} /> // Fallback to Template1 for now
+      case 'template4':
+        // return <ResumeTemplate4 {...templateProps} /> // Will be created later
+        return <ResumeTemplate1 {...templateProps} /> // Fallback to Template1 for now
+      default:
+        return <ResumeTemplate1 {...templateProps} />
     }
   }
 
@@ -641,12 +680,48 @@ export default function BuildResume({ onClose, onATSAnalyzer }) {
         buttonRef={accentButtonRef}
       />
 
+      <TemplateSelector
+        isOpen={templateSelectorOpen}
+        selectedTemplate={selectedTemplate}
+        onTemplateSelect={(template) => setSelectedTemplate(template)}
+        onClose={() => setTemplateSelectorOpen(false)}
+        buttonRef={templateButtonRef}
+      />
+
+      <AISuggestions
+        isOpen={aiSidebarOpen}
+        fieldType={aiFieldType}
+        currentValue={aiFieldValue}
+        onApply={(suggestion) => {
+          if (aiFieldIndex !== null && typeof aiFieldIndex === 'number') {
+            const copy = [...experiences]
+            if (aiFieldType === 'company') copy[aiFieldIndex].company = suggestion
+            if (aiFieldType === 'role') copy[aiFieldIndex].role = suggestion
+            if (aiFieldType === 'description') copy[aiFieldIndex].desc = suggestion
+            setExperiences(copy)
+          } else {
+            if (aiFieldType === 'jobTitle') setPersonal(p => ({...p, jobTitle: suggestion}))
+            if (aiFieldType === 'description') setSummary(suggestion)
+            if (aiFieldType === 'school') setEducation(e => ({...e, school: suggestion}))
+            if (aiFieldType === 'degree') setEducation(e => ({...e, degree: suggestion}))
+          }
+          setAiFieldValue('')
+          setAiFieldType('')
+          setAiFieldIndex(null)
+          setAiSidebarOpen(false)
+        }}
+        onClose={() => setAiSidebarOpen(false)}
+      />
+
       <HeaderWithUser 
         onLogout={onClose} 
         userName="User"
         navActions={
           <>
-            <button className="nav-item">
+            <button 
+              className="nav-item"
+              onClick={() => onJobMatcher({ personal, summary, experiences, education, skills, certifications })}
+            >
               <Briefcase size={20} className="nav-icon-svg" />
               <span className="nav-label">Job Matcher</span>
             </button>
@@ -692,7 +767,11 @@ export default function BuildResume({ onClose, onATSAnalyzer }) {
 
           <div className="step-indicator-bar">
             <div className="step-bar-left">
-              <button className="btn-template" onClick={() => alert('Template selector')}>
+              <button 
+                ref={templateButtonRef}
+                className="btn-template" 
+                onClick={() => setTemplateSelectorOpen(true)}
+              >
                 📋 Template
               </button>
               <button 
@@ -724,47 +803,12 @@ export default function BuildResume({ onClose, onATSAnalyzer }) {
 
           <div className="step-form-container">
             {renderStepContent()}
-
-            {aiSidebarOpen && (
-              <AISuggestions
-                fieldType={aiFieldType}
-                currentValue={aiFieldValue}
-                onApply={(suggestion) => {
-                  if (aiFieldIndex !== null && typeof aiFieldIndex === 'number') {
-                    const copy = [...experiences]
-                    if (aiFieldType === 'company') copy[aiFieldIndex].company = suggestion
-                    if (aiFieldType === 'role') copy[aiFieldIndex].role = suggestion
-                    if (aiFieldType === 'description') copy[aiFieldIndex].desc = suggestion
-                    setExperiences(copy)
-                  } else {
-                    if (aiFieldType === 'jobTitle') setPersonal(p => ({...p, jobTitle: suggestion}))
-                    if (aiFieldType === 'description') setSummary(suggestion)
-                    if (aiFieldType === 'school') setEducation(e => ({...e, school: suggestion}))
-                    if (aiFieldType === 'degree') setEducation(e => ({...e, degree: suggestion}))
-                  }
-                  setAiFieldValue('')
-                  setAiFieldType('')
-                  setAiFieldIndex(null)
-                  setAiSidebarOpen(false)
-                }}
-                onClose={() => setAiSidebarOpen(false)}
-              />
-            )}
           </div>
         </div>
 
         <div className="builder-right">
           <div className="template-container" ref={templateRef}>
-            <ResumeTemplate1 
-              personal={personal}
-              summary={summary}
-              experiences={experiences}
-              education={education}
-              projects={projects}
-              skills={skills}
-              certifications={certifications}
-              accentColor={accentColor}
-            />
+            {renderTemplate()}
           </div>
         </div>
       </div>
