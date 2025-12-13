@@ -1,0 +1,367 @@
+/* CSS Variables for Theme Customization */
+:root {
+  --primary-color: #3B82F6;
+  --text-dark: #1F2937;
+  --text-medium: #3c434d;
+  --text-light: #6B7280;
+  --border-color: #E5E7EB;
+  --background-white: #FFFFFF;
+  --accent-blue: #2563EB;
+}
+
+.resume-template-1 {
+  background: var(--background-white);
+  color: var(--text-dark);
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.6;
+  padding: 32px 36px;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ========== HEADER SECTION ========== */
+.template-header {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.resume-name {
+  font-size: 38px;
+  font-weight: 800;
+  color: var(--primary-color);
+  margin: 0 0 14px 0;
+  letter-spacing: -0.5px;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 22px;
+  margin: 0 auto 14px auto;
+  font-size: 13px;
+  width: 75%;
+}
+
+.contact-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-dark);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.contact-item svg {
+  width: 14px;
+  height: 14px;
+  color: var(--text-light);
+  stroke-width: 2.5;
+}
+
+.header-divider {
+  width: 100%;
+  height: 2px;
+  background: var(--primary-color);
+  margin-top: 16px;
+}
+
+/* ========== SECTIONS ========== */
+.resume-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary-color);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  padding-bottom: 0;
+}
+
+.section-content {
+  font-size: 16px;
+  color: var(--text-medium);
+  line-height: 1.75;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* ========== PROFESSIONAL EXPERIENCE ========== */
+.experience-item {
+  margin-bottom: 14px;
+  padding-left: 12px;
+  border-left: 3px solid var(--primary-color);
+}
+
+.experience-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.job-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0 0 2px 0;
+}
+
+.company-name {
+  font-size: 13px;
+  color: var(--text-medium);
+  margin: 0;
+  font-weight: 500;
+}
+
+.experience-dates {
+    font-size: 12px;
+    color: var(--text-light);
+    white-space: nowrap;
+    text-align: right;
+    font-weight: 700;
+}
+.experience-desc {
+  font-size: 15px;
+  color: var(--text-medium);
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ========== PROJECTS ========== */
+.project-item {
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.project-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 5px;
+}
+
+.project-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.project-type {
+  font-size: 11px;
+  color: var(--primary-color);
+  background: rgba(59, 130, 246, 0.1);
+  padding: 4px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.project-desc {
+  font-size: 15px;
+  color: var(--text-medium);
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ========== EDUCATION ========== */
+.education-item {
+  margin-bottom: 10px;
+}
+
+.education-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.education-title-block {
+  flex: 1;
+}
+
+.degree {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0 0 2px 0;
+}
+
+.school-name {
+  font-size: 13px;
+  color: var(--text-medium);
+  margin: 0;
+  font-weight: 500;
+}
+
+.education-date {
+  font-size: 12px;
+  color: var(--text-medium);
+  white-space: nowrap;
+  text-align: right;
+}
+
+.education-gpa {
+  font-size: 12px;
+  color: var(--text-medium);
+  margin: 4px 0 0 0;
+  font-weight: 500;
+}
+
+.education-field {
+  font-size: 13px;
+  color: var(--text-medium);
+  margin: 4px 0 0 0;
+  font-weight: 500;
+}
+
+/* ========== SKILLS ========== */
+.skills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skill-item {
+  font-size: 12px;
+  color: var(--text-dark);
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  padding: 5px 11px;
+  border-radius: 4px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ========== CERTIFICATIONS ========== */
+.certifications-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.certification-item {
+  font-size: 12px;
+  color: var(--text-dark);
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  padding: 5px 11px;
+  border-radius: 4px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
+@media (max-width: 768px) {
+  .resume-template-1 {
+    padding: 24px;
+    gap: 16px;
+  }
+
+  .resume-name {
+    font-size: 28px;
+  }
+
+  .contact-info {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .contact-item {
+    justify-content: center;
+  }
+
+  .experience-header,
+  .education-header,
+  .project-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .experience-dates,
+  .education-date {
+    text-align: left;
+  }
+
+  .section-title {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .resume-template-1 {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .resume-name {
+    font-size: 24px;
+  }
+
+  .section-title {
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+
+  .job-title,
+  .degree,
+  .project-name {
+    font-size: 14px;
+  }
+}
+
+/* ========== PRINT STYLES ========== */
+@media print {
+  .resume-template-1 {
+    padding: 20px;
+    gap: 20px;
+  }
+
+  * {
+    page-break-inside: avoid;
+  }
+
+  .resume-section {
+    page-break-inside: avoid;
+  }
+
+  /* Ensure contact info stays horizontal in print */
+  .contact-info {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 22px !important;
+    width: 100% !important;
+    margin: 0 auto 14px auto !important;
+  }
+
+  .contact-item {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 6px !important;
+    white-space: nowrap !important;
+  }
+}

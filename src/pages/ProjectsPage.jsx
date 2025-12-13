@@ -5,6 +5,7 @@ import ResumeCard from '../components/ResumeCard'
 import HeaderWithUser from '../components/HeaderWithUser'
 
 export default function ProjectsPage({ onStart, onClose }) {
+
   const [resumes, setResumes] = useState([])
 
   const handleCreateNew = () => {

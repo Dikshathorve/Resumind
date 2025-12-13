@@ -336,10 +336,11 @@
 
 .build-inner{
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 0.4fr 0.6fr;
   gap: 24px;
   height: auto;
   align-items: start;
+  padding: 0 2rem;
 }
 
 .builder-left{
@@ -654,165 +655,6 @@
   overflow: hidden;
   gap: 0;
 }
-.preview-section-header{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 1rem 1.5rem;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  border-bottom: 1px solid rgba(111, 76, 255, 0.1);
-}
-.preview-section-header h3{
-  margin: 0;
-  color: #e6e6ee;
-  font-size: 18px;
-  font-weight: 600;
-}
-.live-status{
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: #888;
-}
-.status-dot{
-  width: 8px;
-  height: 8px;
-  background: #4ade80;
-  border-radius: 50%;
-  display: inline-block;
-  animation: pulse 2s infinite;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-.preview-card{
-  flex: 1;
-  width: 100%;
-  background: #fff;
-  color: #222;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
-  overflow-y: auto;
-  font-family: 'Poppins', Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-  display: flex;
-  flex-direction: column;
-}
-.preview-header{
-  height: 150px;
-  background: linear-gradient(90deg, #6f4cff 0%, #3eb3ff 100%);
-  display: flex;
-  align-items: flex-start;
-  padding: 22px 24px 52px 24px;
-  position: relative;
-}
-.preview-header .header-left{ display:flex; flex-direction:column; gap:6px }
-.preview-header .name{ color: #fff; font-size: 40px; font-weight:800; line-height:1; text-transform: none; letter-spacing: -0.5px }
-.preview-header .title{ color: rgba(255,255,255,0.95); font-size: 16px; font-weight:600; opacity:0.95 }
-.header-icons{ display: flex; gap: 12px; margin-left:auto }
-.header-icons .icon{ font-size: 18px; opacity: 0.95; color: rgba(255,255,255,0.95) }
-.preview-header .contact-row{ position:absolute; left:24px; right:24px; bottom:12px; }
-
-/* contact items inside gradient header */
-.preview-header .contact-row{
-  display:flex;
-  gap:18px;
-  align-items:center;
-  color: #fff;
-  font-size: 14px;
-  flex-wrap:wrap;
-}
-.preview-header .contact-item{ 
-  display:inline-flex; 
-  gap:8px; 
-  align-items:center; 
-  color: #fff; 
-  opacity:0.98; 
-  padding:4px;
-  flex-direction: row;
-}
-.preview-header .contact-icon{ 
-  font-size:16px; 
-  opacity:0.95; 
-  display:inline-block; 
-  width:auto; 
-  text-align:left;
-  flex-shrink: 0;
-}
-.preview-header .contact-icon svg {
-  width: 16px;
-  height: 16px;
-  opacity: 0.95;
-}
-/* show contact text before icons, hide when empty */
-.preview-header .contact-text{
-  color: rgba(255,255,255,0.95);
-  font-weight: 600;
-  font-size: 13px;
-  display: inline-block;
-  margin-right: 6px;
-}
-.preview-header .contact-text:empty{
-  display: none;
-  margin-right: 0;
-}
-
-/* ensure header-left content doesn't overlap contact row */
-.preview-header .header-left{ padding-bottom:28px }
-.preview-body{
-  flex: 1;
-  padding: 28px 26px 26px;
-  overflow-y: auto;
-}
-.preview-body .section{
-  margin-bottom: 18px;
-}
-.preview-body .section:last-child{
-  margin-bottom: 0;
-}
-.preview-body h4{
-  color: #6f4cff;
-  margin: 0 0 18px 0;
-  font-size: 16px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  position: relative;
-  padding-bottom: 8px;
-}
-.preview-body h4::after{ content: ""; position:absolute; left:0; right:0; height:1px; background: rgba(111,76,255,0.10); bottom:-6px }
-.section-icon{
-  font-size: 16px;
-}
-.section-icon svg {
-  width: 20px;
-  height: 20px;
-  stroke-width: 2;
-}
-.bullet-list{
-  list-style: none;
-  padding: 0;
-  margin: 8px 0 0 0;
-}
-.bullet-list li{
-  color: #666;
-  font-size: 14px;
-  line-height: 1.7;
-}
-
-/* section top borders and two-column rows */
-.preview-body .section{ border-top: 1px solid rgba(111,76,255,0.04); padding-top:18px }
-.preview-body .section:first-child{ border-top: none; padding-top:0 }
-.two-col{ display:flex; justify-content:space-between; gap:12px }
-.job-title{ font-weight:700; color:#222; font-size:15px }
-.job-company{ color:#6f4cff; font-weight:600; font-size:13px }
-.job-dates{ color:#777; font-size:13px; text-align:right }
-
-/* keep preview near top while left scrolls */
-.preview-card{ position: sticky; top: 24px }
 
 /* AI Suggestions Styles */
 .section-header-with-ai {
@@ -902,8 +744,146 @@
   transform: scale(0.95);
 }
 
+/* Template Container */
+.template-container {
+  flex: 1;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  scroll-behavior: smooth;
+}
+
+.template-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.template-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+}
+
+.template-container::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.4);
+  border-radius: 8px;
+}
+
+.template-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.6);
+}
+
 /* small responsive tweaks */
 @media (max-width: 900px){
   .build-inner{ grid-template-columns: 1fr 16px; }
   .builder-right{ display:none }
+}
+
+/* Print mode styles */
+body.print-mode {
+  background: white;
+}
+
+body.print-mode .build-page {
+  background: white;
+  color: #000;
+}
+
+body.print-mode .builder-left {
+  display: none !important;
+}
+
+body.print-mode .build-custom-header {
+  display: none !important;
+}
+
+body.print-mode .build-inner {
+  grid-template-columns: 1fr !important;
+  padding: 0 !important;
+  gap: 0 !important;
+}
+
+body.print-mode .builder-right {
+  display: flex !important;
+}
+
+body.print-mode .template-container {
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  background: white !important;
+  max-width: 100% !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+@media print {
+  html {
+    width: 100%;
+    height: 100%;
+  }
+
+  body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+
+  .build-page {
+    background: white;
+    color: #000;
+    min-height: auto;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Hide UI elements */
+  .HeaderWithUser,
+  header,
+  nav,
+  .build-title,
+  .builder-left,
+  .accent-color-dropdown,
+  .AISuggestions {
+    display: none !important;
+  }
+
+  .build-content {
+    margin: 0;
+    padding: 0;
+  }
+
+  .build-inner {
+    display: block;
+    margin: 0;
+    padding: 0;
+    gap: 0;
+    grid-template-columns: 1fr;
+  }
+
+  .builder-right {
+    display: block;
+    margin: 0;
+    padding: 0;
+  }
+
+  .template-container {
+    display: block;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    background: white;
+    overflow: visible;
+    max-width: 100%;
+    max-height: none;
+    height: auto;
+  }
+
+  /* Preserve all resume template styles */
+  .resume-template-1 {
+    padding: 32px 36px;
+    page-break-inside: avoid;
+  }
 }
