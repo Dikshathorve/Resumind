@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import './AISuggestions.css'
 import { X, Lightbulb } from 'lucide-react'
 
-export default function AISuggestions({ fieldType, currentValue, onApply }) {
+export default function AISuggestions({ fieldType, currentValue, onApply, onClose }) {
   const [suggestions, setSuggestions] = useState([])
   const [loading, setLoading] = useState(false)
   const [selectedSuggestion, setSelectedSuggestion] = useState(null)
@@ -75,8 +75,6 @@ export default function AISuggestions({ fieldType, currentValue, onApply }) {
     return suggestionMap[type] || []
   }
 
-  if (!suggestions.length) return null
-
   return (
     <div className="ai-suggestions-sidebar">
       <div className="ai-suggestions-header-sidebar">
@@ -84,10 +82,13 @@ export default function AISuggestions({ fieldType, currentValue, onApply }) {
           <span className="ai-icon-sidebar">✨</span>
           <h3>AI Suggestions</h3>
         </div>
+        <div>
+          <button className="ai-close-btn-sidebar" onClick={onClose} aria-label="Close">✕</button>
+        </div>
       </div>
 
       <div className="ai-content-sidebar">
-        <p className="ai-subtitle-sidebar">ATS-optimized suggestions for your Content</p>
+        <p className="ai-subtitle-sidebar">ATS-optimized suggestions for your {fieldType || 'Content'}</p>
 
         {loading ? (
           <div className="ai-loading-sidebar">
@@ -95,20 +96,29 @@ export default function AISuggestions({ fieldType, currentValue, onApply }) {
             <p>Generating suggestions...</p>
           </div>
         ) : (
-          <div className="ai-suggestions-list-sidebar">
-            {suggestions.map((suggestion, idx) => (
-              <div
-                key={idx}
-                className={`ai-suggestion-item-sidebar ${selectedSuggestion === idx ? 'selected' : ''}`}
-                onClick={() => setSelectedSuggestion(idx)}
-              >
-                <div className="suggestion-radio-sidebar">
-                  {selectedSuggestion === idx && <div className="suggestion-dot-sidebar"></div>}
-                </div>
-                <div className="suggestion-text-sidebar">{suggestion}</div>
+          <>
+            {suggestions.length ? (
+              <div className="ai-suggestions-list-sidebar">
+                {suggestions.map((suggestion, idx) => (
+                  <div
+                    key={idx}
+                    className={`ai-suggestion-item-sidebar ${selectedSuggestion === idx ? 'selected' : ''}`}
+                    onClick={() => setSelectedSuggestion(idx)}
+                  >
+                    <div className="suggestion-radio-sidebar">
+                      {selectedSuggestion === idx && <div className="suggestion-dot-sidebar"></div>}
+                    </div>
+                    <div className="suggestion-text-sidebar">{suggestion}</div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            ) : (
+              <div className="ai-no-suggestions-sidebar">
+                <Lightbulb size={48} />
+                <p>Click on a field to get AI suggestions</p>
+              </div>
+            )}
+          </>
         )}
 
         <div className="ai-tip-section-sidebar">
