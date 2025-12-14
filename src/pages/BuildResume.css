@@ -606,6 +606,82 @@
   color: #ff6b6b;
 }
 
+.template-specific {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #8a7dff;
+  margin-top: 4px;
+}
+
+/* Image Upload Styles */
+.image-upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.image-input-hidden {
+  display: none;
+}
+
+.image-upload-label {
+  display: inline-block;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #8a7dff 0%, #6f4cff 100%);
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(111, 76, 255, 0.3);
+}
+
+.image-upload-label:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(138, 125, 255, 0.3);
+  border-color: rgba(111, 76, 255, 0.6);
+}
+
+.image-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  padding: 12px;
+  background: rgba(138, 125, 255, 0.1);
+  border-radius: 8px;
+  border: 1px dashed rgba(138, 125, 255, 0.3);
+}
+
+.image-preview img {
+  width: 100%;
+  max-width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 2px solid rgba(138, 125, 255, 0.5);
+}
+
+.remove-image-btn {
+  padding: 6px 12px;
+  background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 107, 107, 0.4);
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.remove-image-btn:hover {
+  background: rgba(255, 107, 107, 0.3);
+  border-color: rgba(255, 107, 107, 0.6);
+}
+
+
 .builder-left input, .builder-left textarea{
   width: 100%;
   padding: 12px 14px;

@@ -4,6 +4,9 @@ import './BuildResume.css'
 import AISuggestions from '../components/AISuggestions'
 import HeaderWithUser from '../components/HeaderWithUser'
 import ResumeTemplate1 from '../components/ResumeTemplate1'
+import ResumeTemplate2 from '../components/ResumeTemplate2'
+import ResumeTemplate3 from '../components/ResumeTemplate3'
+import ResumeTemplate4 from '../components/ResumeTemplate4'
 import AccentColorPicker from '../components/AccentColorPicker'
 import TemplateSelector from '../components/TemplateSelector'
 
@@ -45,6 +48,8 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher }) {
   const [certifications, setCertifications] = useState([])
   const [certInput, setCertInput] = useState('')
 
+  // Profile image state for Minimal Image template
+  const [profileImage, setProfileImage] = useState(null)
   const [aiFieldType, setAiFieldType] = useState('')
   const [aiFieldValue, setAiFieldValue] = useState('')
   const [aiFieldIndex, setAiFieldIndex] = useState(null)
@@ -92,23 +97,33 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher }) {
       projects,
       skills,
       certifications,
-      accentColor
+      accentColor,
+      profileImage: selectedTemplate === 'template3' ? profileImage : null
     }
 
     switch (selectedTemplate) {
       case 'template1':
         return <ResumeTemplate1 {...templateProps} />
       case 'template2':
-        // return <ResumeTemplate2 {...templateProps} /> // Will be created later
-        return <ResumeTemplate1 {...templateProps} /> // Fallback to Template1 for now
+        return <ResumeTemplate2 {...templateProps} />
       case 'template3':
-        // return <ResumeTemplate3 {...templateProps} /> // Will be created later
-        return <ResumeTemplate1 {...templateProps} /> // Fallback to Template1 for now
+        return <ResumeTemplate3 {...templateProps} />
       case 'template4':
-        // return <ResumeTemplate4 {...templateProps} /> // Will be created later
-        return <ResumeTemplate1 {...templateProps} /> // Fallback to Template1 for now
+        return <ResumeTemplate4 {...templateProps} />
       default:
         return <ResumeTemplate1 {...templateProps} />
+    }
+  }
+
+  // Handle image upload for Minimal Image template
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        setProfileImage(event.target.result)
+      }
+      reader.readAsDataURL(file)
     }
   }
 
@@ -204,6 +219,39 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher }) {
               </label>
               <input placeholder="Enter your website URL" value={personal.website} onChange={e => setPersonal({...personal, website: e.target.value})} />
             </div>
+
+            {selectedTemplate === 'template3' && (
+              <div className="form-group">
+                <label>
+                  📷 Profile Photo
+                  <span className="template-specific">(Minimal Image Template)</span>
+                </label>
+                <div className="image-upload-section">
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={handleImageUpload}
+                    id="profile-image-input"
+                    className="image-input-hidden"
+                  />
+                  <label htmlFor="profile-image-input" className="image-upload-label">
+                    {profileImage ? '📸 Change Photo' : '📸 Upload Photo'}
+                  </label>
+                  {profileImage && (
+                    <div className="image-preview">
+                      <img src={profileImage} alt="Profile" />
+                      <button 
+                        type="button"
+                        onClick={() => setProfileImage(null)}
+                        className="remove-image-btn"
+                      >
+                        ✕ Remove
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </section>
         )
       case 2:

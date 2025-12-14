@@ -1,0 +1,255 @@
+.resume-template-4 {
+  padding: 40px;
+  background: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  height: auto;
+  min-height: 100vh;
+  max-width: 850px;
+}
+
+/* Header */
+.template4-header {
+  text-align: center;
+  margin-bottom: 35px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.resume-name-t4 {
+  font-size: 40px;
+  font-weight: 900;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+  letter-spacing: -1px;
+  line-height: 1.1;
+}
+
+.job-title-t4 {
+  font-size: 14px;
+  color: var(--primary-color);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0 0 15px 0;
+}
+
+/* Contact Info */
+.contact-info-t4 {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 25px;
+  font-size: 10px;
+}
+
+.contact-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #4b5563;
+  text-decoration: none;
+}
+
+.contact-link svg {
+  color: var(--primary-color);
+  width: 12px;
+  height: 12px;
+}
+
+/* Content */
+.template4-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Sections */
+.template4-section {
+  margin-bottom: 5px;
+}
+
+.section-heading-t4 {
+  font-size: 12px;
+  font-weight: 900;
+  color: #1f2937;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 3px solid var(--primary-color);
+  letter-spacing: 1px;
+}
+
+.section-text-t4 {
+  font-size: 11px;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* Experience */
+.exp-item-t4 {
+  margin-bottom: 16px;
+}
+
+.exp-item-t4:not(:last-child) {
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.exp-header-t4 {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 5px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.exp-role-t4 {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.exp-date-t4 {
+  font-size: 10px;
+  color: #9ca3af;
+  font-style: italic;
+  white-space: nowrap;
+}
+
+.exp-company-t4 {
+  font-size: 11px;
+  color: var(--primary-color);
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.exp-desc-t4 {
+  font-size: 10px;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 6px 0 0 0;
+}
+
+/* Education */
+.edu-item-t4 {
+  margin-bottom: 14px;
+}
+
+.edu-item-t4:not(:last-child) {
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.edu-school-t4 {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+}
+
+.edu-degree-t4 {
+  font-size: 11px;
+  color: var(--primary-color);
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Skills */
+.skills-list-t4 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.skill-tag-t4 {
+  display: inline-block;
+  background: rgba(var(--primary-color), 0.08);
+  color: #1f2937;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  border: 1px solid rgba(var(--primary-color), 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* Certifications */
+.certs-list-t4 {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  columns: 2;
+  column-gap: 20px;
+}
+
+.cert-item-t4 {
+  font-size: 11px;
+  color: #4b5563;
+  margin-bottom: 8px;
+  padding-left: 18px;
+  position: relative;
+  line-height: 1.5;
+  break-inside: avoid;
+}
+
+.cert-item-t4::before {
+  content: '◆';
+  position: absolute;
+  left: 0;
+  color: var(--primary-color);
+  font-size: 8px;
+  top: 3px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .resume-template-4 {
+    padding: 25px;
+  }
+
+  .resume-name-t4 {
+    font-size: 32px;
+  }
+
+  .contact-info-t4 {
+    gap: 15px;
+    font-size: 9px;
+  }
+
+  .certs-list-t4 {
+    columns: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .resume-template-4 {
+    padding: 15px;
+  }
+
+  .resume-name-t4 {
+    font-size: 26px;
+  }
+
+  .job-title-t4 {
+    font-size: 12px;
+  }
+
+  .contact-info-t4 {
+    gap: 10px;
+    font-size: 8px;
+  }
+}
+
+@media print {
+  .resume-template-4 {
+    max-width: 100%;
+    height: auto;
+    padding: 20px;
+  }
+}
