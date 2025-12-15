@@ -123,146 +123,114 @@ This report was generated automatically. Review and implement the recommendation
 
       {analysisResults ? (
         <div className="ats-results-container">
-          <div className="ats-results-hero">
-            <div>
-              <h2>Analysis Results</h2>
-              <p>Resume: {useBuiltResume ? 'Built Resume' : uploadedFile?.name}</p>
-            </div>
-            <div className={`ats-score-circle ${getScoreColor(analysisResults.atsScore)}`}>
-              <div className="ats-score-value">{analysisResults.atsScore}</div>
-              <div className="ats-score-text">ATS Score</div>
-            </div>
-          </div>
-
-          {useBuiltResume && resumeData && (
-            <div className="ats-resume-preview">
-              <h3>Resume Preview</h3>
-              <div className="ats-resume-card">
-                {resumeData.personal?.fullName && (
-                  <div className="ats-preview-section">
-                    <h4>{resumeData.personal.fullName}</h4>
-                    <p className="ats-preview-subtitle">{resumeData.personal.jobTitle}</p>
-                    {(resumeData.personal.email || resumeData.personal.phone || resumeData.personal.location) && (
-                      <p className="ats-preview-contact">
-                        {resumeData.personal.email && <span>{resumeData.personal.email}</span>}
-                        {resumeData.personal.phone && <span>•</span>}
-                        {resumeData.personal.phone && <span>{resumeData.personal.phone}</span>}
-                        {resumeData.personal.location && <span>•</span>}
-                        {resumeData.personal.location && <span>{resumeData.personal.location}</span>}
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                {resumeData.summary && (
-                  <div className="ats-preview-section">
-                    <h5>Professional Summary</h5>
-                    <p className="ats-preview-text">{resumeData.summary}</p>
-                  </div>
-                )}
-
-                {resumeData.experiences?.length > 0 && (
-                  <div className="ats-preview-section">
-                    <h5>Experience</h5>
-                    {resumeData.experiences.map((exp, i) => (
-                      exp.company && (
-                        <div key={i} className="ats-preview-item">
-                          <p className="ats-preview-bold">{exp.role} at {exp.company}</p>
-                          {exp.desc && <p className="ats-preview-text">{exp.desc}</p>}
-                        </div>
-                      )
-                    ))}
-                  </div>
-                )}
-
-                {resumeData.education?.school && (
-                  <div className="ats-preview-section">
-                    <h5>Education</h5>
-                    <p className="ats-preview-bold">{resumeData.education.degree} from {resumeData.education.school}</p>
-                  </div>
-                )}
-
-                {resumeData.skills?.length > 0 && (
-                  <div className="ats-preview-section">
-                    <h5>Skills</h5>
-                    <div className="ats-preview-tags">
-                      {resumeData.skills.map((skill, i) => (
-                        <span key={i} className="ats-preview-tag">{skill}</span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {resumeData.certifications?.length > 0 && (
-                  <div className="ats-preview-section">
-                    <h5>Certifications</h5>
-                    <ul className="ats-preview-list">
-                      {resumeData.certifications.map((cert, i) => (
-                        <li key={i}>{cert}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+          <div className="ats-review-section">
+            <h1 className="ats-review-title">Resume Review</h1>
+            
+            <div className="ats-score-section">
+              <div className="ats-circular-score">
+                <svg viewBox="0 0 100 100" className="ats-score-circle">
+                  <circle cx="50" cy="50" r="45" className="ats-circle-bg" />
+                  <circle 
+                    cx="50" 
+                    cy="50" 
+                    r="45" 
+                    className="ats-circle-fill"
+                    style={{
+                      strokeDasharray: `${(analysisResults.atsScore / 100) * 282.7} 282.7`
+                    }}
+                  />
+                </svg>
+                <div className="ats-score-text">
+                  <span className="ats-score-number">{analysisResults.atsScore}</span>
+                  <span className="ats-score-label">/100</span>
+                </div>
               </div>
-            </div>
-          )}
-
-          <div className="ats-results-grid">
-            <div className="ats-result-card">
-              <h3>Matched Keywords ({analysisResults.matchedKeywords.length})</h3>
-              <div className="ats-keywords">
-                {analysisResults.matchedKeywords.map((kw, i) => (
-                  <span key={i} className="ats-kw-matched">{kw}</span>
-                ))}
+              
+              <div className="ats-score-info">
+                <h2>Your Resume Score</h2>
+                <p>This score is calculated based on the variables listed below.</p>
               </div>
             </div>
 
-            <div className="ats-result-card">
-              <h3>Missing Keywords ({analysisResults.missingKeywords.length})</h3>
-              <div className="ats-keywords">
-                {analysisResults.missingKeywords.map((kw, i) => (
-                  <span key={i} className="ats-kw-missing">{kw}</span>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="ats-sections">
-            <h3>Section Analysis</h3>
-            <div className="ats-section-grid">
+            <div className="ats-categories">
               {Object.entries(analysisResults.sections).map(([name, data]) => (
-                <div key={name} className="ats-section-item">
-                  <div className="ats-section-header">
-                    <h4>{name}</h4>
-                    <span className={`ats-section-score ${getScoreColor(data.score)}`}>{data.score}</span>
+                <div key={name} className="ats-category-item">
+                  <div className="ats-category-header">
+                    <h3>{name.charAt(0).toUpperCase() + name.slice(1)}</h3>
+                    {data.score < 40 && <span className="ats-badge-warning">Needs Work</span>}
+                    {data.score >= 40 && data.score < 70 && <span className="ats-badge-info">Good</span>}
+                    {data.score >= 70 && <span className="ats-badge-success">Excellent</span>}
                   </div>
-                  <div className="ats-progress-bar">
-                    <div className="ats-progress-fill" style={{ width: `${data.score}%` }}></div>
-                  </div>
-                  {data.issues.length > 0 && (
-                    <ul className="ats-issues">
-                      {data.issues.map((issue, i) => (
-                        <li key={i}>{issue}</li>
-                      ))}
-                    </ul>
-                  )}
+                  <div className="ats-score-display">{data.score}/100</div>
                 </div>
               ))}
             </div>
-          </div>
 
-          <div className="ats-recommendations">
-            <h3>Recommendations</h3>
-            <ol className="ats-rec-list">
-              {analysisResults.recommendations.map((rec, i) => (
-                <li key={i}>{rec}</li>
-              ))}
-            </ol>
-          </div>
+            <div className="ats-alert-section">
+              <div className="ats-alert-header">
+                <div className="ats-alert-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+                  </svg>
+                </div>
+                <div className="ats-alert-title">
+                  <h3>ATS Score - {analysisResults.atsScore}/100</h3>
+                </div>
+              </div>
+              
+              <p className="ats-alert-question">
+                How well does your resume pass through Applicant Tracking Systems?
+              </p>
+              
+              <p className="ats-alert-description">
+                Your resume was scanned like an employer would. Here's how it performed.
+              </p>
 
-          <div className="ats-actions">
-            <button className="ats-btn ats-secondary" onClick={handleNewAnalysis}>Analyze Another</button>
-            <button className="ats-btn ats-primary" onClick={handleDownloadReport}>Download Report</button>
+              <div className="ats-suggestions">
+                {analysisResults.recommendations.slice(0, 3).map((rec, i) => (
+                  <div key={i} className="ats-suggestion-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    <span>{rec}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="ats-keywords-section">
+              <div className="ats-result-card">
+                <h3>Matched Keywords ({analysisResults.matchedKeywords.length})</h3>
+                <div className="ats-keywords">
+                  {analysisResults.matchedKeywords.map((kw, i) => (
+                    <span key={i} className="ats-kw-matched">✓ {kw}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="ats-result-card">
+                <h3>Missing Keywords ({analysisResults.missingKeywords.length})</h3>
+                <div className="ats-keywords">
+                  {analysisResults.missingKeywords.map((kw, i) => (
+                    <span key={i} className="ats-kw-missing">✗ {kw}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="ats-all-recommendations">
+              <h3>All Recommendations</h3>
+              <ol className="ats-rec-list">
+                {analysisResults.recommendations.map((rec, i) => (
+                  <li key={i}>{rec}</li>
+                ))}
+              </ol>
+            </div>
+
+            <div className="ats-actions">
+              <button className="ats-btn ats-secondary" onClick={handleNewAnalysis}>Analyze Another</button>
+              <button className="ats-btn ats-primary" onClick={handleDownloadReport}>Download Report</button>
+            </div>
           </div>
         </div>
       ) : (
