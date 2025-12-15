@@ -67,6 +67,15 @@
   color: #fff;
 }
 
+.ats-analyzer-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
 @media (max-width: 768px) {
   .ats-analyzer-nav {
     padding: 1rem 1.5rem;

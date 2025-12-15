@@ -102,12 +102,31 @@
 .ats-content {
   flex: 1;
   padding: 2rem 2.5rem;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  width: 100%;
+}
+
+.ats-analyzer-partition {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  max-width: 1000px;
-  margin: 0 auto;
+  gap: 4rem;
   width: 100%;
+  max-width: 1400px;
+  align-items: flex-start;
+}
+
+.ats-partition-lhs {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ats-partition-rhs {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .ats-upload-box h3 {
@@ -118,7 +137,7 @@
 }
 
 .ats-built-resume-section {
-  grid-column: 1;
+  width: 100%;
 }
 
 .ats-built-resume-section h3 {
@@ -307,6 +326,7 @@
 
 .ats-textarea {
   width: 100%;
+  flex: 1;
   min-height: 200px;
   padding: 1rem;
   border: 2px solid rgba(99, 102, 241, 0.3);
@@ -338,6 +358,18 @@
   font-size: 0.8rem;
   color: #a0aec0;
   margin: 0.5rem 0 0 0;
+}
+
+.ats-jd-input-box {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.ats-jd-hint {
+  font-size: 0.85rem;
+  color: #a0aec0;
+  margin: 0;
 }
 
 .ats-analyze-btn-container {
@@ -804,10 +836,13 @@
     gap: 1rem;
   }
 
-  .ats-content {
+  .ats-analyzer-partition {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .ats-content {
     padding: 1.5rem;
-    gap: 1rem;
   }
 
   .ats-results-grid {

@@ -280,104 +280,110 @@ This report was generated automatically. Review and implement the recommendation
           </div>
 
           <div className="ats-content">
-            {resumeData && (
-              <div className="ats-built-resume-section">
-                <h3>Your Built Resume</h3>
-                <div className="ats-built-resume-card">
-                  {resumeData.personal?.fullName && (
-                    <div className="ats-resume-item">
-                      <h4>{resumeData.personal.fullName}</h4>
-                      <p className="ats-resume-subtitle">{resumeData.personal.jobTitle}</p>
-                      {(resumeData.personal.email || resumeData.personal.phone || resumeData.personal.location) && (
-                        <p className="ats-resume-contact">
-                          {resumeData.personal.email && <span>{resumeData.personal.email}</span>}
-                          {resumeData.personal.phone && <span>•</span>}
-                          {resumeData.personal.phone && <span>{resumeData.personal.phone}</span>}
-                          {resumeData.personal.location && <span>•</span>}
-                          {resumeData.personal.location && <span>{resumeData.personal.location}</span>}
-                        </p>
+            <div className="ats-analyzer-partition">
+              {/* Left Partition - Built Resume */}
+              {resumeData && (
+                <div className="ats-partition-lhs">
+                  <div className="ats-built-resume-section">
+                    <h3>Your Built Resume</h3>
+                    <div className="ats-built-resume-card">
+                      {resumeData.personal?.fullName && (
+                        <div className="ats-resume-item">
+                          <h4>{resumeData.personal.fullName}</h4>
+                          <p className="ats-resume-subtitle">{resumeData.personal.jobTitle}</p>
+                          {(resumeData.personal.email || resumeData.personal.phone || resumeData.personal.location) && (
+                            <p className="ats-resume-contact">
+                              {resumeData.personal.email && <span>{resumeData.personal.email}</span>}
+                              {resumeData.personal.phone && <span>•</span>}
+                              {resumeData.personal.phone && <span>{resumeData.personal.phone}</span>}
+                              {resumeData.personal.location && <span>•</span>}
+                              {resumeData.personal.location && <span>{resumeData.personal.location}</span>}
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      {resumeData.summary && (
+                        <div className="ats-resume-item">
+                          <h5>Summary</h5>
+                          <p className="ats-resume-text">{resumeData.summary.substring(0, 150)}...</p>
+                        </div>
+                      )}
+
+                      {resumeData.experiences?.length > 0 && (
+                        <div className="ats-resume-item">
+                          <h5>Experience</h5>
+                          {resumeData.experiences.slice(0, 2).map((exp, i) => (
+                            exp.company && (
+                              <p key={i} className="ats-resume-text">
+                                <strong>{exp.role}</strong> at {exp.company}
+                              </p>
+                            )
+                          ))}
+                        </div>
+                      )}
+
+                      {resumeData.skills?.length > 0 && (
+                        <div className="ats-resume-item">
+                          <h5>Skills</h5>
+                          <div className="ats-resume-skills">
+                            {resumeData.skills.slice(0, 5).map((skill, i) => (
+                              <span key={i} className="ats-skill-tag">{skill}</span>
+                            ))}
+                            {resumeData.skills.length > 5 && <span className="ats-skill-tag">+{resumeData.skills.length - 5} more</span>}
+                          </div>
+                        </div>
                       )}
                     </div>
-                  )}
-
-                  {resumeData.summary && (
-                    <div className="ats-resume-item">
-                      <h5>Summary</h5>
-                      <p className="ats-resume-text">{resumeData.summary.substring(0, 150)}...</p>
-                    </div>
-                  )}
-
-                  {resumeData.experiences?.length > 0 && (
-                    <div className="ats-resume-item">
-                      <h5>Experience</h5>
-                      {resumeData.experiences.slice(0, 2).map((exp, i) => (
-                        exp.company && (
-                          <p key={i} className="ats-resume-text">
-                            <strong>{exp.role}</strong> at {exp.company}
-                          </p>
-                        )
-                      ))}
-                    </div>
-                  )}
-
-                  {resumeData.skills?.length > 0 && (
-                    <div className="ats-resume-item">
-                      <h5>Skills</h5>
-                      <div className="ats-resume-skills">
-                        {resumeData.skills.slice(0, 5).map((skill, i) => (
-                          <span key={i} className="ats-skill-tag">{skill}</span>
-                        ))}
-                        {resumeData.skills.length > 5 && <span className="ats-skill-tag">+{resumeData.skills.length - 5} more</span>}
-                      </div>
-                    </div>
-                  )}
-
-                  <button className="ats-use-built-btn" onClick={() => {
-                    setUseBuiltResume(true)
-                    setUploadedFile(null)
-                  }}>
-                    Analyze This Resume
-                  </button>
-                </div>
-              </div>
-            )}
-
-            <div className="ats-upload-box">
-              <h3>Step 1: Upload Resume</h3>
-              <label className={`ats-upload-area ${uploadedFile ? 'uploaded' : ''}`}>
-                {uploadedFile ? (
-                  <div className="ats-file-info">
-                    <span className="ats-file-icon">📄</span>
-                    <div>
-                      <p>{uploadedFile.name}</p>
-                      <p className="ats-file-size">{(uploadedFile.size / 1024).toFixed(2)} KB</p>
-                    </div>
                   </div>
-                ) : (
-                  <div className="ats-upload-content">
-                    <span className="ats-upload-icon">📤</span>
-                    <p className="ats-upload-text">Drag and drop your resume here</p>
-                    <p className="ats-upload-sub">or click to browse</p>
+                </div>
+              )}
+
+              {/* Right Partition - Upload Options */}
+              <div className="ats-partition-rhs">
+                {!resumeData && (
+                  <div className="ats-upload-box">
+                    <h3>Step 1: Upload Resume</h3>
+                    <label className={`ats-upload-area ${uploadedFile ? 'uploaded' : ''}`}>
+                      {uploadedFile ? (
+                        <div className="ats-file-info">
+                          <span className="ats-file-icon">📄</span>
+                          <div>
+                            <p>{uploadedFile.name}</p>
+                            <p className="ats-file-size">{(uploadedFile.size / 1024).toFixed(2)} KB</p>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="ats-upload-content">
+                          <span className="ats-upload-icon">📤</span>
+                          <p className="ats-upload-text">Drag and drop your resume here</p>
+                          <p className="ats-upload-sub">or click to browse</p>
+                        </div>
+                      )}
+                      <input
+                        type="file"
+                        accept=".pdf"
+                        onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0])}
+                        style={{ display: 'none' }}
+                      />
+                    </label>
                   </div>
                 )}
-                <input
-                  type="file"
-                  accept=".pdf"
-                  onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0])}
-                  style={{ display: 'none' }}
-                />
-              </label>
-            </div>
 
-            <div className="ats-upload-box">
-              <h3>Step 2: Paste Job Description</h3>
-              <textarea
-                className="ats-textarea"
-                placeholder="Paste the job description here..."
-                value={jobDescription}
-                onChange={(e) => setJobDescription(e.target.value)}
-              />
-              <p className="ats-hint">The more details you provide, the more accurate the analysis</p>
+                <div className="ats-upload-box ats-jd-input-box">
+                  <h3>{resumeData ? 'Job Description (Required)' : 'Step 2: Paste Job Description'}</h3>
+                  {resumeData && (
+                    <p className="ats-jd-hint">Enter the job description to analyze your built resume</p>
+                  )}
+                  <textarea
+                    className="ats-textarea"
+                    placeholder="Paste the job description here..."
+                    value={jobDescription}
+                    onChange={(e) => setJobDescription(e.target.value)}
+                  />
+                  <p className="ats-hint">The more details you provide, the more accurate the analysis</p>
+                </div>
+              </div>
             </div>
           </div>
 
