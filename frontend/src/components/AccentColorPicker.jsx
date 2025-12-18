@@ -11,7 +11,12 @@ const ACCENT_COLORS = [
   { name: 'Teal', value: '#14B8A6' },
   { name: 'Pink', value: '#EC4899' },
   { name: 'Gray', value: '#6B7280' },
-  { name: 'Black', value: '#1F2937' }
+  { name: 'Black', value: '#1F2937' },
+  { name: 'Cyan', value: '#06B6D4' },
+  { name: 'Lime', value: '#84CC16' },
+  { name: 'Rose', value: '#F43F5E' },
+  { name: 'Amber', value: '#FBBF24' },
+  { name: 'Navy', value: '#1E3A8A' }
 ]
 
 export default function AccentColorPicker({ isOpen, selectedColor, onColorSelect, onClose, buttonRef }) {
