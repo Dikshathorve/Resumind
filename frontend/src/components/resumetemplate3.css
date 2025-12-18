@@ -74,7 +74,9 @@
   right: 0;
   bottom: 0;
   height: 1px;
-  background: rgba(0,0,0,0.06);
+  /* use the accent/primary color for the separator with subtle opacity */
+  background: var(--primary-color);
+  opacity: 0.12;
 }
 
 /* RIGHT CONTENT AREA */
@@ -96,7 +98,7 @@
 .section-title-t3 { font-size:13px; color: var(--primary-color); margin:0 0 10px 0; font-weight:700; text-transform:uppercase; letter-spacing:1px }
 .section-text-t3 { color:#374151; font-size:13px; line-height:1.6 }
 
-.content-section { padding-bottom:8px; border-bottom:1px solid #e6e6e9 }
+.content-section { padding-bottom:8px; border-bottom:1px solid var(--primary-color); opacity: 0.6 }
 
 .exp-item-t3 { margin-bottom:12px; padding:10px 0 }
 .exp-header { display:flex; justify-content:space-between; align-items:flex-start }
