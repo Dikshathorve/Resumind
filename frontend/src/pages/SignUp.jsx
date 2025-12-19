@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { X, User, Mail, Lock } from 'lucide-react'
 import './SignUp.css'
+import { useAuth } from '../context/AuthContext'
 
-export default function SignUp({ onClose }) {
+export default function SignUp({ onClose, onSuccess, onShowSignIn }) {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -12,6 +13,7 @@ export default function SignUp({ onClose }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const { login } = useAuth()
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -73,6 +75,9 @@ export default function SignUp({ onClose }) {
       setSuccess('Account created successfully!')
       console.log('User created:', data.user)
       
+      // Use auth context to update login state
+      login(data.user)
+
       // Clear form
       setFormData({
         fullName: '',
@@ -81,10 +86,13 @@ export default function SignUp({ onClose }) {
         confirmPassword: ''
       })
 
-      // Close modal after 2 seconds
+      // Close modal and call success callback after 1 second
       setTimeout(() => {
+        if (onSuccess) {
+          onSuccess()
+        }
         onClose()
-      }, 2000)
+      }, 1000)
     } catch (err) {
       setError('An error occurred. Please try again.')
       console.error('Signup error:', err)
@@ -182,7 +190,10 @@ export default function SignUp({ onClose }) {
           </form>
 
           <p className="signup-footer">
-            Already have an account? <a href="#signin">Sign In</a>
+            Already have an account? <a href="#" onClick={(e) => {
+              e.preventDefault()
+              if (onShowSignIn) onShowSignIn()
+            }}>Sign In</a>
           </p>
         </div>
       </div>

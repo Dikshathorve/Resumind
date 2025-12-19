@@ -3,10 +3,12 @@ import './ProjectsPage.css'
 import { Plus, Upload } from 'lucide-react'
 import ResumeCard from '../components/ResumeCard'
 import HeaderWithUser from '../components/HeaderWithUser'
+import { useAuth } from '../context/AuthContext'
 
 export default function ProjectsPage({ onStart, onClose }) {
 
   const [resumes, setResumes] = useState([])
+  const { user, logout } = useAuth()
 
   const handleCreateNew = () => {
     onStart()
@@ -18,13 +20,13 @@ export default function ProjectsPage({ onStart, onClose }) {
   }
 
   const handleLogout = () => {
+    logout()
     onClose()
-    // TODO: Implement logout functionality
   }
 
   return (
     <div className="projects-page">
-      <HeaderWithUser onLogout={handleLogout} userName="Avinosh" />
+      <HeaderWithUser onLogout={handleLogout} userName={user?.fullName || 'User'} />
       <div className="projects-header">
         <button className="back-btn" onClick={onClose}>
           ← Back to Dashboard
