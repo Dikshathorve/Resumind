@@ -53,15 +53,16 @@ function App() {
     }
   }
 
-  const handleCreateNewResume = async () => {
+  const handleCreateNewResume = async (resumeTitle = 'My Resume') => {
     setIsCreatingResume(true)
     const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
     console.log('[Resume Creation] Starting resume creation...')
+    console.log('[Resume Creation] Resume Title:', resumeTitle)
     console.log('[Resume Creation] API Base URL:', apiBaseUrl)
     
     try {
       const resumePayload = {
-        name: 'My Resume',
+        name: resumeTitle,
         templateType: 'template1',
         resumeData: {
           personal: {

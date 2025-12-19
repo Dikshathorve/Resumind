@@ -3,15 +3,31 @@ import './ProjectsPage.css'
 import { Plus, Upload } from 'lucide-react'
 import ResumeCard from '../components/ResumeCard'
 import HeaderWithUser from '../components/HeaderWithUser'
+import CreateResumeModal from '../components/CreateResumeModal'
 import { useAuth } from '../context/AuthContext'
 
 export default function ProjectsPage({ onStart, onClose }) {
 
   const [resumes, setResumes] = useState([])
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [isCreating, setIsCreating] = useState(false)
   const { user, logout } = useAuth()
 
   const handleCreateNew = () => {
-    onStart()
+    setShowCreateModal(true)
+  }
+
+  const handleCreateResumeSubmit = async (resumeTitle) => {
+    console.log('[Projects Page] Creating resume with title:', resumeTitle)
+    setIsCreating(true)
+    try {
+      onStart(resumeTitle)
+      setShowCreateModal(false)
+    } catch (error) {
+      console.error('[Projects Page] Error creating resume:', error)
+    } finally {
+      setIsCreating(false)
+    }
   }
 
   const handleUpload = () => {
@@ -78,6 +94,13 @@ export default function ProjectsPage({ onStart, onClose }) {
           )}
         </div>
       </div>
+
+      <CreateResumeModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSubmit={handleCreateResumeSubmit}
+        isLoading={isCreating}
+      />
     </div>
   )
 }
