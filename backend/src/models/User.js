@@ -1,8 +1,25 @@
 import mongoose from 'mongoose'
 import bcryptjs from 'bcryptjs'
 
+// Helper function to generate 6-digit unique ID
+const generate6DigitId = () => {
+  return Math.floor(100000 + Math.random() * 900000).toString()
+}
+
+// Helper function to generate unique projectsId
+const generateProjectsId = (userId) => {
+  const randomSuffix = Math.random().toString(36).substring(2, 8).toUpperCase()
+  return `${userId}-PROJECT-${randomSuffix}`
+}
+
 const userSchema = new mongoose.Schema(
   {
+    userId: {
+      type: String,
+      unique: true,
+      sparse: true,
+      // Generated as 6-digit unique ID before saving
+    },
     fullName: {
       type: String,
       required: [true, 'Please provide your full name'],
@@ -22,6 +39,12 @@ const userSchema = new mongoose.Schema(
       required: [true, 'Please provide a password'],
       minlength: [6, 'Password must be at least 6 characters'],
       select: false, // don't return password by default
+    },
+    projectsId: {
+      type: String,
+      unique: true,
+      sparse: true,
+      // Generated as userId-PROJECT-XXXXX (e.g., 123456-PROJECT-XXXXX)
     },
     profileImage: {
       type: String,
@@ -91,8 +114,26 @@ const userSchema = new mongoose.Schema(
   }
 )
 
-// Hash password before saving
+// Generate userId and projectsId before saving
 userSchema.pre('save', async function (next) {
+  // Generate userId if not already set
+  if (!this.userId) {
+    let isUnique = false
+    while (!isUnique) {
+      this.userId = generate6DigitId()
+      // Check if this userId already exists
+      const existingUser = await mongoose.model('User').findOne({ userId: this.userId })
+      if (!existingUser) {
+        isUnique = true
+      }
+    }
+  }
+
+  // Generate projectsId if not already set
+  if (!this.projectsId && this.userId) {
+    this.projectsId = generateProjectsId(this.userId)
+  }
+
   // Only hash the password if it has been modified (or is new)
   if (!this.isModified('password')) return next()
 

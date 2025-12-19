@@ -48,8 +48,10 @@ export const signup = asyncHandler(async (req, res) => {
     message: 'User registered successfully',
     user: {
       id: user._id,
+      userId: user.userId,
       fullName: user.fullName,
       email: user.email,
+      projectsId: user.projectsId,
     },
   })
 })
