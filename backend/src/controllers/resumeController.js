@@ -21,9 +21,24 @@ export const createResume = asyncHandler(async (req, res) => {
     })
   }
 
+  // Get the count of existing resumes for this user to determine resumeIndex
+  const existingResumes = await Resume.countDocuments({ userId })
+  const resumeIndex = existingResumes // Start from 0 for first resume
+  
+  // Generate resumeName and projectsId
+  const resumeName = `resume-${userId}-${resumeIndex}`
+  const projectsId = `${userId}-PROJECT-${Date.now()}`
+
+  console.log('[Resume API] Auto-generated resumeName:', resumeName)
+  console.log('[Resume API] Auto-generated projectsId:', projectsId)
+  console.log('[Resume API] Resume index:', resumeIndex)
+
   const resume = await Resume.create({
     userId,
-    name,
+    projectsId,
+    resumeIndex,
+    resumeName,
+    name: name || 'My Resume',
     templateType: templateType || 'template1',
     personal: resumeData?.personal || {},
     summary: resumeData?.summary || '',
