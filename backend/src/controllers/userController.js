@@ -1,4 +1,5 @@
 import { User } from '../models/User.js'
+import { Projects } from '../models/Projects.js'
 import { asyncHandler } from '../middleware/middleware.js'
 
 // @route   GET /api/user/profile
@@ -148,9 +149,43 @@ export const deleteAccount = asyncHandler(async (req, res) => {
   })
 })
 
+// @route   GET /api/user/projects
+// @desc    Get user's projects (resumes) metadata
+// @access  Private
+export const getUserProjects = asyncHandler(async (req, res) => {
+  const userId = req.session.userId
+
+  console.log('[User API] GET /api/user/projects - Fetching user projects')
+  console.log('[User API] User ID:', userId)
+
+  let userProjects = await Projects.findOne({ userId })
+    .populate('projects', '_id name templateType updatedAt')
+    .exec()
+
+  if (!userProjects) {
+    console.log('[User API] No projects found for user, returning empty array')
+    return res.status(200).json({
+      success: true,
+      projectsCount: 0,
+      projects: [],
+      message: 'No projects yet'
+    })
+  }
+
+  console.log('[User API] Found projects:', userProjects.projectsCount)
+
+  res.status(200).json({
+    success: true,
+    projectsCount: userProjects.projectsCount,
+    projects: userProjects.projects,
+    projectsId: userProjects.projectsId
+  })
+})
+
 export default {
   getUserProfile,
   updateUserProfile,
   changePassword,
   deleteAccount,
+  getUserProjects,
 }

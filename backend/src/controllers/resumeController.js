@@ -1,4 +1,5 @@
 import { Resume } from '../models/Resume.js'
+import { Projects } from '../models/Projects.js'
 import { asyncHandler } from '../middleware/middleware.js'
 
 // @route   POST /api/resumes
@@ -50,6 +51,35 @@ export const createResume = asyncHandler(async (req, res) => {
   })
 
   console.log('[Resume API] Resume created successfully with ID:', resume._id)
+
+  // Add resume ID to user's Projects array
+  try {
+    let userProjects = await Projects.findOne({ userId })
+    
+    if (!userProjects) {
+      console.log('[Resume API] Creating new Projects document for user:', userId)
+      // Create Projects document if it doesn't exist
+      userProjects = await Projects.create({
+        userId,
+        projectsId,
+        projects: [resume._id],
+        projectsCount: 1
+      })
+      console.log('[Resume API] Projects document created with ID:', userProjects._id)
+    } else {
+      console.log('[Resume API] Updating existing Projects document for user:', userId)
+      // Add resume to projects array if not already there
+      if (!userProjects.projects.includes(resume._id)) {
+        userProjects.projects.push(resume._id)
+        userProjects.projectsCount = userProjects.projects.length
+        await userProjects.save()
+        console.log('[Resume API] Resume ID added to Projects. Total projects:', userProjects.projectsCount)
+      }
+    }
+  } catch (error) {
+    console.error('[Resume API] Error updating Projects:', error.message)
+    // Don't fail the resume creation if Projects update fails, just log the error
+  }
 
   res.status(201).json({
     success: true,
@@ -179,6 +209,24 @@ export const deleteResume = asyncHandler(async (req, res) => {
     })
   }
 
+  console.log('[Resume API] Resume deleted with ID:', id)
+
+  // Remove resume ID from user's Projects array
+  try {
+    const userProjects = await Projects.findOne({ userId })
+    if (userProjects) {
+      userProjects.projects = userProjects.projects.filter(
+        projectId => projectId.toString() !== id
+      )
+      userProjects.projectsCount = userProjects.projects.length
+      await userProjects.save()
+      console.log('[Resume API] Resume removed from Projects. Remaining projects:', userProjects.projectsCount)
+    }
+  } catch (error) {
+    console.error('[Resume API] Error updating Projects after delete:', error.message)
+    // Don't fail the deletion if Projects update fails
+  }
+
   res.status(200).json({
     success: true,
     message: 'Resume deleted successfully',
@@ -200,8 +248,21 @@ export const duplicateResume = asyncHandler(async (req, res) => {
     })
   }
 
+  console.log('[Resume API] Duplicating resume:', id)
+
+  // Get the count of existing resumes for this user to determine resumeIndex
+  const existingResumes = await Resume.countDocuments({ userId })
+  const resumeIndex = existingResumes
+  
+  // Generate resumeName and projectsId for the duplicate
+  const resumeName = `resume-${userId}-${resumeIndex}`
+  const projectsId = `${userId}-PROJECT-${Date.now()}`
+
   const duplicatedResume = new Resume({
     userId,
+    projectsId,
+    resumeIndex,
+    resumeName,
     name: `${originalResume.name} (Copy)`,
     templateType: originalResume.templateType,
     personal: originalResume.personal,
@@ -212,15 +273,77 @@ export const duplicateResume = asyncHandler(async (req, res) => {
     skills: originalResume.skills,
     certifications: originalResume.certifications,
     accentColor: originalResume.accentColor,
+    profileImage: originalResume.profileImage,
   })
 
   await duplicatedResume.save()
+
+  console.log('[Resume API] Resume duplicated successfully with ID:', duplicatedResume._id)
+
+  // Add duplicated resume ID to user's Projects array
+  try {
+    let userProjects = await Projects.findOne({ userId })
+    
+    if (userProjects) {
+      if (!userProjects.projects.includes(duplicatedResume._id)) {
+        userProjects.projects.push(duplicatedResume._id)
+        userProjects.projectsCount = userProjects.projects.length
+        await userProjects.save()
+        console.log('[Resume API] Duplicated resume added to Projects. Total projects:', userProjects.projectsCount)
+      }
+    }
+  } catch (error) {
+    console.error('[Resume API] Error updating Projects after duplicate:', error.message)
+    // Don't fail the duplication if Projects update fails
+  }
 
   res.status(201).json({
     success: true,
     message: 'Resume duplicated successfully',
     resume: duplicatedResume,
   })
+})
+
+// @route   POST /api/resumes/batch/fetch
+// @desc    Fetch multiple resumes by IDs
+// @access  Private
+export const getResumesByIds = asyncHandler(async (req, res) => {
+  const { ids } = req.body
+  const userId = req.session.userId
+
+  console.log('[Resume API] POST /api/resumes/batch/fetch - Fetching resumes by IDs')
+  console.log('[Resume API] User ID:', userId)
+  console.log('[Resume API] Resume IDs:', ids)
+
+  if (!Array.isArray(ids) || ids.length === 0) {
+    console.error('[Resume API] Invalid IDs array provided')
+    return res.status(400).json({
+      success: false,
+      message: 'Please provide an array of resume IDs'
+    })
+  }
+
+  try {
+    // Convert string IDs to ObjectId if needed
+    const resumes = await Resume.find({
+      _id: { $in: ids },
+      userId
+    }).select('_id name templateType personal summary experiences education projects skills certifications accentColor profileImage updatedAt')
+
+    console.log('[Resume API] Found', resumes.length, 'resumes')
+
+    res.status(200).json({
+      success: true,
+      count: resumes.length,
+      resumes
+    })
+  } catch (error) {
+    console.error('[Resume API] Error fetching resumes:', error.message)
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching resumes'
+    })
+  }
 })
 
 export default {
@@ -230,4 +353,5 @@ export default {
   updateResume,
   deleteResume,
   duplicateResume,
+  getResumesByIds,
 }
