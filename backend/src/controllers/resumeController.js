@@ -9,11 +9,6 @@ export const createResume = asyncHandler(async (req, res) => {
   const { name, templateType, resumeData } = req.body
   const userId = req.session.userId
 
-  console.log('[Resume API] POST /api/resumes - Creating new resume')
-  console.log('[Resume API] User ID from session:', userId)
-  console.log('[Resume API] Request body:', { name, templateType })
-  console.log('[Resume API] Session data:', req.session)
-
   if (!userId) {
     console.error('[Resume API] User ID is missing from session')
     return res.status(401).json({
@@ -29,10 +24,6 @@ export const createResume = asyncHandler(async (req, res) => {
   // Generate resumeName and projectsId
   const resumeName = `resume-${userId}-${resumeIndex}`
   const projectsId = `${userId}-PROJECT-${Date.now()}`
-
-  console.log('[Resume API] Auto-generated resumeName:', resumeName)
-  console.log('[Resume API] Auto-generated projectsId:', projectsId)
-  console.log('[Resume API] Resume index:', resumeIndex)
 
   const resume = await Resume.create({
     userId,
@@ -50,14 +41,11 @@ export const createResume = asyncHandler(async (req, res) => {
     certifications: resumeData?.certifications || [],
   })
 
-  console.log('[Resume API] Resume created successfully with ID:', resume._id)
-
   // Add resume ID to user's Projects array
   try {
     let userProjects = await Projects.findOne({ userId })
     
     if (!userProjects) {
-      console.log('[Resume API] Creating new Projects document for user:', userId)
       // Create Projects document if it doesn't exist
       userProjects = await Projects.create({
         userId,
@@ -65,15 +53,12 @@ export const createResume = asyncHandler(async (req, res) => {
         projects: [resume._id],
         projectsCount: 1
       })
-      console.log('[Resume API] Projects document created with ID:', userProjects._id)
     } else {
-      console.log('[Resume API] Updating existing Projects document for user:', userId)
       // Add resume to projects array if not already there
       if (!userProjects.projects.includes(resume._id)) {
         userProjects.projects.push(resume._id)
         userProjects.projectsCount = userProjects.projects.length
         await userProjects.save()
-        console.log('[Resume API] Resume ID added to Projects. Total projects:', userProjects.projectsCount)
       }
     }
   } catch (error) {
@@ -144,11 +129,6 @@ export const updateResume = asyncHandler(async (req, res) => {
     profileImage,
   } = req.body
 
-  console.log('[Resume API] PUT /api/resumes/:id - Updating resume')
-  console.log('[Resume API] Resume ID:', id)
-  console.log('[Resume API] User ID from session:', userId)
-  console.log('[Resume API] Fields being updated:', { name, templateType, personal, summary })
-
   if (!userId) {
     console.error('[Resume API] User ID is missing from session')
     return res.status(401).json({
@@ -184,9 +164,6 @@ export const updateResume = asyncHandler(async (req, res) => {
 
   resume = await resume.save()
 
-  console.log('[Resume API] Resume updated successfully with ID:', resume._id)
-  console.log('[Resume API] Updated fields:', { name, templateType, accentColor })
-
   res.status(200).json({
     success: true,
     message: 'Resume updated successfully',
@@ -209,8 +186,6 @@ export const deleteResume = asyncHandler(async (req, res) => {
     })
   }
 
-  console.log('[Resume API] Resume deleted with ID:', id)
-
   // Remove resume ID from user's Projects array
   try {
     const userProjects = await Projects.findOne({ userId })
@@ -220,7 +195,6 @@ export const deleteResume = asyncHandler(async (req, res) => {
       )
       userProjects.projectsCount = userProjects.projects.length
       await userProjects.save()
-      console.log('[Resume API] Resume removed from Projects. Remaining projects:', userProjects.projectsCount)
     }
   } catch (error) {
     console.error('[Resume API] Error updating Projects after delete:', error.message)
@@ -247,8 +221,6 @@ export const duplicateResume = asyncHandler(async (req, res) => {
       message: 'Resume not found',
     })
   }
-
-  console.log('[Resume API] Duplicating resume:', id)
 
   // Get the count of existing resumes for this user to determine resumeIndex
   const existingResumes = await Resume.countDocuments({ userId })
@@ -278,8 +250,6 @@ export const duplicateResume = asyncHandler(async (req, res) => {
 
   await duplicatedResume.save()
 
-  console.log('[Resume API] Resume duplicated successfully with ID:', duplicatedResume._id)
-
   // Add duplicated resume ID to user's Projects array
   try {
     let userProjects = await Projects.findOne({ userId })
@@ -289,7 +259,6 @@ export const duplicateResume = asyncHandler(async (req, res) => {
         userProjects.projects.push(duplicatedResume._id)
         userProjects.projectsCount = userProjects.projects.length
         await userProjects.save()
-        console.log('[Resume API] Duplicated resume added to Projects. Total projects:', userProjects.projectsCount)
       }
     }
   } catch (error) {
@@ -311,10 +280,6 @@ export const getResumesByIds = asyncHandler(async (req, res) => {
   const { ids } = req.body
   const userId = req.session.userId
 
-  console.log('[Resume API] POST /api/resumes/batch/fetch - Fetching resumes by IDs')
-  console.log('[Resume API] User ID:', userId)
-  console.log('[Resume API] Resume IDs:', ids)
-
   if (!Array.isArray(ids) || ids.length === 0) {
     console.error('[Resume API] Invalid IDs array provided')
     return res.status(400).json({
@@ -329,8 +294,6 @@ export const getResumesByIds = asyncHandler(async (req, res) => {
       _id: { $in: ids },
       userId
     }).select('_id name templateType personal summary experiences education projects skills certifications accentColor profileImage updatedAt')
-
-    console.log('[Resume API] Found', resumes.length, 'resumes')
 
     res.status(200).json({
       success: true,

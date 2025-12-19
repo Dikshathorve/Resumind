@@ -57,7 +57,6 @@ export default function SignIn({ onClose, onSuccess, onShowSignUp }) {
       }
 
       setSuccess('Logged in successfully!')
-      console.log('User logged in:', data.user)
       
       // Use auth context to update login state
       login(data.user)

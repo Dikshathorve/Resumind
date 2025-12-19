@@ -1,12 +1,6 @@
 // Auth Middleware
 export const isAuthenticated = (req, res, next) => {
-  console.log('[Auth Middleware] Checking authentication')
-  console.log('[Auth Middleware] Session:', req.session)
-  console.log('[Auth Middleware] Session ID:', req.sessionID)
-  console.log('[Auth Middleware] Cookies:', req.headers.cookie)
-  
   if (req.session && req.session.userId) {
-    console.log('[Auth Middleware] User authenticated:', req.session.userId)
     next()
   } else {
     console.error('[Auth Middleware] Authentication failed - No userId in session')

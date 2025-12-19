@@ -33,9 +33,6 @@ app.use(sessionConfig)
 
 // Request logging middleware
 app.use((req, res, next) => {
-  console.log(`[Server] ${new Date().toISOString()} - ${req.method} ${req.path}`)
-  console.log(`[Server] Session ID:`, req.sessionID)
-  console.log(`[Server] Session data:`, req.session)
   next()
 })
 

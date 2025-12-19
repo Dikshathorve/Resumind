@@ -73,7 +73,6 @@ export default function SignUp({ onClose, onSuccess, onShowSignIn }) {
       }
 
       setSuccess('Account created successfully!')
-      console.log('User created:', data.user)
       
       // Use auth context to update login state
       login(data.user)

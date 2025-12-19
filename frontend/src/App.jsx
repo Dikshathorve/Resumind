@@ -19,14 +19,6 @@ function App() {
   const [currentResumeTitle, setCurrentResumeTitle] = useState(null)
   const { isAuthenticated, getAndClearRedirect } = useAuth()
 
-  // Debug logging
-  useEffect(() => {
-    console.log('[App] Component mounted')
-    console.log('[App] Current page:', currentPage)
-    console.log('[App] Is authenticated:', isAuthenticated)
-    console.log('[App] Current resume ID:', currentResumeId)
-  }, [currentPage, isAuthenticated, currentResumeId])
-
   // Handle redirect after authentication
   useEffect(() => {
     const redirectPage = getAndClearRedirect()
@@ -59,9 +51,6 @@ function App() {
     setIsCreatingResume(true)
     setIsEditingResume(false)
     const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
-    console.log('[Resume Creation] Starting resume creation...')
-    console.log('[Resume Creation] Resume Title:', resumeTitle)
-    console.log('[Resume Creation] API Base URL:', apiBaseUrl)
     
     try {
       const resumePayload = {
@@ -86,9 +75,6 @@ function App() {
         }
       }
       
-      console.log('[Resume Creation] Payload:', resumePayload)
-      console.log('[Resume Creation] Sending POST request to /api/resumes...')
-      
       const response = await fetch(`${apiBaseUrl}/api/resumes`, {
         method: 'POST',
         headers: {
@@ -98,9 +84,6 @@ function App() {
         body: JSON.stringify(resumePayload)
       })
 
-      console.log('[Resume Creation] Response status:', response.status)
-      console.log('[Resume Creation] Response ok:', response.ok)
-
       if (!response.ok) {
         const errorText = await response.text()
         console.error('[Resume Creation] Error response:', errorText)
@@ -108,8 +91,6 @@ function App() {
       }
 
       const data = await response.json()
-      console.log('[Resume Creation] Success! Resume created with ID:', data.resume._id)
-      console.log('[Resume Creation] Full response:', data)
       
       setCurrentResumeId(data.resume._id)
       setCurrentResumeTitle(resumeTitle)
@@ -125,7 +106,6 @@ function App() {
   }
 
   const handleEditResume = (resumeId, resumeTitle) => {
-    console.log('[App] Edit resume handler called with ID:', resumeId, 'Title:', resumeTitle)
     setCurrentResumeId(resumeId)
     setCurrentResumeTitle(resumeTitle)
     setIsEditingResume(true)

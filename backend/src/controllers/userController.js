@@ -155,15 +155,11 @@ export const deleteAccount = asyncHandler(async (req, res) => {
 export const getUserProjects = asyncHandler(async (req, res) => {
   const userId = req.session.userId
 
-  console.log('[User API] GET /api/user/projects - Fetching user projects')
-  console.log('[User API] User ID:', userId)
-
   let userProjects = await Projects.findOne({ userId })
     .populate('projects', '_id name templateType updatedAt')
     .exec()
 
   if (!userProjects) {
-    console.log('[User API] No projects found for user, returning empty array')
     return res.status(200).json({
       success: true,
       projectsCount: 0,
@@ -171,8 +167,6 @@ export const getUserProjects = asyncHandler(async (req, res) => {
       message: 'No projects yet'
     })
   }
-
-  console.log('[User API] Found projects:', userProjects.projectsCount)
 
   res.status(200).json({
     success: true,

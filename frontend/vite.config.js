@@ -13,11 +13,7 @@ export default defineConfig({
         secure: false,
         ws: true,
         rewrite: (path) => {
-          console.log('[Vite Proxy] Proxying request:', path)
           return path
-        },
-        onProxyRes: (proxyRes, req, res) => {
-          console.log('[Vite Proxy] Response received from backend:', proxyRes.statusCode)
         }
       }
     }

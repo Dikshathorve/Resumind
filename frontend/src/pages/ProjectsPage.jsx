@@ -22,7 +22,6 @@ export default function ProjectsPage({ onStart, onClose, onEditResume }) {
   }, [])
 
   const fetchUserResumes = async () => {
-    console.log('[Projects Page] Fetching user resumes')
     setIsFetching(true)
     setError(null)
     try {
@@ -43,20 +42,17 @@ export default function ProjectsPage({ onStart, onClose, onEditResume }) {
       }
 
       const projectsData = await projectsResponse.json()
-      console.log('[Projects Page] Projects data received:', projectsData)
 
       setProjectsCount(projectsData.projectsCount)
 
       // If no resumes, just set empty array
       if (!projectsData.projects || projectsData.projects.length === 0) {
-        console.log('[Projects Page] No resumes found for user')
         setResumes([])
         return
       }
 
       // Step 2: Fetch full resume details using batch endpoint
       const resumeIds = projectsData.projects.map(p => p._id || p)
-      console.log('[Projects Page] Fetching full details for resume IDs:', resumeIds)
 
       const batchResponse = await fetch(
         `${import.meta.env.VITE_API_URL}/api/resumes/batch/fetch`,
@@ -75,7 +71,6 @@ export default function ProjectsPage({ onStart, onClose, onEditResume }) {
       }
 
       const batchData = await batchResponse.json()
-      console.log('[Projects Page] Resume details fetched:', batchData)
 
       setResumes(batchData.resumes || [])
     } catch (err) {
@@ -91,7 +86,6 @@ export default function ProjectsPage({ onStart, onClose, onEditResume }) {
   }
 
   const handleCreateResumeSubmit = async (resumeTitle) => {
-    console.log('[Projects Page] Creating resume with title:', resumeTitle)
     setIsCreating(true)
     try {
       onStart(resumeTitle)
@@ -106,14 +100,12 @@ export default function ProjectsPage({ onStart, onClose, onEditResume }) {
   }
 
   const handleEditResume = (resumeId, resumeTitle) => {
-    console.log('[Projects Page] Edit button clicked for resume:', resumeId, resumeTitle)
     // Call parent handler to navigate to BuildResume with existing resume
     onEditResume?.(resumeId, resumeTitle)
   }
 
   const handleUpload = () => {
     // TODO: Implement upload functionality
-    console.log('Upload functionality')
   }
 
   const handleLogout = () => {

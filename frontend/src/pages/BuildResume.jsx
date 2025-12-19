@@ -77,11 +77,9 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
   // Load existing resume data if editing
   useEffect(() => {
     if (resumeId) {
-      console.log('[BuildResume] Loading existing resume with ID:', resumeId)
       const loadResumeData = async () => {
         try {
           const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
-          console.log('[BuildResume] Fetching resume from:', `${apiBaseUrl}/api/resumes/${resumeId}`)
           
           const response = await fetch(`${apiBaseUrl}/api/resumes/${resumeId}`, {
             method: 'GET',
@@ -96,7 +94,6 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
           }
 
           const data = await response.json()
-          console.log('[BuildResume] Resume data loaded:', data)
           
           // Populate form fields with existing data
           if (data.resume) {
@@ -113,7 +110,6 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
             if (resume.profileImage) {
               setProfileImage(resume.profileImage)
             }
-            console.log('[BuildResume] Form populated with existing data')
           }
         } catch (error) {
           console.error('[BuildResume] Error loading resume:', error)
@@ -144,9 +140,6 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
 
   // Save handler for saving resume to database
   const handleSaveChanges = async () => {
-    console.log('[Save Resume] Starting save operation...')
-    console.log('[Save Resume] Resume ID:', resumeId)
-    
     if (!resumeId) {
       console.error('[Save Resume] Resume ID is null or undefined')
       setSaveError('Resume ID not found. Please create a new resume first.')
@@ -159,7 +152,6 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
 
     try {
       const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
-      console.log('[Save Resume] API Base URL:', apiBaseUrl)
       
       const resumeData = {
         personal,
@@ -174,9 +166,6 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
         profileImage: selectedTemplate === 'template3' ? profileImage : null
       }
 
-      console.log('[Save Resume] Sending PUT request to:', `${apiBaseUrl}/api/resumes/${resumeId}`)
-      console.log('[Save Resume] Payload:', resumeData)
-
       const response = await fetch(`${apiBaseUrl}/api/resumes/${resumeId}`, {
         method: 'PUT',
         headers: {
@@ -186,9 +175,6 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
         body: JSON.stringify(resumeData)
       })
 
-      console.log('[Save Resume] Response status:', response.status)
-      console.log('[Save Resume] Response ok:', response.ok)
-
       if (!response.ok) {
         const errorText = await response.text()
         console.error('[Save Resume] Error response:', errorText)
@@ -196,7 +182,6 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
       }
 
       const data = await response.json()
-      console.log('[Save Resume] Success! Resume saved:', data)
       setSaveMessage('Resume saved successfully!')
       
       // Clear message after 3 seconds

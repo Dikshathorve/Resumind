@@ -80,7 +80,6 @@ export default function ResumeCard({ resume, onDelete, onDuplicate, onDownload, 
         <button 
           className="project-edit-btn"
           onClick={() => {
-            console.log('[Resume Card] Edit button clicked for resume:', resume._id)
             onEdit?.(resume._id, resume.name)
           }}
         >
