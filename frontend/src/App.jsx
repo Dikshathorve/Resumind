@@ -15,6 +15,8 @@ function App() {
   const [resumeData, setResumeData] = useState(null)
   const [currentResumeId, setCurrentResumeId] = useState(null)
   const [isCreatingResume, setIsCreatingResume] = useState(false)
+  const [isEditingResume, setIsEditingResume] = useState(false)
+  const [currentResumeTitle, setCurrentResumeTitle] = useState(null)
   const { isAuthenticated, getAndClearRedirect } = useAuth()
 
   // Debug logging
@@ -55,6 +57,7 @@ function App() {
 
   const handleCreateNewResume = async (resumeTitle = 'My Resume') => {
     setIsCreatingResume(true)
+    setIsEditingResume(false)
     const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
     console.log('[Resume Creation] Starting resume creation...')
     console.log('[Resume Creation] Resume Title:', resumeTitle)
@@ -109,6 +112,7 @@ function App() {
       console.log('[Resume Creation] Full response:', data)
       
       setCurrentResumeId(data.resume._id)
+      setCurrentResumeTitle(resumeTitle)
       setCurrentPage('builder')
     } catch (error) {
       console.error('[Resume Creation] Error caught:', error)
@@ -118,6 +122,14 @@ function App() {
     } finally {
       setIsCreatingResume(false)
     }
+  }
+
+  const handleEditResume = (resumeId, resumeTitle) => {
+    console.log('[App] Edit resume handler called with ID:', resumeId, 'Title:', resumeTitle)
+    setCurrentResumeId(resumeId)
+    setCurrentResumeTitle(resumeTitle)
+    setIsEditingResume(true)
+    setCurrentPage('builder')
   }
 
   return (
@@ -133,6 +145,7 @@ function App() {
         {currentPage === 'projects' && (
           <ProjectsPage 
             onStart={handleCreateNewResume}
+            onEditResume={handleEditResume}
             onClose={() => setCurrentPage('landing')}
           />
         )}

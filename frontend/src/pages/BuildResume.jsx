@@ -74,6 +74,56 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
   // AI Assist modal state
   const [aiAssistOpen, setAiAssistOpen] = useState(false)
 
+  // Load existing resume data if editing
+  useEffect(() => {
+    if (resumeId) {
+      console.log('[BuildResume] Loading existing resume with ID:', resumeId)
+      const loadResumeData = async () => {
+        try {
+          const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+          console.log('[BuildResume] Fetching resume from:', `${apiBaseUrl}/api/resumes/${resumeId}`)
+          
+          const response = await fetch(`${apiBaseUrl}/api/resumes/${resumeId}`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+
+          if (!response.ok) {
+            throw new Error(`Failed to load resume: ${response.status}`)
+          }
+
+          const data = await response.json()
+          console.log('[BuildResume] Resume data loaded:', data)
+          
+          // Populate form fields with existing data
+          if (data.resume) {
+            const resume = data.resume
+            setPersonal(resume.personal || personal)
+            setSummary(resume.summary || '')
+            setExperiences(resume.experiences || [])
+            setEducation(resume.education || [])
+            setProjects(resume.projects || [])
+            setSkills(resume.skills || [])
+            setCertifications(resume.certifications || [])
+            setSelectedTemplate(resume.templateType || 'template1')
+            setAccentColor(resume.accentColor || '#3B82F6')
+            if (resume.profileImage) {
+              setProfileImage(resume.profileImage)
+            }
+            console.log('[BuildResume] Form populated with existing data')
+          }
+        } catch (error) {
+          console.error('[BuildResume] Error loading resume:', error)
+          alert(`Failed to load resume: ${error.message}`)
+        }
+      }
+      loadResumeData()
+    }
+  }, [resumeId])
+
   // Print handler for download
   const handleDownload = () => {
     if (templateRef.current) {

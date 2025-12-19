@@ -2,8 +2,20 @@ import './ResumeCard.css'
 import { MoreVertical, Download, Trash2, Copy } from 'lucide-react'
 import { useState } from 'react'
 
-export default function ResumeCard({ resume, onDelete, onDuplicate, onDownload }) {
+export default function ResumeCard({ resume, onDelete, onDuplicate, onDownload, onEdit }) {
   const [showMenu, setShowMenu] = useState(false)
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Never'
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
 
   return (
     <div className="project-card">
@@ -11,7 +23,7 @@ export default function ResumeCard({ resume, onDelete, onDuplicate, onDownload }
         <div className="project-info">
           <h3>{resume.name || 'Untitled Resume'}</h3>
           <p className="project-date">
-            {new Date(resume.createdAt).toLocaleDateString()}
+            Last updated: {formatDate(resume.updatedAt || resume.createdAt)}
           </p>
         </div>
         <div className="project-menu-container">
@@ -65,7 +77,15 @@ export default function ResumeCard({ resume, onDelete, onDuplicate, onDownload }
       </div>
 
       <div className="project-card-footer">
-        <button className="project-edit-btn">Edit Resume</button>
+        <button 
+          className="project-edit-btn"
+          onClick={() => {
+            console.log('[Resume Card] Edit button clicked for resume:', resume._id)
+            onEdit?.(resume._id, resume.name)
+          }}
+        >
+          Edit Resume
+        </button>
       </div>
     </div>
   )
