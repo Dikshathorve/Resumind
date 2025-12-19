@@ -3,12 +3,81 @@ import { X, Mail, Lock } from 'lucide-react'
 import './SignIn.css'
 
 export default function SignIn({ onClose }) {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  })
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+    setError('')
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Login:', { email, password })
+    setLoading(true)
+    setError('')
+    setSuccess('')
+
+    // Validation
+    if (!formData.email || !formData.password) {
+      setError('Please fill in all fields')
+      setLoading(false)
+      return
+    }
+
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.message || 'Login failed')
+        setLoading(false)
+        return
+      }
+
+      setSuccess('Logged in successfully!')
+      console.log('User logged in:', data.user)
+      
+      // Store user data in localStorage
+      localStorage.setItem('user', JSON.stringify(data.user))
+      localStorage.setItem('isAuthenticated', 'true')
+
+      // Clear form
+      setFormData({
+        email: '',
+        password: '',
+      })
+
+      // Close modal after 2 seconds
+      setTimeout(() => {
+        onClose()
+        // You can dispatch a login action here if using Redux/Context
+      }, 2000)
+    } catch (err) {
+      setError('An error occurred. Please try again.')
+      console.error('Signin error:', err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -26,6 +95,9 @@ export default function SignIn({ onClose }) {
           <h2 className="signin-title">Welcome Back</h2>
           <p className="signin-subtitle">Login to your account</p>
 
+          {error && <div className="signin-error">{error}</div>}
+          {success && <div className="signin-success">{success}</div>}
+
           <form onSubmit={handleSubmit} className="signin-form">
             <div className="signin-form-group">
               <label htmlFor="email">Email Address</label>
@@ -34,9 +106,10 @@ export default function SignIn({ onClose }) {
                 <input
                   type="email"
                   id="email"
+                  name="email"
                   placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={formData.email}
+                  onChange={handleChange}
                   required
                 />
               </div>
@@ -49,15 +122,18 @@ export default function SignIn({ onClose }) {
                 <input
                   type="password"
                   id="password"
+                  name="password"
                   placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={formData.password}
+                  onChange={handleChange}
                   required
                 />
               </div>
             </div>
 
-            <button type="submit" className="signin-button">Login</button>
+            <button type="submit" className="signin-button" disabled={loading}>
+              {loading ? 'Logging in...' : 'Login'}
+            </button>
           </form>
 
           <p className="signin-footer">
