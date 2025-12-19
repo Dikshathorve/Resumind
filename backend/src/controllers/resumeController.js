@@ -8,6 +8,19 @@ export const createResume = asyncHandler(async (req, res) => {
   const { name, templateType, resumeData } = req.body
   const userId = req.session.userId
 
+  console.log('[Resume API] POST /api/resumes - Creating new resume')
+  console.log('[Resume API] User ID from session:', userId)
+  console.log('[Resume API] Request body:', { name, templateType })
+  console.log('[Resume API] Session data:', req.session)
+
+  if (!userId) {
+    console.error('[Resume API] User ID is missing from session')
+    return res.status(401).json({
+      success: false,
+      message: 'Unauthorized - User session not found'
+    })
+  }
+
   const resume = await Resume.create({
     userId,
     name,
@@ -20,6 +33,8 @@ export const createResume = asyncHandler(async (req, res) => {
     skills: resumeData?.skills || [],
     certifications: resumeData?.certifications || [],
   })
+
+  console.log('[Resume API] Resume created successfully with ID:', resume._id)
 
   res.status(201).json({
     success: true,
@@ -81,10 +96,25 @@ export const updateResume = asyncHandler(async (req, res) => {
     skills,
     certifications,
     accentColor,
+    profileImage,
   } = req.body
+
+  console.log('[Resume API] PUT /api/resumes/:id - Updating resume')
+  console.log('[Resume API] Resume ID:', id)
+  console.log('[Resume API] User ID from session:', userId)
+  console.log('[Resume API] Fields being updated:', { name, templateType, personal, summary })
+
+  if (!userId) {
+    console.error('[Resume API] User ID is missing from session')
+    return res.status(401).json({
+      success: false,
+      message: 'Unauthorized - User session not found'
+    })
+  }
 
   let resume = await Resume.findOne({ _id: id, userId })
   if (!resume) {
+    console.error('[Resume API] Resume not found for ID:', id, 'and User:', userId)
     return res.status(404).json({
       success: false,
       message: 'Resume not found',
@@ -102,11 +132,15 @@ export const updateResume = asyncHandler(async (req, res) => {
   if (skills) resume.skills = skills
   if (certifications) resume.certifications = certifications
   if (accentColor) resume.accentColor = accentColor
+  if (profileImage) resume.profileImage = profileImage
 
   resume.updatedAt = new Date()
   resume.lastModified = new Date()
 
   resume = await resume.save()
+
+  console.log('[Resume API] Resume updated successfully with ID:', resume._id)
+  console.log('[Resume API] Updated fields:', { name, templateType, accentColor })
 
   res.status(200).json({
     success: true,

@@ -17,6 +17,14 @@ function App() {
   const [isCreatingResume, setIsCreatingResume] = useState(false)
   const { isAuthenticated, getAndClearRedirect } = useAuth()
 
+  // Debug logging
+  useEffect(() => {
+    console.log('[App] Component mounted')
+    console.log('[App] Current page:', currentPage)
+    console.log('[App] Is authenticated:', isAuthenticated)
+    console.log('[App] Current resume ID:', currentResumeId)
+  }, [currentPage, isAuthenticated, currentResumeId])
+
   // Handle redirect after authentication
   useEffect(() => {
     const redirectPage = getAndClearRedirect()
@@ -47,45 +55,65 @@ function App() {
 
   const handleCreateNewResume = async () => {
     setIsCreatingResume(true)
+    const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+    console.log('[Resume Creation] Starting resume creation...')
+    console.log('[Resume Creation] API Base URL:', apiBaseUrl)
+    
     try {
-      const response = await fetch('/api/resumes', {
+      const resumePayload = {
+        name: 'My Resume',
+        templateType: 'template1',
+        resumeData: {
+          personal: {
+            fullName: '',
+            jobTitle: '',
+            email: '',
+            phone: '',
+            location: '',
+            linkedin: '',
+            website: ''
+          },
+          summary: '',
+          experiences: [],
+          education: [],
+          projects: [],
+          skills: [],
+          certifications: []
+        }
+      }
+      
+      console.log('[Resume Creation] Payload:', resumePayload)
+      console.log('[Resume Creation] Sending POST request to /api/resumes...')
+      
+      const response = await fetch(`${apiBaseUrl}/api/resumes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          name: 'My Resume',
-          templateType: 'template1',
-          resumeData: {
-            personal: {
-              fullName: '',
-              jobTitle: '',
-              email: '',
-              phone: '',
-              location: '',
-              linkedin: '',
-              website: ''
-            },
-            summary: '',
-            experiences: [],
-            education: [],
-            projects: [],
-            skills: [],
-            certifications: []
-          }
-        })
+        credentials: 'include',
+        body: JSON.stringify(resumePayload)
       })
 
+      console.log('[Resume Creation] Response status:', response.status)
+      console.log('[Resume Creation] Response ok:', response.ok)
+
       if (!response.ok) {
-        throw new Error('Failed to create resume')
+        const errorText = await response.text()
+        console.error('[Resume Creation] Error response:', errorText)
+        throw new Error(`Failed to create resume: ${response.status} ${response.statusText}`)
       }
 
       const data = await response.json()
+      console.log('[Resume Creation] Success! Resume created with ID:', data.resume._id)
+      console.log('[Resume Creation] Full response:', data)
+      
       setCurrentResumeId(data.resume._id)
       setCurrentPage('builder')
     } catch (error) {
-      console.error('Error creating resume:', error)
-      alert('Failed to create resume. Please try again.')
+      console.error('[Resume Creation] Error caught:', error)
+      console.error('[Resume Creation] Error message:', error.message)
+      console.error('[Resume Creation] Error stack:', error.stack)
+      alert(`Failed to create resume: ${error.message}`)
     } finally {
       setIsCreatingResume(false)
     }

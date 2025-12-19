@@ -94,7 +94,11 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
 
   // Save handler for saving resume to database
   const handleSaveChanges = async () => {
+    console.log('[Save Resume] Starting save operation...')
+    console.log('[Save Resume] Resume ID:', resumeId)
+    
     if (!resumeId) {
+      console.error('[Save Resume] Resume ID is null or undefined')
       setSaveError('Resume ID not found. Please create a new resume first.')
       return
     }
@@ -104,6 +108,9 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
     setSaveMessage(null)
 
     try {
+      const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+      console.log('[Save Resume] API Base URL:', apiBaseUrl)
+      
       const resumeData = {
         personal,
         summary,
@@ -117,20 +124,29 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
         profileImage: selectedTemplate === 'template3' ? profileImage : null
       }
 
-      const response = await fetch(`/api/resumes/${resumeId}`, {
+      console.log('[Save Resume] Sending PUT request to:', `${apiBaseUrl}/api/resumes/${resumeId}`)
+      console.log('[Save Resume] Payload:', resumeData)
+
+      const response = await fetch(`${apiBaseUrl}/api/resumes/${resumeId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(resumeData)
       })
 
+      console.log('[Save Resume] Response status:', response.status)
+      console.log('[Save Resume] Response ok:', response.ok)
+
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || 'Failed to save resume')
+        const errorText = await response.text()
+        console.error('[Save Resume] Error response:', errorText)
+        throw new Error(`Failed to save resume: ${response.status} ${response.statusText}`)
       }
 
       const data = await response.json()
+      console.log('[Save Resume] Success! Resume saved:', data)
       setSaveMessage('Resume saved successfully!')
       
       // Clear message after 3 seconds
@@ -138,7 +154,9 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
         setSaveMessage(null)
       }, 3000)
     } catch (error) {
-      console.error('Error saving resume:', error)
+      console.error('[Save Resume] Error caught:', error)
+      console.error('[Save Resume] Error message:', error.message)
+      console.error('[Save Resume] Error stack:', error.stack)
       setSaveError(error.message || 'Failed to save resume')
       
       // Clear error after 5 seconds
