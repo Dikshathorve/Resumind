@@ -8,9 +8,26 @@ const resumeSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    name: {
+    projectsId: {
       type: String,
       required: true,
+      // Reference to Projects document (inherited from User)
+      // Format: userId-PROJECT-XXXXX
+    },
+    resumeIndex: {
+      type: Number,
+      required: true,
+      // Index of this resume for naming (0, 1, 2, etc.)
+    },
+    resumeName: {
+      type: String,
+      required: true,
+      unique: true,
+      sparse: true,
+      // Format: resume-{userId}-{resumeIndex} (e.g., resume-123456-0)
+    },
+    name: {
+      type: String,
       default: 'My Resume',
       trim: true,
     },
@@ -102,10 +119,6 @@ const resumeSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    lastModified: {
-      type: Date,
-      default: Date.now,
-    },
   },
   {
     timestamps: true,
@@ -114,6 +127,8 @@ const resumeSchema = new mongoose.Schema(
 
 // Index for better query performance
 resumeSchema.index({ userId: 1, createdAt: -1 })
+resumeSchema.index({ projectsId: 1 })
+resumeSchema.index({ resumeName: 1 })
 
 export const Resume = mongoose.model('Resume', resumeSchema)
 export default Resume

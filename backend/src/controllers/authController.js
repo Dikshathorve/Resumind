@@ -1,4 +1,5 @@
 import { User } from '../models/User.js'
+import { Projects } from '../models/Projects.js'
 import { asyncHandler } from '../middleware/middleware.js'
 
 /**
@@ -79,6 +80,14 @@ export const signup = asyncHandler(async (req, res) => {
     fullName,
     email,
     password,
+  })
+
+  // Initialize Projects document with empty projects array and count 0
+  const projects = await Projects.create({
+    projectsId: user.projectsId,
+    userId: user._id,
+    projectsCount: 0,
+    projects: [],
   })
 
   // Set session
