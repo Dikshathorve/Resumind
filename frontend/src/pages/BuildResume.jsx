@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Briefcase, FileText, Sparkles, Download, Mail, Phone, MapPin, FileText as FileDocument, Briefcase as WorkBriefcase, GraduationCap, Settings, Award, User, Briefcase as BriefcaseIcon, Globe, Linkedin } from 'lucide-react'
+import { Briefcase, FileText, Sparkles, Download, Mail, Phone, MapPin, FileText as FileDocument, Briefcase as WorkBriefcase, GraduationCap, Settings, Award, User, Briefcase as BriefcaseIcon, Globe, Linkedin, Save } from 'lucide-react'
 import './BuildResume.css'
 import AISuggestions from '../components/AISuggestions'
 import HeaderWithUser from '../components/HeaderWithUser'
@@ -10,7 +10,7 @@ import ResumeTemplate4 from '../components/ResumeTemplate4'
 import AccentColorPicker from '../components/AccentColorPicker'
 import TemplateSelector from '../components/TemplateSelector'
 
-export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher }) {
+export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resumeId = null }) {
   // Step management for step-wise form
   const [currentStep, setCurrentStep] = useState(1)
   const steps = [
@@ -22,6 +22,11 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher }) {
     { id: 6, label: 'Skills' },
     { id: 7, label: 'Certifications' }
   ]
+
+  // Save state
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveMessage, setSaveMessage] = useState(null)
+  const [saveError, setSaveError] = useState(null)
 
   // form state for live preview
   const [personal, setPersonal] = useState({
@@ -84,6 +89,64 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher }) {
       setTimeout(() => {
         document.body.classList.remove('print-mode')
       }, 1000)
+    }
+  }
+
+  // Save handler for saving resume to database
+  const handleSaveChanges = async () => {
+    if (!resumeId) {
+      setSaveError('Resume ID not found. Please create a new resume first.')
+      return
+    }
+
+    setIsSaving(true)
+    setSaveError(null)
+    setSaveMessage(null)
+
+    try {
+      const resumeData = {
+        personal,
+        summary,
+        experiences,
+        education,
+        projects,
+        skills,
+        certifications,
+        templateType: selectedTemplate,
+        accentColor,
+        profileImage: selectedTemplate === 'template3' ? profileImage : null
+      }
+
+      const response = await fetch(`/api/resumes/${resumeId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(resumeData)
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Failed to save resume')
+      }
+
+      const data = await response.json()
+      setSaveMessage('Resume saved successfully!')
+      
+      // Clear message after 3 seconds
+      setTimeout(() => {
+        setSaveMessage(null)
+      }, 3000)
+    } catch (error) {
+      console.error('Error saving resume:', error)
+      setSaveError(error.message || 'Failed to save resume')
+      
+      // Clear error after 5 seconds
+      setTimeout(() => {
+        setSaveError(null)
+      }, 5000)
+    } finally {
+      setIsSaving(false)
     }
   }
 
@@ -797,8 +860,19 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher }) {
             </button>
           </div>
           <div className="title-right">
+            {saveMessage && <div className="save-success-message">{saveMessage}</div>}
+            {saveError && <div className="save-error-message">{saveError}</div>}
             <button className="btn-private" onClick={() => alert('Private mode')}>
               🔒 Private
+            </button>
+            <button 
+              className="btn-save" 
+              onClick={handleSaveChanges}
+              disabled={isSaving}
+              title="Save changes to resume"
+            >
+              <Save size={20} />
+              {isSaving ? 'Saving...' : 'Save Changes'}
             </button>
             <button className="btn-download" onClick={handleDownload}>
               <Download size={20} />

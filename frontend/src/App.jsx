@@ -13,6 +13,8 @@ import SignUp from './pages/SignUp'
 function App() {
   const [currentPage, setCurrentPage] = useState('landing') // landing, landing-signin, landing-signup, projects, builder, build-ats, ats-analyzer, job-matcher
   const [resumeData, setResumeData] = useState(null)
+  const [currentResumeId, setCurrentResumeId] = useState(null)
+  const [isCreatingResume, setIsCreatingResume] = useState(false)
   const { isAuthenticated, getAndClearRedirect } = useAuth()
 
   // Handle redirect after authentication
@@ -43,6 +45,52 @@ function App() {
     }
   }
 
+  const handleCreateNewResume = async () => {
+    setIsCreatingResume(true)
+    try {
+      const response = await fetch('/api/resumes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: 'My Resume',
+          templateType: 'template1',
+          resumeData: {
+            personal: {
+              fullName: '',
+              jobTitle: '',
+              email: '',
+              phone: '',
+              location: '',
+              linkedin: '',
+              website: ''
+            },
+            summary: '',
+            experiences: [],
+            education: [],
+            projects: [],
+            skills: [],
+            certifications: []
+          }
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to create resume')
+      }
+
+      const data = await response.json()
+      setCurrentResumeId(data.resume._id)
+      setCurrentPage('builder')
+    } catch (error) {
+      console.error('Error creating resume:', error)
+      alert('Failed to create resume. Please try again.')
+    } finally {
+      setIsCreatingResume(false)
+    }
+  }
+
   return (
     <>
       <div className="app">
@@ -55,12 +103,13 @@ function App() {
         )}
         {currentPage === 'projects' && (
           <ProjectsPage 
-            onStart={() => setCurrentPage('builder')} 
+            onStart={handleCreateNewResume}
             onClose={() => setCurrentPage('landing')}
           />
         )}
         {currentPage === 'builder' && (
           <BuildResume 
+            resumeId={currentResumeId}
             onClose={() => setCurrentPage('projects')}
             onATSAnalyzer={(data) => {
               setResumeData(data)

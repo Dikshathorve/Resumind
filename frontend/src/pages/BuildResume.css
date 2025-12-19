@@ -215,6 +215,70 @@
   border-color: rgba(100, 220, 150, 0.5);
 }
 
+.btn-save {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(100, 180, 255, 0.1);
+  border: 1px solid rgba(100, 180, 255, 0.3);
+  color: #64b4ff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-save:hover:not(:disabled) {
+  background: rgba(100, 180, 255, 0.15);
+  border-color: rgba(100, 180, 255, 0.5);
+}
+
+.btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.save-success-message {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  background: rgba(100, 220, 150, 0.15);
+  border: 1px solid rgba(100, 220, 150, 0.3);
+  color: #64dc96;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  animation: slideIn 0.3s ease;
+}
+
+.save-error-message {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  background: rgba(255, 100, 100, 0.15);
+  border: 1px solid rgba(255, 100, 100, 0.3);
+  color: #ff6464;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .step-indicator-bar {
   display: flex;
   align-items: center;
