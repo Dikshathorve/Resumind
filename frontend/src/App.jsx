@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import './App.css'
+import { useAuth } from './context/AuthContext'
 import LandingPage from './pages/LandingPage'
 import BuildResume from './pages/BuildResume'
 import ProjectsPage from './pages/ProjectsPage'
@@ -12,6 +13,15 @@ import SignUp from './pages/SignUp'
 function App() {
   const [currentPage, setCurrentPage] = useState('landing') // landing, landing-signin, landing-signup, projects, builder, build-ats, ats-analyzer, job-matcher
   const [resumeData, setResumeData] = useState(null)
+  const { isAuthenticated, getAndClearRedirect } = useAuth()
+
+  // Handle redirect after authentication
+  useEffect(() => {
+    const redirectPage = getAndClearRedirect()
+    if (redirectPage && isAuthenticated) {
+      setCurrentPage(redirectPage)
+    }
+  }, [isAuthenticated, getAndClearRedirect])
 
   useEffect(() => {
     if (currentPage === 'landing-signin' || currentPage === 'landing-signup' || currentPage === 'signin' || currentPage === 'signup') {
@@ -24,12 +34,21 @@ function App() {
     }
   }, [currentPage])
 
+  const handleStartBuilder = () => {
+    if (isAuthenticated) {
+      setCurrentPage('projects')
+    } else {
+      // Set redirect to projects page after auth
+      setCurrentPage('landing-signup')
+    }
+  }
+
   return (
     <>
       <div className="app">
         {(currentPage === 'landing' || currentPage === 'landing-signin' || currentPage === 'landing-signup') && (
           <LandingPage 
-            onStart={() => setCurrentPage('projects')}
+            onStart={handleStartBuilder}
             onSignIn={() => setCurrentPage('landing-signin')}
             onSignUp={() => setCurrentPage('landing-signup')}
           />
@@ -71,10 +90,22 @@ function App() {
       </div>
 
       {(currentPage === 'landing-signin' || currentPage === 'signin') && (
-        <SignIn onClose={() => setCurrentPage('landing')} />
+        <SignIn 
+          onClose={() => setCurrentPage(isAuthenticated ? 'projects' : 'landing')}
+          onSuccess={() => {
+            setCurrentPage('projects')
+          }}
+          onShowSignUp={() => setCurrentPage(currentPage === 'landing-signin' ? 'landing-signup' : 'signup')}
+        />
       )}
       {(currentPage === 'landing-signup' || currentPage === 'signup') && (
-        <SignUp onClose={() => setCurrentPage('landing')} />
+        <SignUp 
+          onClose={() => setCurrentPage(isAuthenticated ? 'projects' : 'landing')}
+          onSuccess={() => {
+            setCurrentPage('projects')
+          }}
+          onShowSignIn={() => setCurrentPage(currentPage === 'landing-signup' ? 'landing-signin' : 'signin')}
+        />
       )}
     </>
   )

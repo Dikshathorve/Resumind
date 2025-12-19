@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { X, Mail, Lock } from 'lucide-react'
 import './SignIn.css'
+import { useAuth } from '../context/AuthContext'
 
-export default function SignIn({ onClose }) {
+export default function SignIn({ onClose, onSuccess, onShowSignUp }) {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -10,6 +11,7 @@ export default function SignIn({ onClose }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const { login } = useAuth()
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -57,9 +59,8 @@ export default function SignIn({ onClose }) {
       setSuccess('Logged in successfully!')
       console.log('User logged in:', data.user)
       
-      // Store user data in localStorage
-      localStorage.setItem('user', JSON.stringify(data.user))
-      localStorage.setItem('isAuthenticated', 'true')
+      // Use auth context to update login state
+      login(data.user)
 
       // Clear form
       setFormData({
@@ -67,11 +68,13 @@ export default function SignIn({ onClose }) {
         password: '',
       })
 
-      // Close modal after 2 seconds
+      // Close modal and call success callback after 1 second
       setTimeout(() => {
+        if (onSuccess) {
+          onSuccess()
+        }
         onClose()
-        // You can dispatch a login action here if using Redux/Context
-      }, 2000)
+      }, 1000)
     } catch (err) {
       setError('An error occurred. Please try again.')
       console.error('Signin error:', err)
@@ -137,7 +140,10 @@ export default function SignIn({ onClose }) {
           </form>
 
           <p className="signin-footer">
-            Don't have an account? <a href="#signup">Sign Up</a>
+            Don't have an account? <a href="#" onClick={(e) => {
+              e.preventDefault()
+              if (onShowSignUp) onShowSignUp()
+            }}>Sign Up</a>
           </p>
         </div>
       </div>

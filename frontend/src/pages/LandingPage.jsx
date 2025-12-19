@@ -11,12 +11,12 @@ export default function LandingPage({ onStart, onSignIn, onSignUp }) {
   return (
     <>
       <Header onSignIn={onSignIn} onSignUp={onSignUp} />
-      <HeroSection onStart={onStart} />
+      <HeroSection onStart={onStart} onSignUp={onSignUp} />
       <ResumePreview />
       <FeaturesSection />
       <HowItWorks />
       <FAQ />
-      <CTASection onStart={onStart} />
+      <CTASection onStart={onStart} onSignUp={onSignUp} />
       <Footer />
     </>
   )

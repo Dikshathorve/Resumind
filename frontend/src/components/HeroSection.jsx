@@ -1,7 +1,10 @@
 import './HeroSection.css'
 import { Users } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
 
-export default function HeroSection({ onStart }) {
+export default function HeroSection({ onStart, onSignUp }) {
+  const { isAuthenticated } = useAuth()
+
   return (
     <section className="hero" id="home">
       <div className="hero-badge">
@@ -19,7 +22,11 @@ export default function HeroSection({ onStart }) {
           Get matched with the right keywords, tone, and layout — in minutes.
         </p>
         <div className="hero-buttons">
-          <button className="primary-button" onClick={onStart}>Build my CV</button>
+          {isAuthenticated ? (
+            <button className="primary-button" onClick={onStart}>Build my CV</button>
+          ) : (
+            <button className="primary-button" onClick={onSignUp}>Build my CV</button>
+          )}
           <button className="secondary-button">Request demo</button>
         </div>
       </div>
