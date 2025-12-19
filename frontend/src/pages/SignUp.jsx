@@ -9,6 +9,9 @@ export default function SignUp({ onClose }) {
     password: '',
     confirmPassword: ''
   })
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -16,11 +19,78 @@ export default function SignUp({ onClose }) {
       ...prev,
       [name]: value
     }))
+    setError('')
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Signup:', formData)
+    setLoading(true)
+    setError('')
+    setSuccess('')
+
+    // Validation
+    if (!formData.fullName || !formData.email || !formData.password || !formData.confirmPassword) {
+      setError('Please fill in all fields')
+      setLoading(false)
+      return
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match')
+      setLoading(false)
+      return
+    }
+
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters')
+      setLoading(false)
+      return
+    }
+
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          fullName: formData.fullName,
+          email: formData.email,
+          password: formData.password,
+          confirmPassword: formData.confirmPassword
+        })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.message || 'Signup failed')
+        setLoading(false)
+        return
+      }
+
+      setSuccess('Account created successfully!')
+      console.log('User created:', data.user)
+      
+      // Clear form
+      setFormData({
+        fullName: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+      })
+
+      // Close modal after 2 seconds
+      setTimeout(() => {
+        onClose()
+      }, 2000)
+    } catch (err) {
+      setError('An error occurred. Please try again.')
+      console.error('Signup error:', err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -37,6 +107,9 @@ export default function SignUp({ onClose }) {
         <div className="signup-content">
           <h2 className="signup-title">Create Account</h2>
           <p className="signup-subtitle">Join Resumind to build your perfect resume</p>
+
+          {error && <div className="signup-error">{error}</div>}
+          {success && <div className="signup-success">{success}</div>}
 
           <form onSubmit={handleSubmit} className="signup-form">
             <div className="signup-form-group">
@@ -103,7 +176,9 @@ export default function SignUp({ onClose }) {
               </div>
             </div>
 
-            <button type="submit" className="signup-button">Create Account</button>
+            <button type="submit" className="signup-button" disabled={loading}>
+              {loading ? 'Creating Account...' : 'Create Account'}
+            </button>
           </form>
 
           <p className="signup-footer">

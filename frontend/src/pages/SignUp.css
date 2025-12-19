@@ -161,16 +161,22 @@
   transition: all 0.3s ease;
   margin-top: 8px;
   box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+  width: 100%;
 }
 
-.signup-button:hover {
+.signup-button:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 6px 25px rgba(99, 102, 241, 0.45);
   background: linear-gradient(135deg, #7c3aed, #a78bfa);
 }
 
-.signup-button:active {
+.signup-button:active:not(:disabled) {
   transform: translateY(0);
+}
+
+.signup-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .signup-footer {
@@ -200,6 +206,39 @@
 
   .signup-title {
     font-size: 28px;
+  }
+}
+
+.signup-error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  color: #fca5a5;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 16px;
+  animation: slideDown 0.3s ease-out;
+}
+
+.signup-success {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.5);
+  color: #86efac;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 16px;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

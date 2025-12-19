@@ -1,6 +1,49 @@
 import { User } from '../models/User.js'
 import { asyncHandler } from '../middleware/middleware.js'
 
+/**
+ * AUTHENTICATION SYSTEM DOCUMENTATION
+ * 
+ * Technology Stack:
+ * - Password Hashing: bcryptjs (automatic hashing on User model pre-save)
+ * - Session Management: express-session with MongoDB store
+ * - Session Cookie: secure, httpOnly, sameSite (strict in development)
+ * - CORS: Enabled with credentials for cookie sharing
+ * 
+ * Authentication Flow:
+ * 1. SIGNUP:
+ *    - User provides: fullName, email, password, confirmPassword
+ *    - Backend: Validates inputs, checks if email exists
+ *    - bcryptjs: Automatically hashes password in User model pre-save hook
+ *    - Database: Saves user with hashed password
+ *    - Session: Creates session with userId
+ *    - Returns: User object with userId and projectsId
+ * 
+ * 2. SIGNIN:
+ *    - User provides: email, password
+ *    - Database: Finds user by email
+ *    - bcryptjs: Compares provided password with hashed password
+ *    - Session: Creates session with userId
+ *    - Returns: User object with all data and projectsId
+ * 
+ * 3. SESSION VERIFICATION:
+ *    - Frontend: Can call /api/auth/verify to check if user is logged in
+ *    - Backend: Returns user data if session exists
+ * 
+ * 4. LOGOUT:
+ *    - Backend: Destroys session and clears cookie
+ *    - Frontend: Clears localStorage
+ * 
+ * Protected Routes:
+ * - Use isAuthenticated middleware on routes that require login
+ * - Example: router.get('/route', isAuthenticated, controller)
+ * 
+ * Session Storage:
+ * - MongoDB: Sessions are stored in 'sessions' collection
+ * - Auto cleanup: 24 hour touch interval (lazy session update)
+ * - Cookie: Expires in 7 days (SESSION_MAX_AGE)
+ */
+
 // @route   POST /api/auth/signup
 // @desc    Register a new user
 // @access  Public
@@ -48,8 +91,10 @@ export const signup = asyncHandler(async (req, res) => {
     message: 'User registered successfully',
     user: {
       id: user._id,
+      userId: user.userId,
       fullName: user.fullName,
       email: user.email,
+      projectsId: user.projectsId,
     },
   })
 })
@@ -100,8 +145,11 @@ export const signin = asyncHandler(async (req, res) => {
     message: 'Logged in successfully',
     user: {
       id: user._id,
+      userId: user.userId,
       fullName: user.fullName,
       email: user.email,
+      projectsId: user.projectsId,
+      subscription: user.subscription,
     },
   })
 })
@@ -149,9 +197,13 @@ export const verifySession = asyncHandler(async (req, res) => {
     success: true,
     user: {
       id: user._id,
+      userId: user.userId,
       fullName: user.fullName,
       email: user.email,
+      projectsId: user.projectsId,
       subscription: user.subscription,
+      profileImage: user.profileImage,
+      accentColor: user.preferences?.accentColor,
     },
   })
 })

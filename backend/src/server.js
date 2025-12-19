@@ -13,8 +13,10 @@ import analysisRoutes from './routes/analysisRoutes.js'
 
 const app = express()
 
-// Connect to database
-connectDB()
+// Connect to database (non-blocking - don't wait for connection)
+connectDB().catch(err => {
+  console.error('Database connection will be retried...')
+})
 
 // Middleware
 app.use(express.json({ limit: '50mb' }))
