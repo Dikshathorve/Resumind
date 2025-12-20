@@ -151,7 +151,7 @@ export default function ResumeTemplate1({ personal, summary, experiences, educat
             
             <div className="certifications-container-t1">
               {certifications.map((cert, idx) => (
-                <span key={idx} className="certification-item-t1">{cert}</span>
+                <span key={idx} className="certification-item-t1">{typeof cert === 'string' ? cert : cert.certName}</span>
               ))}
             </div>
           </div>

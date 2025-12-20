@@ -123,7 +123,7 @@ export default function ResumeTemplate2({ personal, summary, experiences, educat
             <h2 className="section-heading-t2">CERTIFICATIONS</h2>
             <ul className="certs-list-t2">
               {certifications.map((cert, idx) => (
-                <li key={idx} className="cert-item-t2">{cert}</li>
+                <li key={idx} className="cert-item-t2">{typeof cert === 'string' ? cert : cert.certName}</li>
               ))}
             </ul>
           </div>
