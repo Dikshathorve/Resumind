@@ -133,7 +133,7 @@ export default function ResumeTemplate3({ personal, summary, experiences, educat
                 <h3 className="section-title-t3">EXTRA</h3>
                 <ul className="certs-list-t3">
                   {certifications.map((cert, idx) => (
-                    <li key={idx}>{cert}</li>
+                    <li key={idx}>{typeof cert === 'string' ? cert : cert.certName}</li>
                   ))}
                 </ul>
               </section>

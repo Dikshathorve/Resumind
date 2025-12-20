@@ -21,12 +21,31 @@ connectDB().catch(err => {
 // Middleware
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ limit: '50mb', extended: true }))
-app.use(
-  cors({
-    origin: config.corsOrigin,
-    credentials: true, // Allow cookies
-  })
-)
+
+// CORS configuration - supports multiple origins
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests from localhost on any port in development
+    if (!origin || origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+      callback(null, true)
+    } else if (process.env.CORS_ORIGIN) {
+      // In production, check against CORS_ORIGIN env variable
+      const allowedOrigins = process.env.CORS_ORIGIN.split(',')
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS'))
+      }
+    } else {
+      callback(null, true) // Allow all in development
+    }
+  },
+  credentials: true, // Allow cookies
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}
+
+app.use(cors(corsOptions))
 
 // Session middleware
 app.use(sessionConfig)

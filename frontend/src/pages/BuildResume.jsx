@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Briefcase, FileText, Sparkles, Download, Mail, Phone, MapPin, FileText as FileDocument, Briefcase as WorkBriefcase, GraduationCap, Settings, Award, User, Briefcase as BriefcaseIcon, Globe, Linkedin, Save } from 'lucide-react'
+import html2pdf from 'html2pdf.js'
 import './BuildResume.css'
 import AISuggestions from '../components/AISuggestions'
 import HeaderWithUser from '../components/HeaderWithUser'
@@ -51,7 +52,6 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
   const [skillInput, setSkillInput] = useState('')
 
   const [certifications, setCertifications] = useState([])
-  const [certInput, setCertInput] = useState('')
 
   // Profile image state for Minimal Image template
   const [profileImage, setProfileImage] = useState(null)
@@ -120,21 +120,54 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
     }
   }, [resumeId])
 
-  // Print handler for download
-  const handleDownload = () => {
-    if (templateRef.current) {
-      // Add print class to hide non-essential elements
-      document.body.classList.add('print-mode')
-      
-      // Trigger print dialog after a brief delay to ensure styles are applied
-      setTimeout(() => {
-        window.print()
-      }, 300)
-      
-      // Remove print class after longer timeout to account for print dialog
-      setTimeout(() => {
-        document.body.classList.remove('print-mode')
-      }, 1000)
+  // Enhanced PDF download handler - captures exact visual representation
+  const handleDownload = async () => {
+    if (!templateRef.current) {
+      console.error('[Download] Template reference not found')
+      return
+    }
+
+    try {
+      const element = templateRef.current
+      const filename = `${personal.fullName || 'Resume'}_${new Date().toISOString().split('T')[0]}.pdf`
+
+      // Create a clone to avoid modifying the original
+      const clone = element.cloneNode(true)
+
+      // HTML2PDF options for exact visual preservation
+      const options = {
+        margin: 0, // No margins - preserve exact layout
+        filename: filename,
+        image: { type: 'jpeg', quality: 0.98 }, // High quality images
+        html2canvas: {
+          scale: 2, // Higher scale for better quality
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff',
+          logging: false,
+          windowHeight: element.scrollHeight,
+          windowWidth: element.scrollWidth
+        },
+        jsPDF: {
+          orientation: 'portrait',
+          unit: 'mm',
+          format: 'a4',
+          compress: true
+        },
+        pagebreak: {
+          mode: ['avoid-all', 'css', 'legacy'],
+          before: [],
+          after: []
+        }
+      }
+
+      // Generate PDF from the template
+      html2pdf().set(options).from(clone).save()
+
+      console.log('[Download] PDF generated successfully:', filename)
+    } catch (error) {
+      console.error('[Download] Error generating PDF:', error)
+      alert('Failed to download PDF. Please try again.')
     }
   }
 
@@ -814,19 +847,116 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
       case 7:
         return (
           <section className="panel">
-            <h3>Certifications</h3>
-            <input placeholder="Add a certification (press enter)" value={certInput} onChange={e => setCertInput(e.target.value)} onKeyDown={e => {
-              if(e.key === 'Enter' && certInput.trim()){
-                setCertifications(prev => [...prev, certInput.trim()])
-                setCertInput('')
-                e.preventDefault()
-              }
-            }} />
-            <div className="skills-list">
-              {certifications.map((c, i) => (
-                <span key={i} className="skill-badge">{c}</span>
-              ))}
+            <div className="section-header">
+              <div>
+                <h3>Certifications</h3>
+                <p className="section-subtitle">Add your certifications and credentials</p>
+              </div>
+              <button 
+                className="add-btn"
+                onClick={() => {
+                  const newCert = { certName: '', issuer: '', issueDate: '', expiryDate: '', credentialUrl: '' }
+                  setCertifications([...certifications, newCert])
+                }}
+              >
+                + Add Certification
+              </button>
             </div>
+            {certifications.length === 0 ? (
+              <div className="empty-state-message">
+                <Award size={48} className="empty-icon" />
+                <p className="empty-title">No certifications added yet.</p>
+                <p className="empty-desc">Click "Add Certification" to get started.</p>
+              </div>
+            ) : (
+              certifications.map((cert, idx) => (
+                <div className="exp-item" key={idx}>
+                  <div className="exp-header">
+                    <h4>Certification #{idx + 1}</h4>
+                    <button 
+                      className="delete-btn"
+                      onClick={() => {
+                        const copy = certifications.filter((_, i) => i !== idx)
+                        setCertifications(copy)
+                      }}
+                      title="Delete certification"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+
+                  <div className="exp-row-two-cols">
+                    <div className="form-group">
+                      <label>Certification Name</label>
+                      <input 
+                        type="text"
+                        placeholder="e.g., AWS Solutions Architect" 
+                        value={cert.certName || ''} 
+                        onChange={e => {
+                          const copy = [...certifications]
+                          copy[idx].certName = e.target.value
+                          setCertifications(copy)
+                        }} 
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Issuer</label>
+                      <input 
+                        type="text"
+                        placeholder="e.g., Amazon Web Services" 
+                        value={cert.issuer || ''} 
+                        onChange={e => {
+                          const copy = [...certifications]
+                          copy[idx].issuer = e.target.value
+                          setCertifications(copy)
+                        }} 
+                      />
+                    </div>
+                  </div>
+
+                  <div className="exp-row-two-cols">
+                    <div className="form-group">
+                      <label>Issue Date</label>
+                      <input 
+                        type="date"
+                        value={cert.issueDate || ''} 
+                        onChange={e => {
+                          const copy = [...certifications]
+                          copy[idx].issueDate = e.target.value
+                          setCertifications(copy)
+                        }} 
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Expiry Date</label>
+                      <input 
+                        type="date"
+                        value={cert.expiryDate || ''} 
+                        onChange={e => {
+                          const copy = [...certifications]
+                          copy[idx].expiryDate = e.target.value
+                          setCertifications(copy)
+                        }} 
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Credential URL</label>
+                    <input 
+                      type="url"
+                      placeholder="https://example.com/credential" 
+                      value={cert.credentialUrl || ''} 
+                      onChange={e => {
+                        const copy = [...certifications]
+                        copy[idx].credentialUrl = e.target.value
+                        setCertifications(copy)
+                      }} 
+                    />
+                  </div>
+                </div>
+              ))
+            )}
           </section>
         )
       default:
