@@ -33,7 +33,7 @@ export default function ResumeCard({ resume, onDelete, onDuplicate, onDownload, 
               className="resume-menu-item"
               onClick={(e) => {
                 e.stopPropagation()
-                onDownload?.(resume.id)
+                onDownload?.(resume._id)
                 setShowMenu(false)
               }}
             >
@@ -44,7 +44,7 @@ export default function ResumeCard({ resume, onDelete, onDuplicate, onDownload, 
               className="resume-menu-item"
               onClick={(e) => {
                 e.stopPropagation()
-                onDuplicate?.(resume.id)
+                onDuplicate?.(resume._id)
                 setShowMenu(false)
               }}
             >
@@ -55,7 +55,7 @@ export default function ResumeCard({ resume, onDelete, onDuplicate, onDownload, 
               className="resume-menu-item delete"
               onClick={(e) => {
                 e.stopPropagation()
-                onDelete?.(resume.id)
+                onDelete?.(resume._id)
                 setShowMenu(false)
               }}
             >

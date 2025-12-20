@@ -104,6 +104,36 @@ export default function ProjectsPage({ onStart, onClose, onEditResume }) {
     onEditResume?.(resumeId, resumeTitle)
   }
 
+  const handleDeleteResume = async (resumeId) => {
+    if (!window.confirm('Are you sure you want to delete this resume? This action cannot be undone.')) {
+      return
+    }
+
+    try {
+      const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+      const response = await fetch(`${apiBaseUrl}/api/resumes/${resumeId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete resume: ${response.status}`)
+      }
+
+      // Remove from UI immediately
+      setResumes(resumes.filter(resume => resume._id !== resumeId))
+      console.log('[Projects Page] Resume deleted successfully:', resumeId)
+    } catch (error) {
+      console.error('[Projects Page] Error deleting resume:', error)
+      setError(`Failed to delete resume: ${error.message}`)
+      // Refresh resumes on error to sync with server
+      setTimeout(() => fetchUserResumes(), 1000)
+    }
+  }
+
   const handleUpload = () => {
     // TODO: Implement upload functionality
   }
@@ -170,6 +200,7 @@ export default function ProjectsPage({ onStart, onClose, onEditResume }) {
                 key={resume._id} 
                 resume={resume}
                 onEdit={handleEditResume}
+                onDelete={handleDeleteResume}
               />
             ))
           )}

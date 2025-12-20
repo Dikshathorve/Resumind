@@ -74,6 +74,31 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
   // AI Assist modal state
   const [aiAssistOpen, setAiAssistOpen] = useState(false)
 
+  // User state
+  const [user, setUser] = useState(null)
+
+  // Load user data on mount
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+        const response = await fetch(`${apiBaseUrl}/api/user/profile`, {
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        if (response.ok) {
+          const data = await response.json()
+          setUser(data.user || {})
+        }
+      } catch (error) {
+        console.error('[BuildResume] Error fetching user:', error)
+      }
+    }
+    fetchUser()
+  }, [])
+
   // Load existing resume data if editing
   useEffect(() => {
     if (resumeId) {
@@ -1009,7 +1034,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
 
       <HeaderWithUser 
         onLogout={onClose} 
-        userName="User"
+        userName={user?.fullName || 'User'}
         navActions={
           <>
             <button 
