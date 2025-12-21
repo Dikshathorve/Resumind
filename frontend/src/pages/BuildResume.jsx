@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Briefcase, FileText, Sparkles, Download, Mail, Phone, MapPin, FileText as FileDocument, Briefcase as WorkBriefcase, GraduationCap, Settings, Award, User, Briefcase as BriefcaseIcon, Globe, Linkedin, Save } from 'lucide-react'
-import html2pdf from 'html2pdf.js'
+import html2pdf from 'html2pdf.js/dist/html2pdf.bundle.min'
 import './BuildResume.css'
 import AISuggestions from '../components/AISuggestions'
 import HeaderWithUser from '../components/HeaderWithUser'

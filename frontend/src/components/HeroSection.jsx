@@ -27,7 +27,6 @@ export default function HeroSection({ onStart, onSignUp }) {
           ) : (
             <button className="primary-button" onClick={onSignUp}>Build my CV</button>
           )}
-          <button className="secondary-button">Request demo</button>
         </div>
       </div>
     </section>
