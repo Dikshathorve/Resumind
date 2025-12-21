@@ -18,8 +18,9 @@ export const createResume = asyncHandler(async (req, res) => {
   }
 
   // Get the count of existing resumes for this user to determine resumeIndex
-  const existingResumes = await Resume.countDocuments({ userId })
-  const resumeIndex = existingResumes // Start from 0 for first resume
+  // Find the highest resumeIndex to avoid duplicates when resumes are deleted
+  const existingResume = await Resume.findOne({ userId }).sort({ resumeIndex: -1 })
+  const resumeIndex = existingResume ? existingResume.resumeIndex + 1 : 0
   
   // Generate resumeName and projectsId
   const resumeName = `resume-${userId}-${resumeIndex}`
