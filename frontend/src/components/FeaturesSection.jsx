@@ -1,5 +1,6 @@
 import './FeaturesSection.css'
 import { Lightbulb, Target, BarChart3, Zap, FileText, Sparkles } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 
 const features = [
   {
@@ -41,16 +42,49 @@ const features = [
 ]
 
 export default function FeaturesSection() {
+  const [visibleCards, setVisibleCards] = useState(new Set())
+  const gridRef = useRef(null)
+  const cardRefs = useRef({})
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setVisibleCards(prev => new Set([...prev, entry.target.dataset.id]))
+          }
+        })
+      },
+      { threshold: 0.1 }
+    )
+
+    features.forEach(feature => {
+      if (cardRefs.current[feature.id]) {
+        observer.observe(cardRefs.current[feature.id])
+      }
+    })
+
+    return () => observer.disconnect()
+  }, [])
+
   return (
     <section id="features" className="features">
       <div className="features-container">
         <h2>Why choose <span className="gradient-text">Resumind?</span></h2>
         <p className="features-subtitle">Everything you need to land your dream job</p>
-        <div className="features-grid">
-          {features.map(feature => {
+        <div className="features-grid" ref={gridRef}>
+          {features.map((feature, index) => {
             const IconComponent = feature.icon
             return (
-              <div key={feature.id} className="feature-card">
+              <div
+                key={feature.id}
+                ref={el => cardRefs.current[feature.id] = el}
+                data-id={feature.id}
+                className={`feature-card ${visibleCards.has(feature.id.toString()) ? 'visible' : ''} ${index % 2 === 0 ? 'slide-from-left' : 'slide-from-right'}`}
+                style={{
+                  '--animation-delay': `${index * 100}ms`
+                }}
+              >
                 <div className="feature-icon">
                   <IconComponent size={40} color="#6347eb" strokeWidth={1.5} />
                 </div>
