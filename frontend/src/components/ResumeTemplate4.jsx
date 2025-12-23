@@ -93,6 +93,22 @@ export default function ResumeTemplate4({ personal, summary, experiences, educat
           </section>
         )}
 
+        {/* Projects */}
+        {projects && projects.length > 0 && projects.some(p => p.name || p.description) && (
+          <section className="template4-section">
+            <h2 className="section-heading-t4">PROJECTS</h2>
+            {projects.map((proj, idx) => (
+              (proj.name || proj.description) && (
+                <div key={idx} className="proj-item-t4">
+                  <h3 className="proj-name-t4">{proj.name || 'Project'}</h3>
+                  {proj.type && <p className="proj-type-t4">{proj.type}</p>}
+                  {proj.description && <p className="proj-desc-t4">{proj.description}</p>}
+                </div>
+              )
+            ))}
+          </section>
+        )}
+
         {/* Skills */}
         {skills && skills.length > 0 && (
           <section className="template4-section">

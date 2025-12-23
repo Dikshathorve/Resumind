@@ -18,10 +18,21 @@ export default function SuggestionsList({
       updatedData.summary = suggestion.suggestedText
     } else if (suggestion.section === 'Skills') {
       updatedData.skills = suggestion.suggestedText.split(',').map(s => s.trim())
-    } else if (suggestion.section === 'Professional Experience') {
-      // Update first experience's description
-      if (updatedData.experiences && updatedData.experiences.length > 0) {
-        updatedData.experiences[0].description = suggestion.suggestedText
+    } else if (suggestion.section?.includes('Professional Experience')) {
+      // Extract experience index from section name like "Professional Experience (1)"
+      const match = suggestion.section.match(/\((\d+)\)/)
+      const expIndex = match ? parseInt(match[1]) - 1 : 0
+      
+      if (updatedData.experiences && updatedData.experiences.length > expIndex) {
+        updatedData.experiences[expIndex].desc = suggestion.suggestedText
+      }
+    } else if (suggestion.section?.includes('Project')) {
+      // Extract project index from section name like "Project (1)"
+      const match = suggestion.section.match(/\((\d+)\)/)
+      const projIndex = match ? parseInt(match[1]) - 1 : 0
+      
+      if (updatedData.projects && updatedData.projects.length > projIndex) {
+        updatedData.projects[projIndex].description = suggestion.suggestedText
       }
     }
 

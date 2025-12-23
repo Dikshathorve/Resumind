@@ -11,6 +11,31 @@ import ResumeTemplate4 from '../components/ResumeTemplate4'
 import AccentColorPicker from '../components/AccentColorPicker'
 import TemplateSelector from '../components/TemplateSelector'
 
+// Helper function to convert ISO date to yyyy-MM format for month input
+const convertToMonthFormat = (dateString) => {
+  if (!dateString) return ''
+  
+  // If it's already in yyyy-MM format, return it
+  if (/^\d{4}-\d{2}$/.test(dateString)) {
+    return dateString
+  }
+  
+  // If it's ISO format (2025-03-01T00:00:00.000Z), extract yyyy-MM
+  if (dateString.includes('T')) {
+    return dateString.substring(0, 7)
+  }
+  
+  return ''
+}
+
+// Helper function to convert yyyy-MM format to ISO format for storage
+const convertFromMonthFormat = (monthString) => {
+  if (!monthString) return ''
+  
+  // Convert yyyy-MM to ISO date format
+  return `${monthString}-01T00:00:00.000Z`
+}
+
 export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resumeId = null }) {
   // Step management for step-wise form
   const [currentStep, setCurrentStep] = useState(1)
@@ -503,7 +528,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
                       <input 
                         type="text"
                         placeholder="e.g., Google, Microsoft" 
-                        value={exp.company} 
+                        value={exp.company || ''} 
                         onChange={e => {
                           const copy = [...experiences]
                           copy[idx].company = e.target.value
@@ -516,7 +541,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
                       <input 
                         type="text"
                         placeholder="e.g., Senior Developer" 
-                        value={exp.role} 
+                        value={exp.role || ''} 
                         onChange={e => {
                           const copy = [...experiences]
                           copy[idx].role = e.target.value
@@ -531,10 +556,10 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
                       <label>Start Date</label>
                       <input 
                         type="month"
-                        value={exp.startDate || ''} 
+                        value={convertToMonthFormat(exp.startDate) || ''} 
                         onChange={e => {
                           const copy = [...experiences]
-                          copy[idx].startDate = e.target.value
+                          copy[idx].startDate = convertFromMonthFormat(e.target.value)
                           setExperiences(copy)
                         }} 
                       />
@@ -543,10 +568,10 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
                       <label>End Date</label>
                       <input 
                         type="month"
-                        value={exp.endDate || ''} 
+                        value={convertToMonthFormat(exp.endDate) || ''} 
                         onChange={e => {
                           const copy = [...experiences]
-                          copy[idx].endDate = e.target.value
+                          copy[idx].endDate = convertFromMonthFormat(e.target.value)
                           setExperiences(copy)
                         }} 
                       />
@@ -585,7 +610,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
                     <textarea 
                       placeholder="Describe your key responsibilities and achievements..." 
                       rows={4} 
-                      value={exp.desc} 
+                      value={exp.desc || ''} 
                       onChange={e => {
                         const copy = [...experiences]
                         copy[idx].desc = e.target.value
@@ -645,7 +670,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
                       <input 
                         type="text"
                         placeholder="e.g., University of California" 
-                        value={edu.institution} 
+                        value={edu.institution || ''} 
                         onChange={e => {
                           const copy = [...education]
                           copy[idx].institution = e.target.value
@@ -658,7 +683,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
                       <input 
                         type="text"
                         placeholder="e.g., Bachelor's, Master's" 
-                        value={edu.degree} 
+                        value={edu.degree || ''} 
                         onChange={e => {
                           const copy = [...education]
                           copy[idx].degree = e.target.value
@@ -673,7 +698,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
                     <input 
                       type="text"
                       placeholder="e.g., Computer Science" 
-                      value={edu.fieldOfStudy} 
+                      value={edu.fieldOfStudy || ''} 
                       onChange={e => {
                         const copy = [...education]
                         copy[idx].fieldOfStudy = e.target.value
@@ -687,10 +712,10 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
                       <label>Graduation Date</label>
                       <input 
                         type="month"
-                        value={edu.graduationDate || ''} 
+                        value={convertToMonthFormat(edu.graduationDate) || ''} 
                         onChange={e => {
                           const copy = [...education]
-                          copy[idx].graduationDate = e.target.value
+                          copy[idx].graduationDate = convertFromMonthFormat(e.target.value)
                           setEducation(copy)
                         }} 
                       />
@@ -700,7 +725,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
                       <input 
                         type="text"
                         placeholder="e.g., 3.8" 
-                        value={edu.gpa} 
+                        value={edu.gpa || ''} 
                         onChange={e => {
                           const copy = [...education]
                           copy[idx].gpa = e.target.value
@@ -761,7 +786,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
                       <input 
                         type="text"
                         placeholder="e.g., E-commerce Platform" 
-                        value={proj.name} 
+                        value={proj.name || ''} 
                         onChange={e => {
                           const copy = [...projects]
                           copy[idx].name = e.target.value
@@ -774,7 +799,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
                       <input 
                         type="text"
                         placeholder="e.g., Web App, Mobile App" 
-                        value={proj.type} 
+                        value={proj.type || ''} 
                         onChange={e => {
                           const copy = [...projects]
                           copy[idx].type = e.target.value
@@ -789,7 +814,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
                     <textarea 
                       placeholder="Describe your project..." 
                       rows={4} 
-                      value={proj.description} 
+                      value={proj.description || ''} 
                       onChange={e => {
                         const copy = [...projects]
                         copy[idx].description = e.target.value
@@ -1039,7 +1064,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
           <>
             <button 
               className="nav-item"
-              onClick={() => onJobMatcher({ personal, summary, experiences, education, skills, certifications })}
+              onClick={() => onJobMatcher({ personal, summary, experiences, education, projects, skills, certifications })}
             >
               <Briefcase size={20} className="nav-icon-svg" />
               <span className="nav-label">Job Matcher</span>

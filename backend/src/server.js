@@ -10,6 +10,9 @@ import authRoutes from './routes/authRoutes.js'
 import resumeRoutes from './routes/resumeRoutes.js'
 import userRoutes from './routes/userRoutes.js'
 import analysisRoutes from './routes/analysisRoutes.js'
+import aiSuggestionsRoutes from './routes/aiSuggestionsRoutes.js'
+import summaryAIRoutes from './routes/summaryAIRoutes.js'
+import experienceAIRoutes from './routes/experienceAIRoutes.js'
 
 const app = express()
 
@@ -60,6 +63,9 @@ app.use('/api/auth', authRoutes)
 app.use('/api/resumes', resumeRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/analysis', analysisRoutes)
+app.use('/api/ai', aiSuggestionsRoutes)
+app.use('/api/ai', summaryAIRoutes)
+app.use('/api/ai', experienceAIRoutes)
 
 // Health check
 app.get('/api/health', (req, res) => {
