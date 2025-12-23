@@ -12,7 +12,85 @@ export default function AISuggestions({ isOpen, fieldType, currentValue, onApply
   // Define generateSuggestions function FIRST
   const generateSuggestions = async () => {
     setLoading(true)
-    // Simulate API call delay
+    
+    // Check if this is a profession field that needs API call
+    if (fieldType === 'jobTitle' && currentValue && currentValue.trim()) {
+      try {
+        // Call backend API for profession recommendations
+        const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+        const response = await fetch(`${apiBaseUrl}/api/ai/suggest/profession`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ profession: currentValue.trim() })
+        })
+
+        if (!response.ok) {
+          throw new Error('Failed to get profession recommendations')
+        }
+
+        const data = await response.json()
+        
+        if (data.success && data.data?.recommendations) {
+          setSuggestions(data.data.recommendations)
+          setLoading(false)
+          return
+        }
+      } catch (error) {
+        console.error('Error fetching profession recommendations:', error)
+      }
+    }
+
+    // Check if this is professional summary field that needs API call
+    if (fieldType === 'description' && currentValue && currentValue.trim()) {
+      try {
+        const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+        
+        // Determine if this is professional summary or experience description
+        // Professional summary: no aiFieldIndex, Experience: has aiFieldIndex
+        // We'll try summary first, and if it fails, try experience
+        
+        let response = await fetch(`${apiBaseUrl}/api/ai/enhance/professional-summary`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ 
+            summary: currentValue.trim()
+          })
+        })
+
+        // If professional summary API fails, try experience API
+        if (!response.ok) {
+          response = await fetch(`${apiBaseUrl}/api/ai/enhance/experience`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+              description: currentValue.trim()
+            })
+          })
+        }
+
+        if (!response.ok) {
+          throw new Error('Failed to enhance description')
+        }
+
+        const data = await response.json()
+        
+        if (data.success && data.enhanced) {
+          setSuggestions([data.enhanced])
+          setLoading(false)
+          return
+        }
+      } catch (error) {
+        console.error('Error enhancing description:', error)
+      }
+    }
+    
+    // Fallback to local suggestions for other field types
     setTimeout(() => {
       const newSuggestions = getAISuggestions(fieldType, currentValue)
       setSuggestions(newSuggestions)
@@ -70,12 +148,13 @@ export default function AISuggestions({ isOpen, fieldType, currentValue, onApply
   }
 
   useEffect(() => {
-    if (currentValue && currentValue.trim()) {
+    // Only generate suggestions when the sidebar is opened, not on every keystroke
+    if (isOpen && currentValue && currentValue.trim()) {
       generateSuggestions()
     } else {
       setSuggestions([])
     }
-  }, [currentValue, fieldType])
+  }, [isOpen])
 
   // Position modal at top of builder-right section
   useEffect(() => {

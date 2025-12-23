@@ -21,9 +21,9 @@ export const config = {
   // JWT
   jwtSecret: process.env.JWT_SECRET || 'jwt-secret-key',
 
-  // AI Service
-  aiServiceUrl: process.env.AI_SERVICE_URL || 'http://localhost:8000',
-  aiApiKey: process.env.AI_API_KEY || '',
+  // OpenAI Configuration
+  openaiApiKey: process.env.OPENAI_API_KEY || '',
+  openaiModel: process.env.OPENAI_MODEL || 'gpt-4o-mini',
 
   // File Upload
   pdfMaxSize: parseInt(process.env.PDF_UPLOAD_MAX_SIZE) || 10485760, // 10MB

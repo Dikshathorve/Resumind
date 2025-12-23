@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { ChevronLeft } from 'lucide-react'
+import { ChevronLeft, Check } from 'lucide-react'
 import './JobMatcher.css'
 import HeaderWithUser from '../components/HeaderWithUser'
 import ResumeTemplate1 from '../components/ResumeTemplate1'
@@ -7,7 +7,7 @@ import ResumeSelector from '../components/ResumeSelector'
 import JDInput from '../components/JDInput'
 import SuggestionsList from '../components/SuggestionsList'
 
-export default function JobMatcher({ onClose, resumeData }) {
+export default function JobMatcher({ onClose, resumeData, resumeId = null }) {
   // Resume data state
   const [selectedResumeType, setSelectedResumeType] = useState('current')
   const [currentResumeData, setCurrentResumeData] = useState(resumeData || {
@@ -25,22 +25,142 @@ export default function JobMatcher({ onClose, resumeData }) {
   const [suggestions, setSuggestions] = useState([])
   const [loading, setLoading] = useState(false)
   const [accentColor] = useState('#3B82F6')
+  const [saveStatus, setSaveStatus] = useState(null)
   const templateRef = useRef(null)
 
-  // Handle JD submission
+  // Handle JD submission with AI analysis
   const handleJDSubmit = async (jobDescription) => {
     setJd(jobDescription)
     setLoading(true)
 
-    // Simulate API call to analyze resume against JD
-    setTimeout(() => {
-      const newSuggestions = generateSuggestions(currentResumeData, jobDescription)
-      setSuggestions(newSuggestions)
+    try {
+      const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+      
+      const response = await fetch(`${apiBaseUrl}/api/analysis/job-matcher`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          jobDescription,
+          summary: currentResumeData.summary || '',
+          experiences: currentResumeData.experiences || [],
+          skills: currentResumeData.skills || [],
+          projects: currentResumeData.projects || []
+        })
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        console.error('Job matcher API error:', error)
+        alert('Error analyzing job match. Please try again.')
+        setLoading(false)
+        return
+      }
+
+      const data = await response.json()
+      
+      // Convert AI analysis to suggestions format
+      const aiSuggestions = convertAIAnalysisToSuggestions(
+        data.analysis,
+        currentResumeData
+      )
+      
+      setSuggestions(aiSuggestions)
+    } catch (error) {
+      console.error('Job matcher error:', error)
+      alert('Failed to analyze job match: ' + error.message)
+    } finally {
       setLoading(false)
-    }, 1500)
+    }
   }
 
-  // Mock suggestion generation - would be replaced by actual API
+  // Convert AI analysis results to suggestions format for UI
+  const convertAIAnalysisToSuggestions = (analysis, resumeData) => {
+    const suggestions = []
+    let id = 1
+
+    // Summary suggestion
+    if (analysis.detailedAnalysis?.summary) {
+      const summaryAnalysis = analysis.detailedAnalysis.summary
+      suggestions.push({
+        id: id++,
+        section: 'Professional Summary',
+        score: summaryAnalysis.matchScore || 0,
+        originalText: resumeData.summary || 'No summary provided',
+        suggestedText: summaryAnalysis.suggestion || '',
+        improvement: summaryAnalysis.matchScore || 0,
+        applied: false,
+        details: {
+          keywords: summaryAnalysis.jdKeywords || [],
+          missingKeywords: summaryAnalysis.missingKeywords || [],
+          improvements: summaryAnalysis.keyImprovements || []
+        }
+      })
+    }
+
+    // Experiences suggestions
+    if (analysis.detailedAnalysis?.experiences?.experiences) {
+      analysis.detailedAnalysis.experiences.experiences.forEach((exp, idx) => {
+        suggestions.push({
+          id: id++,
+          section: `Professional Experience (${idx + 1})`,
+          score: exp.relevanceScore || 0,
+          originalText: exp.original || '',
+          suggestedText: exp.suggestion || '',
+          improvement: exp.relevanceScore || 0,
+          applied: false,
+          details: {
+            matchedSkills: exp.matchedSkills || [],
+            improvements: [exp.improvementNotes].filter(Boolean)
+          }
+        })
+      })
+    }
+
+    // Skills suggestion
+    if (analysis.detailedAnalysis?.skills) {
+      const skillsAnalysis = analysis.detailedAnalysis.skills
+      suggestions.push({
+        id: id++,
+        section: 'Skills',
+        score: skillsAnalysis.matchPercentage || 0,
+        originalText: (resumeData.skills || []).join(', ') || 'No skills provided',
+        suggestedText: (skillsAnalysis.recommendedOrder || []).slice(0, 10).join(', '),
+        improvement: skillsAnalysis.matchPercentage || 0,
+        applied: false,
+        details: {
+          matched: skillsAnalysis.matchedSkills || [],
+          missing: skillsAnalysis.missingButLearnable || [],
+          improvements: ['Reorder skills to prioritize JD-relevant ones first']
+        }
+      })
+    }
+
+    // Projects suggestions
+    if (analysis.detailedAnalysis?.projects?.projectAnalysis) {
+      analysis.detailedAnalysis.projects.projectAnalysis.forEach((proj, idx) => {
+        suggestions.push({
+          id: id++,
+          section: `Project (${idx + 1})`,
+          score: proj.relevanceScore || 0,
+          originalText: proj.original || '',
+          suggestedText: proj.suggestion || '',
+          improvement: proj.relevanceScore || 0,
+          applied: false,
+          details: {
+            matchedTech: proj.matchedTech || [],
+            improvements: [proj.relevantDemonstration].filter(Boolean)
+          }
+        })
+      })
+    }
+
+    return suggestions
+  }
+
+  // Mock suggestion generation - kept for backward compatibility
   const generateSuggestions = (resume, jobDescription) => {
     // This is a placeholder that generates mock suggestions
     // In real implementation, this would call backend API
@@ -73,12 +193,81 @@ export default function JobMatcher({ onClose, resumeData }) {
     return mockSuggestions
   }
 
-  // Apply a suggestion to the resume
-  const handleApplySuggestion = (suggestionId, updatedData) => {
+  // Apply a suggestion to the resume and save to database
+  const handleApplySuggestion = async (suggestionId, updatedData) => {
     setCurrentResumeData(updatedData)
     setSuggestions(suggestions.map(s => 
       s.id === suggestionId ? { ...s, applied: true } : s
     ))
+
+    // Auto-save changes to database
+    if (resumeId) {
+      try {
+        setSaveStatus('saving')
+        const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+        
+        // First, fetch the latest resume from DB to ensure we don't lose any fields
+        const getResponse = await fetch(`${apiBaseUrl}/api/resumes/${resumeId}`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+
+        if (!getResponse.ok) {
+          throw new Error('Failed to fetch latest resume data')
+        }
+
+        const latestData = await getResponse.json()
+        const latestResume = latestData.resume || {}
+
+        // Merge: keep all existing fields from DB, override with updated data
+        const mergedData = {
+          personal: updatedData.personal || latestResume.personal || {},
+          summary: updatedData.summary || latestResume.summary || '',
+          experiences: updatedData.experiences && updatedData.experiences.length > 0 
+            ? updatedData.experiences 
+            : (latestResume.experiences || []),
+          education: updatedData.education && updatedData.education.length > 0 
+            ? updatedData.education 
+            : (latestResume.education || []),
+          projects: updatedData.projects && updatedData.projects.length > 0 
+            ? updatedData.projects 
+            : (latestResume.projects || []),
+          skills: updatedData.skills && updatedData.skills.length > 0 
+            ? updatedData.skills 
+            : (latestResume.skills || []),
+          certifications: updatedData.certifications && updatedData.certifications.length > 0 
+            ? updatedData.certifications 
+            : (latestResume.certifications || []),
+          templateType: latestResume.templateType,
+          accentColor: latestResume.accentColor,
+          profileImage: latestResume.profileImage
+        }
+        
+        const response = await fetch(`${apiBaseUrl}/api/resumes/${resumeId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify(mergedData)
+        })
+
+        if (!response.ok) {
+          throw new Error(`Failed to save changes: ${response.status}`)
+        }
+
+        setSaveStatus('saved')
+        setTimeout(() => setSaveStatus(null), 2000)
+        console.log('✅ Changes saved to database')
+      } catch (error) {
+        console.error('Failed to save changes:', error)
+        setSaveStatus('error')
+        setTimeout(() => setSaveStatus(null), 3000)
+      }
+    }
   }
 
   return (
@@ -96,6 +285,13 @@ export default function JobMatcher({ onClose, resumeData }) {
             Back
           </button>
           <h1>Job Matcher</h1>
+          {saveStatus && (
+            <div className={`save-indicator ${saveStatus}`}>
+              {saveStatus === 'saving' && <span>💾 Saving...</span>}
+              {saveStatus === 'saved' && <span><Check size={16} /> Saved</span>}
+              {saveStatus === 'error' && <span>❌ Failed to save</span>}
+            </div>
+          )}
         </div>
 
         <div className="job-matcher-inner">
