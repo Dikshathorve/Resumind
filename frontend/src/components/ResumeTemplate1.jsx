@@ -131,6 +131,27 @@ export default function ResumeTemplate1({ personal, summary, experiences, educat
           </div>
         )}
 
+        {/* Projects */}
+        {projects && projects.length > 0 && projects.some(p => p.name || p.description) && (
+          <div className="resume-section-t1">
+            <h2 className="section-title-t1">PROJECTS</h2>
+            {projects.map((proj, idx) => (
+              (proj.name || proj.description) && (
+                <div key={idx} className="project-item-t1">
+                  <div className="project-header-t1">
+                    <div className="project-title-block-t1">
+                      <h3 className="project-name-t1">{proj.name || 'Project Name'}</h3>
+                      {proj.type && <p className="project-type-t1">{proj.type}</p>}
+                    </div>
+                  </div>
+                  
+                  {proj.description && <p className="project-desc-t1">{proj.description}</p>}
+                </div>
+              )
+            ))}
+          </div>
+        )}
+
         {/* Skills */}
         {skills && skills.length > 0 && (
           <div className="resume-section-t1">

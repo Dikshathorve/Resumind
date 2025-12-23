@@ -29,6 +29,58 @@
   font-weight: 700;
   color: #ffffff;
   margin: 0;
+  flex: 1;
+}
+
+/* Save Status Indicator */
+.save-indicator {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: fadeIn 0.2s ease;
+}
+
+.save-indicator.saving {
+  background: #3b82f6;
+  color: #ffffff;
+}
+
+.save-indicator.saved {
+  background: #10b981;
+  color: #ffffff;
+  animation: fadeOut 2s ease-out;
+}
+
+.save-indicator.error {
+  background: #ef4444;
+  color: #ffffff;
+  animation: fadeOut 3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeOut {
+  0%, 70% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(10px);
+  }
 }
 
 .back-button {
@@ -70,6 +122,7 @@
   background: #151d2b;
   border-right: 1px solid #2d3748;
   overflow-y: auto;
+  max-height: 100%;
   padding: 25px 50px;
   display: flex;
   flex-direction: column;

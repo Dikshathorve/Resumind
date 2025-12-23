@@ -147,6 +147,7 @@ function App() {
           <JobMatcher 
             onClose={() => setCurrentPage('builder')} 
             resumeData={resumeData}
+            resumeId={currentResumeId}
           />
         )}
         {currentPage === 'build-ats' && (
