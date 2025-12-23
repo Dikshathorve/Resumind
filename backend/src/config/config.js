@@ -33,7 +33,7 @@ export const config = {
 
   // AI Service
   aiServiceUrl: process.env.AI_SERVICE_URL || 'http://localhost:8000',
-  aiApiKey: process.env.AI_API_KEY || ''
+  aiApiKey: process.env.AI_API_KEY || '',
 
   // File Upload
   pdfMaxSize: parseInt(process.env.PDF_UPLOAD_MAX_SIZE) || 10485760, // 10MB
