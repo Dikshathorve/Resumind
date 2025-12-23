@@ -349,7 +349,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
             <div className="form-group">
               <label>
                 <User size={18} />
-                Full Name <span className="required">*</span>
+                User <span className="required">*</span>
               </label>
               <input placeholder="Enter your full name" value={personal.fullName} onChange={e => setPersonal({...personal, fullName: e.target.value})} />
             </div>
@@ -357,7 +357,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
             <div className="form-group">
               <label>
                 <BriefcaseIcon size={18} />
-                Profession <span className="required">*</span>
+                Briefcase <span className="required">*</span>
               </label>
               <div className="input-with-ai">
                 <input placeholder="Enter your profession" value={personal.jobTitle} onChange={e => {
@@ -374,7 +374,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
                   }}
                   title="Get AI suggestions"
                 >
-                  ✨
+                  <Sparkles size={36} />
                 </button>
               </div>
             </div>
@@ -382,7 +382,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
             <div className="form-group">
               <label>
                 <Mail size={18} />
-                Email Address <span className="required">*</span>
+                Mail <span className="required">*</span>
               </label>
               <input placeholder="Enter your email address" type="email" value={personal.email} onChange={e => setPersonal({...personal, email: e.target.value})} />
             </div>
@@ -390,7 +390,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
             <div className="form-group">
               <label>
                 <Phone size={18} />
-                Phone Number
+                Phone
               </label>
               <input placeholder="Enter your phone number" value={personal.phone} onChange={e => setPersonal({...personal, phone: e.target.value})} />
             </div>
@@ -398,7 +398,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
             <div className="form-group">
               <label>
                 <MapPin size={18} />
-                Location
+                Map Pin
               </label>
               <input placeholder="Enter your location" value={personal.location} onChange={e => setPersonal({...personal, location: e.target.value})} />
             </div>
@@ -406,7 +406,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
             <div className="form-group">
               <label>
                 <Linkedin size={18} />
-                LinkedIn URL
+                Linkedin
               </label>
               <input placeholder="Enter your LinkedIn profile URL" value={personal.linkedin} onChange={e => setPersonal({...personal, linkedin: e.target.value})} />
             </div>
@@ -414,7 +414,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
             <div className="form-group">
               <label>
                 <Globe size={18} />
-                Website
+                Globe
               </label>
               <input placeholder="Enter your website URL" value={personal.website} onChange={e => setPersonal({...personal, website: e.target.value})} />
             </div>
@@ -470,7 +470,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
                 }}
                 title="Get AI suggestions"
               >
-                ✨ AI Enhance
+                <Sparkles size={16} /> AI Enhance
               </button>
             </div>
             <textarea placeholder="Write a compelling professional summary that highlights your key strengths and career objectives..." rows={10} value={summary} onChange={e => {
@@ -604,7 +604,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
                           setAiSidebarOpen(true)
                         }}
                       >
-                        ✨ Enhance with AI
+                        <Sparkles size={16} /> Enhance with AI
                       </button>
                     </div>
                     <textarea 
