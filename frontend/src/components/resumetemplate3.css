@@ -112,7 +112,11 @@
 .project-desc-t3 { color:#374151; margin-top:6px }
 
 .certs-list-t3 { list-style:none; padding:0; margin:0 }
-.certs-list-t3 li { margin:6px 0; color:#374151 }
+.certs-list-t3 li { margin:12px 0; padding-bottom: 8px; color:#374151 }
+.certs-list-t3 li strong { display: block; margin-bottom: 4px; font-weight: 700 }
+.cert-issuer-t3 { font-size: 13px; margin: 0 0 4px 0 }
+.cert-dates-t3 { display: flex; gap: 16px; flex-wrap: wrap }
+.cert-date-t3 { font-size: 12px; margin: 0 }
 
 /* Rounded left edge to match image small border radius */
 .template3-sidebar { border-top-left-radius:6px; border-bottom-left-radius:6px }

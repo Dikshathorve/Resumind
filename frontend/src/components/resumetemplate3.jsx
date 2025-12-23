@@ -62,6 +62,8 @@ export default function ResumeTemplate3({ personal, summary, experiences, educat
                         <div className="edu-details">
                           <h5 className="edu-title-sidebar">{edu.institution || ''}</h5>
                           <p className="edu-school-sidebar">{edu.degree || ''}</p>
+                          {edu.fieldOfStudy && <p className="edu-field-sidebar">{edu.fieldOfStudy}</p>}
+                          {edu.gpa && <p className="edu-gpa-sidebar">GPA: {edu.gpa}</p>}
                         </div>
                       </div>
                     )
@@ -121,6 +123,7 @@ export default function ResumeTemplate3({ personal, summary, experiences, educat
                   (proj.name || proj.title) && (
                     <div key={idx} className="project-item-t3">
                       <h4 className="project-title-t3">{proj.name || proj.title}</h4>
+                      {proj.type && <p className="project-type-t3">{proj.type}</p>}
                       {proj.description && <p className="project-desc-t3">{proj.description}</p>}
                     </div>
                   )
@@ -133,7 +136,24 @@ export default function ResumeTemplate3({ personal, summary, experiences, educat
                 <h3 className="section-title-t3">EXTRA</h3>
                 <ul className="certs-list-t3">
                   {certifications.map((cert, idx) => (
-                    <li key={idx}>{typeof cert === 'string' ? cert : cert.certName}</li>
+                    cert.certName && (
+                      <li key={idx}>
+                        <strong>{typeof cert === 'string' ? cert : cert.certName}</strong>
+                        {cert.issuer && <p className="cert-issuer-t3">{cert.issuer}</p>}
+                        <div className="cert-dates-t3">
+                          {cert.issueDate && (
+                            <span className="cert-date-t3">
+                              Issue: {new Date(cert.issueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                            </span>
+                          )}
+                          {cert.expiryDate && (
+                            <span className="cert-date-t3">
+                              Expires: {new Date(cert.expiryDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                            </span>
+                          )}
+                        </div>
+                      </li>
+                    )
                   ))}
                 </ul>
               </section>
