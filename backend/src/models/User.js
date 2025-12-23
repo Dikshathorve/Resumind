@@ -36,7 +36,10 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, 'Please provide a password'],
+      required: function() {
+        // Password is required only if email is already verified
+        return this.isEmailVerified || false
+      },
       minlength: [6, 'Password must be at least 6 characters'],
       select: false, // don't return password by default
     },
@@ -76,6 +79,16 @@ const userSchema = new mongoose.Schema(
     isEmailVerified: {
       type: Boolean,
       default: false,
+    },
+    otp: {
+      type: String,
+      default: null,
+      select: false,
+    },
+    otpExpiry: {
+      type: Date,
+      default: null,
+      select: false,
     },
     emailVerificationToken: {
       type: String,
@@ -155,6 +168,8 @@ userSchema.methods.comparePassword = async function (enteredPassword) {
 userSchema.methods.toJSON = function () {
   const user = this.toObject()
   delete user.password
+  delete user.otp
+  delete user.otpExpiry
   delete user.emailVerificationToken
   delete user.passwordResetToken
   delete user.passwordResetExpiry

@@ -21,6 +21,16 @@ export const config = {
   // JWT
   jwtSecret: process.env.JWT_SECRET || 'jwt-secret-key',
 
+  // EmailJS Configuration
+  emailJsServiceId: process.env.EMAILJS_SERVICE_ID || '',
+  emailJsPublicKey: process.env.EMAILJS_PUBLIC_KEY || '',
+  emailJsPrivateKey: process.env.EMAILJS_PRIVATE_KEY || '',
+  emailJsTemplateId: process.env.EMAILJS_TEMPLATE_ID || 'template_otp_verification',
+
+  // OpenAI Configuration
+  openaiApiKey: process.env.OPENAI_API_KEY || '',
+  openaiModel: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+
   // AI Service
   aiServiceUrl: process.env.AI_SERVICE_URL || 'http://localhost:8000',
   aiApiKey: process.env.AI_API_KEY || '',

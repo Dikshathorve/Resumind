@@ -1,51 +1,13 @@
 import { AnalysisResult } from '../models/AnalysisResult.js'
 import { asyncHandler } from '../middleware/middleware.js'
-
-// Mock Job Matcher Analysis
-const performJobMatcherAnalysis = async (resume, jobDescription) => {
-  // In production, this would call your AI service
-  const suggestions = [
-    {
-      id: 1,
-      section: 'Professional Summary',
-      originalText: resume.summary || 'No summary provided',
-      suggestedText:
-        'Experienced professional with proven track record in delivering high-impact solutions aligned with your job requirements.',
-      improvement: 23,
-      applied: false,
-    },
-    {
-      id: 2,
-      section: 'Skills',
-      originalText: resume.skills?.join(', ') || 'No skills provided',
-      suggestedText: 'JavaScript, React, Node.js, SQL, Cloud Computing, Team Leadership',
-      improvement: 18,
-      applied: false,
-    },
-    {
-      id: 3,
-      section: 'Professional Experience',
-      originalText: 'Current work experience',
-      suggestedText: 'Enhanced description emphasizing relevant achievements and metrics',
-      improvement: 31,
-      applied: false,
-    },
-  ]
-
-  return {
-    suggestions,
-    overallScore: 72,
-    matchedCount: 8,
-    totalKeywords: 15,
-  }
-}
+import { performComprehensiveJobMatching } from '../services/aiJobMatcherService.js'
 
 // @route   POST /api/analysis/job-matcher
-// @desc    Analyze resume against job description
+// @desc    Analyze resume against job description using AI
 // @access  Private
 export const analyzeJobMatcher = asyncHandler(async (req, res) => {
   const userId = req.session.userId
-  const { resumeId, jobDescription } = req.body
+  const { resumeId, jobDescription, summary, experiences, skills, projects } = req.body
 
   if (!jobDescription || jobDescription.trim().length === 0) {
     return res.status(400).json({
@@ -54,31 +16,83 @@ export const analyzeJobMatcher = asyncHandler(async (req, res) => {
     })
   }
 
-  // Mock resume data (in production, fetch from database)
-  const mockResumeData = {
-    summary: 'Experienced full-stack developer',
-    skills: ['JavaScript', 'React', 'Node.js'],
+  // Validate that at least some resume data is provided
+  if (!summary && (!experiences || experiences.length === 0) && (!skills || skills.length === 0) && (!projects || projects.length === 0)) {
+    return res.status(400).json({
+      success: false,
+      message: 'At least some resume content (summary, experiences, skills, or projects) is required',
+    })
   }
 
-  // Perform analysis
-  const analysisResults = await performJobMatcherAnalysis(mockResumeData, jobDescription)
+  try {
+    console.log('🎯 Starting job matcher analysis for user:', userId)
+    
+    // Perform comprehensive job matching using AI
+    const analysisResults = await performComprehensiveJobMatching(
+      {
+        summary: summary || '',
+        experiences: experiences || [],
+        skills: skills || [],
+        projects: projects || []
+      },
+      jobDescription
+    )
 
-  // Save to database
-  const analysis = await AnalysisResult.create({
-    userId,
-    resumeId: resumeId || null,
-    type: 'job-matcher',
-    jobDescription,
-    score: analysisResults.overallScore,
-    suggestions: analysisResults.suggestions,
-    results: analysisResults,
-  })
+    if (!analysisResults.success) {
+      return res.status(400).json({
+        success: false,
+        message: analysisResults.message,
+      })
+    }
 
-  res.status(200).json({
-    success: true,
-    message: 'Job matching analysis completed',
-    analysis,
-  })
+    // Save analysis to database
+    const analysis = await AnalysisResult.create({
+      userId,
+      resumeId: resumeId || null,
+      type: 'job-matcher',
+      jobDescription,
+      score: analysisResults.overallMatchScore,
+      suggestions: analysisResults.analyses, // Store detailed analysis
+      results: {
+        overallMatchScore: analysisResults.overallMatchScore,
+        totalTokens: analysisResults.totalTokens,
+        estimatedCost: analysisResults.estimatedCost,
+        matchingInsights: analysisResults.matchingInsights,
+      },
+    })
+
+    console.log('✅ Job matching analysis completed successfully')
+    console.log('   Match Score:', analysisResults.overallMatchScore)
+    console.log('   Cost:', analysisResults.estimatedCost)
+
+    res.status(200).json({
+      success: true,
+      message: 'Job matching analysis completed successfully',
+      analysis: {
+        _id: analysis._id,
+        overallMatchScore: analysisResults.overallMatchScore,
+        matchingInsights: analysisResults.matchingInsights,
+        detailedAnalysis: {
+          summary: analysisResults.analyses.summary?.analysis || null,
+          experiences: analysisResults.analyses.experiences?.analysis || null,
+          skills: analysisResults.analyses.skills?.analysis || null,
+          projects: analysisResults.analyses.projects?.analysis || null,
+        },
+        tokenUsage: {
+          total: analysisResults.totalTokens,
+          estimatedCost: analysisResults.estimatedCost,
+        },
+        createdAt: analysis.createdAt,
+      },
+    })
+  } catch (error) {
+    console.error('❌ Job matcher analysis error:', error.message)
+    res.status(500).json({
+      success: false,
+      message: 'Failed to complete job matching analysis',
+      error: error.message,
+    })
+  }
 })
 
 // Mock ATS Analysis

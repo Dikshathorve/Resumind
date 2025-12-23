@@ -1,6 +1,7 @@
 import { User } from '../models/User.js'
 import { Projects } from '../models/Projects.js'
 import { asyncHandler } from '../middleware/middleware.js'
+import { generateOTP, getOTPExpiry, isOTPExpired } from '../utils/emailService.js'
 
 /**
  * AUTHENTICATION SYSTEM DOCUMENTATION
@@ -66,21 +67,31 @@ export const signup = asyncHandler(async (req, res) => {
     })
   }
 
-  // Check if user already exists
-  const existingUser = await User.findOne({ email })
-  if (existingUser) {
+  // Check if user already exists and is verified
+  let user = await User.findOne({ email })
+  
+  if (user && user.isEmailVerified) {
     return res.status(409).json({
       success: false,
       message: 'Email already registered',
     })
   }
 
-  // Create new user
-  const user = await User.create({
-    fullName,
-    email,
-    password,
-  })
+  // If user exists but not verified, update the user (from OTP flow)
+  if (user) {
+    user.fullName = fullName
+    user.password = password
+    user.isEmailVerified = true
+    await user.save()
+  } else {
+    // Create new user if doesn't exist
+    user = await User.create({
+      fullName,
+      email,
+      password,
+      isEmailVerified: true, // Mark as verified since OTP has been verified
+    })
+  }
 
   // Initialize Projects document with empty projects array and count 0
   const projects = await Projects.create({
@@ -217,9 +228,204 @@ export const verifySession = asyncHandler(async (req, res) => {
   })
 })
 
+// @route   POST /api/auth/send-otp
+// @desc    Send OTP to user's email for verification
+// @access  Public
+// NOTE: EmailJS sending is now handled on the frontend
+export const sendOTP = asyncHandler(async (req, res) => {
+  const { email, fullName } = req.body
+
+  // Validation
+  if (!email || !fullName) {
+    return res.status(400).json({
+      success: false,
+      message: 'Email and fullName are required',
+    })
+  }
+
+  // Generate OTP and expiry time
+  const otp = generateOTP()
+  const otpExpiry = getOTPExpiry()
+
+  try {
+    // Find user by email and update OTP
+    let user = await User.findOne({ email })
+    
+    if (!user) {
+      // If user doesn't exist, create a temporary user record with OTP
+      user = new User({
+        email,
+        fullName,
+        otp,
+        otpExpiry,
+      })
+      await user.save()
+    } else {
+      // Update existing user with new OTP
+      user.otp = otp
+      user.otpExpiry = otpExpiry
+      await user.save()
+    }
+
+    // NOTE: Email sending is now handled on the frontend with EmailJS
+    // Backend only generates, stores, and validates OTP
+
+    res.status(200).json({
+      success: true,
+      message: 'OTP generated successfully. Email will be sent from the browser.',
+      email: email,
+      otp: otp, // Include OTP in response for frontend to send via EmailJS
+      expiresIn: '15 minutes',
+    })
+  } catch (error) {
+    console.error('Error generating OTP:', error)
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Failed to generate OTP',
+    })
+  }
+})
+
+// @route   POST /api/auth/verify-otp
+// @desc    Verify OTP sent to user's email
+// @access  Public
+export const verifyOTP = asyncHandler(async (req, res) => {
+  const { email, otp } = req.body
+
+  // Validation
+  if (!email || !otp) {
+    return res.status(400).json({
+      success: false,
+      message: 'Email and OTP are required',
+    })
+  }
+
+  try {
+    // Find user by email
+    const user = await User.findOne({ email }).select('+otp +otpExpiry')
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      })
+    }
+
+    // Check if OTP exists
+    if (!user.otp) {
+      return res.status(400).json({
+        success: false,
+        message: 'No OTP found. Please request a new OTP.',
+      })
+    }
+
+    // Check if OTP has expired
+    if (isOTPExpired(user.otpExpiry)) {
+      user.otp = null
+      user.otpExpiry = null
+      await user.save()
+      
+      return res.status(400).json({
+        success: false,
+        message: 'OTP has expired. Please request a new OTP.',
+      })
+    }
+
+    // Verify OTP
+    if (user.otp !== otp) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid OTP. Please try again.',
+      })
+    }
+
+    // OTP verified successfully - only clear OTP, don't mark email as verified yet
+    // isEmailVerified will be set during signup endpoint
+    user.otp = null
+    user.otpExpiry = null
+    await user.save()
+
+    res.status(200).json({
+      success: true,
+      message: 'OTP verified successfully. Please complete signup.',
+      otpVerified: true,
+    })
+  } catch (error) {
+    console.error('Error verifying OTP:', error)
+    res.status(500).json({
+      success: false,
+      message: 'Failed to verify OTP',
+    })
+  }
+})
+
+// @route   POST /api/auth/resend-otp
+// @desc    Resend OTP to user's email
+// @access  Public
+// NOTE: EmailJS sending is now handled on the frontend
+export const resendOTP = asyncHandler(async (req, res) => {
+  const { email, fullName } = req.body
+
+  // Validation
+  if (!email || !fullName) {
+    return res.status(400).json({
+      success: false,
+      message: 'Email and fullName are required',
+    })
+  }
+
+  try {
+    // Find user by email
+    const user = await User.findOne({ email })
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      })
+    }
+
+    // Check if user already verified
+    if (user.isEmailVerified) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is already verified',
+      })
+    }
+
+    // Generate new OTP
+    const otp = generateOTP()
+    const otpExpiry = getOTPExpiry()
+
+    user.otp = otp
+    user.otpExpiry = otpExpiry
+    await user.save()
+
+    // NOTE: Email sending is now handled on the frontend with EmailJS
+    // Backend only generates, stores, and validates OTP
+
+    res.status(200).json({
+      success: true,
+      message: 'OTP regenerated successfully. Email will be sent from the browser.',
+      email: email,
+      otp: otp, // Include OTP in response for frontend to send via EmailJS
+      expiresIn: '15 minutes',
+    })
+  } catch (error) {
+    console.error('Error resending OTP:', error)
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Failed to resend OTP',
+    })
+  }
+})
+
 export default {
   signup,
   signin,
   logout,
   verifySession,
+  sendOTP,
+  verifyOTP,
+  resendOTP,
 }

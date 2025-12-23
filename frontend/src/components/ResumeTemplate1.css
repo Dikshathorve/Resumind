@@ -203,6 +203,54 @@
   font-weight: 500;
 }
 
+/* ========== PROJECTS ========== */
+.project-item-t1 {
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  padding-left: 12px;
+  border-left: 3px solid var(--primary-color);
+  border-bottom: none;
+}
+
+.project-item-t1:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.project-header-t1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.project-title-block-t1 {
+  flex: 1;
+}
+
+.project-name-t1 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0 0 2px 0;
+}
+
+.project-type-t1 {
+  font-size: 13px;
+  color: var(--text-dark);
+  margin: 0;
+  font-weight: 600;
+}
+
+.project-desc-t1 {
+  font-size: 14px;
+  color: var(--text-dark);
+  line-height: 1.65;
+  margin: 0;
+}
+
 /* ========== SKILLS ========== */
 .skills-container-t1 {
   display: flex;

@@ -159,6 +159,37 @@
   margin: 0;
 }
 
+/* Projects */
+.proj-item-t4 {
+  margin-bottom: 14px;
+}
+
+.proj-item-t4:not(:last-child) {
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.proj-name-t4 {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+}
+
+.proj-type-t4 {
+  font-size: 11px;
+  color: var(--primary-color);
+  font-weight: 600;
+  margin: 0 0 4px 0;
+}
+
+.proj-desc-t4 {
+  font-size: 11px;
+  color: #4b5563;
+  margin: 0;
+  line-height: 1.5;
+}
+
 /* Skills */
 .skills-list-t4 {
   display: flex;
