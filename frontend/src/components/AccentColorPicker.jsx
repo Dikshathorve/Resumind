@@ -2,21 +2,12 @@ import { useRef, useEffect, useState } from 'react'
 import './AccentColorPicker.css'
 
 const ACCENT_COLORS = [
-  { name: 'Blue', value: '#3B82F6' },
-  { name: 'Indigo', value: '#6366F1' },
-  { name: 'Purple', value: '#A855F7' },
-  { name: 'Green', value: '#10B981' },
-  { name: 'Red', value: '#EF4444' },
-  { name: 'Orange', value: '#F97316' },
-  { name: 'Teal', value: '#14B8A6' },
-  { name: 'Pink', value: '#EC4899' },
-  { name: 'Gray', value: '#6B7280' },
+  { name: 'Navy Blue', value: '#1E3A8A' },
+  { name: 'Light Blue', value: '#3B82F6' },
   { name: 'Black', value: '#1F2937' },
-  { name: 'Cyan', value: '#06B6D4' },
-  { name: 'Lime', value: '#84CC16' },
-  { name: 'Rose', value: '#F43F5E' },
-  { name: 'Amber', value: '#FBBF24' },
-  { name: 'Navy', value: '#1E3A8A' }
+  { name: 'Orange', value: '#F97316' },
+  { name: 'Gray', value: '#6B7280' },
+  { name: 'Dark Green', value: '#065F46' }
 ]
 
 export default function AccentColorPicker({ isOpen, selectedColor, onColorSelect, onClose, buttonRef }) {
