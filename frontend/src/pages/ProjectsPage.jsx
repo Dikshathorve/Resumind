@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import './ProjectsPage.css'
-import { Plus, Upload } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import ResumeCard from '../components/ResumeCard'
 import HeaderWithUser from '../components/HeaderWithUser'
 import CreateResumeModal from '../components/CreateResumeModal'
@@ -134,10 +134,6 @@ export default function ProjectsPage({ onStart, onClose, onEditResume }) {
     }
   }
 
-  const handleUpload = () => {
-    // TODO: Implement upload functionality
-  }
-
   const handleLogout = () => {
     logout()
     onClose()
@@ -164,14 +160,6 @@ export default function ProjectsPage({ onStart, onClose, onEditResume }) {
             </div>
             <h3>Create Resume</h3>
             <p>Start fresh with our AI-powered builder</p>
-          </div>
-
-          <div className="action-card upload-card" onClick={handleUpload}>
-            <div className="projects-card-icon upload-icon">
-              <Upload size={40} />
-            </div>
-            <h3>Upload Existing</h3>
-            <p>Upload your existing resume and enhance it</p>
           </div>
         </div>
 

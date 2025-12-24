@@ -1,12 +1,61 @@
 import './ATSAnalyzerResults.css'
-import { CheckCircle, AlertCircle, TrendingUp, Zap } from 'lucide-react'
+import { CheckCircle, AlertCircle, TrendingUp, Zap, Download } from 'lucide-react'
 
 export default function ATSAnalyzerResults({ results, fileName, onNewAnalysis }) {
   const getScoreColor = (score) => {
-    if (score >= 80) return 'excellent'
-    if (score >= 60) return 'good'
-    if (score >= 40) return 'fair'
+    // Scores are out of 30
+    const percentage = (score / 30) * 100
+    if (percentage >= 80) return 'excellent'
+    if (percentage >= 60) return 'good'
+    if (percentage >= 40) return 'fair'
     return 'poor'
+  }
+
+  const downloadReport = () => {
+    const scorePercentage = ((results.atsScore / 30) * 100).toFixed(1)
+    const reportContent = `
+ATS COMPATIBILITY ANALYSIS REPORT
+=====================================
+Generated: ${new Date().toLocaleString()}
+
+RESUME: ${fileName || 'Uploaded Resume'}
+
+OVERALL ATS SCORE
+=====================================
+Score: ${results.atsScore}/30 (${scorePercentage}%)
+Overall Fit: ${results.overallFit || 'N/A'}
+
+QUICK SUMMARY
+=====================================
+Matched Keywords: ${results.matchedKeywords.length}
+${results.matchedKeywords.map(k => `  • ${k}`).join('\n')}
+
+Missing Keywords: ${results.missingKeywords.length}
+${results.missingKeywords.map(k => `  • ${k}`).join('\n')}
+
+SECTION ANALYSIS
+=====================================
+${Object.entries(results.sections).map(([sectionName, sectionData]) => `
+${sectionName.toUpperCase()}
+Score: ${sectionData.score}/30 (${((sectionData.score / 30) * 100).toFixed(1)}%)
+${sectionData.issues.length > 0 ? `Issues:\n${sectionData.issues.map(i => `  - ${i}`).join('\n')}` : 'No issues found'}
+`).join('\n')}
+
+IMPROVEMENT RECOMMENDATIONS
+=====================================
+${results.recommendations.map((rec, idx) => `${idx + 1}. ${rec}`).join('\n\n')}
+
+=====================================
+For more details, visit your resume builder.
+    `.trim()
+
+    const element = document.createElement('a')
+    const file = new Blob([reportContent], { type: 'text/plain' })
+    element.href = URL.createObjectURL(file)
+    element.download = `ATS_Report_${fileName ? fileName.replace(/\.[^.]+$/, '') : 'resume'}_${new Date().getTime()}.txt`
+    document.body.appendChild(element)
+    element.click()
+    document.body.removeChild(element)
   }
 
   const ScoreCircle = ({ score, label }) => (
@@ -92,7 +141,7 @@ export default function ATSAnalyzerResults({ results, fileName, onNewAnalysis })
                 <div className="ats-score-bar">
                   <div
                     className={`ats-score-fill ${getScoreColor(sectionData.score)}`}
-                    style={{ width: `${sectionData.score}%` }}
+                    style={{ width: `${(sectionData.score / 30) * 100}%` }}
                   ></div>
                 </div>
                 {sectionData.issues.length > 0 ? (
@@ -144,12 +193,8 @@ export default function ATSAnalyzerResults({ results, fileName, onNewAnalysis })
             </svg>
             Analyze Another Resume
           </button>
-          <button className="ats-action-btn ats-primary">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
+          <button className="ats-action-btn ats-primary" onClick={downloadReport}>
+            <Download size={20} />
             Download Report
           </button>
         </div>
