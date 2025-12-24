@@ -5,7 +5,7 @@ import LandingPage from './pages/LandingPage'
 import BuildResume from './pages/BuildResume'
 import ProjectsPage from './pages/ProjectsPage'
 import BuildATSAnalyzer from './pages/BuildATSAnalyzer'
-import ATSAnalyzer from './pages/ATSAnalyzer'
+import ATSAnalyzerMain from './pages/ATSAnalyzerMain'
 import JobMatcher from './pages/JobMatcher'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
@@ -50,7 +50,7 @@ function App() {
   const handleCreateNewResume = async (resumeTitle = 'My Resume') => {
     setIsCreatingResume(true)
     setIsEditingResume(false)
-    const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+    const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
     
     try {
       const resumePayload = {
@@ -75,7 +75,7 @@ function App() {
         }
       }
       
-      const response = await fetch(`${apiBaseUrl}/api/resumes`, {
+      const response = await fetch(`${apiBaseUrl}/resumes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -157,7 +157,7 @@ function App() {
           />
         )}
         {currentPage === 'ats-analyzer' && (
-          <ATSAnalyzer onClose={() => setCurrentPage('projects')} resumeData={resumeData} />
+          <ATSAnalyzerMain onClose={() => setCurrentPage('builder')} resumeData={resumeData} />
         )}
       </div>
 

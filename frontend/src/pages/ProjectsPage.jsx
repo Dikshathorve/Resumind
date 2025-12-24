@@ -27,7 +27,7 @@ export default function ProjectsPage({ onStart, onClose, onEditResume }) {
     try {
       // Step 1: Fetch user's Projects document to get resume IDs
       const projectsResponse = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/user/projects`,
+        `${import.meta.env.VITE_API_URL}/user/projects`,
         {
           method: 'GET',
           credentials: 'include',
@@ -55,7 +55,7 @@ export default function ProjectsPage({ onStart, onClose, onEditResume }) {
       const resumeIds = projectsData.projects.map(p => p._id || p)
 
       const batchResponse = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/resumes/batch/fetch`,
+        `${import.meta.env.VITE_API_URL}/resumes/batch/fetch`,
         {
           method: 'POST',
           credentials: 'include',
@@ -110,8 +110,8 @@ export default function ProjectsPage({ onStart, onClose, onEditResume }) {
     }
 
     try {
-      const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
-      const response = await fetch(`${apiBaseUrl}/api/resumes/${resumeId}`, {
+      const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+      const response = await fetch(`${apiBaseUrl}/resumes/${resumeId}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {

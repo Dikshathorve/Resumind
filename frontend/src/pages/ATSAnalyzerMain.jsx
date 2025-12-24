@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react'
 import ATSAnalyzerHeader from '../components/ATSAnalyzerHeader'
 import ATSAnalyzerUpload from '../components/ATSAnalyzerUpload'
 import ATSAnalyzerResults from '../components/ATSAnalyzerResults'
+import { analyzeResumeATS, analyzeBuiltResumeATS } from '../services/atsService'
 
 export default function ATSAnalyzerMain({ onClose, resumeData }) {
   const [uploadedFile, setUploadedFile] = useState(null)
@@ -34,29 +35,48 @@ export default function ATSAnalyzerMain({ onClose, resumeData }) {
     setLoading(true)
     setAnalyzeBuiltResume(true)
     
-    // Simulate API call - replace with actual API later
-    setTimeout(() => {
-      const mockResults = {
-        atsScore: 82,
-        overallFit: 'Excellent',
-        matchedKeywords: ['project management', 'agile', 'leadership', 'communication', 'strategic planning'],
-        missingKeywords: ['machine learning', 'cloud architecture'],
+    try {
+      const results = await analyzeBuiltResumeATS(resumeData, jobDescription)
+      
+      const transformedResults = {
+        atsScore: results.overall_score,
+        overallFit: results.overall_fit,
+        matchedKeywords: results.matched_keywords || [],
+        missingKeywords: results.missing_keywords || [],
         sections: {
-          skills: { score: 88, issues: [] },
-          experience: { score: 80, issues: ['Could add more quantifiable metrics'] },
-          education: { score: 85, issues: [] },
-          format: { score: 84, issues: [] }
+          keyword_match: { 
+            score: results.category_scores.keyword_match,
+            issues: []
+          },
+          experience_relevance: { 
+            score: results.category_scores.experience_relevance,
+            issues: []
+          },
+          skills_alignment: { 
+            score: results.category_scores.skills_alignment,
+            issues: []
+          },
+          formatting: { 
+            score: results.category_scores.formatting,
+            issues: results.format_issues || []
+          },
+          impact: { 
+            score: results.category_scores.impact,
+            issues: []
+          }
         },
-        recommendations: [
-          'Resume is well-structured and ATS-friendly',
-          'All key skills are highlighted appropriately',
-          'Consider adding specific metrics to experience section',
-          'Format maintains good consistency'
-        ]
+        format_issues: results.format_issues || [],
+        improvement_suggestions: results.improvement_suggestions || [],
+        strengths: results.strengths || [],
+        recommendations: results.improvement_suggestions || []
       }
-      setAnalysisResults(mockResults)
+      
+      setAnalysisResults(transformedResults)
       setLoading(false)
-    }, 2000)
+    } catch (error) {
+      alert('Failed to analyze resume. Please try again. Check console for details.')
+      setLoading(false)
+    }
   }
 
   const handleAnalyze = async () => {
@@ -67,30 +87,55 @@ export default function ATSAnalyzerMain({ onClose, resumeData }) {
 
     setLoading(true)
     
-    // Simulate API call - replace with actual API later
-    setTimeout(() => {
-      const mockResults = {
-        atsScore: 78,
-        overallFit: 'Good',
-        matchedKeywords: ['project management', 'agile', 'leadership', 'communication'],
-        missingKeywords: ['machine learning', 'cloud architecture', 'devops'],
-        sections: {
-          skills: { score: 85, issues: ['Missing technical certifications'] },
-          experience: { score: 72, issues: ['Could emphasize quantifiable achievements more'] },
-          education: { score: 88, issues: [] },
-          format: { score: 76, issues: ['Consider adding more white space between sections'] }
-        },
-        recommendations: [
-          'Add more action verbs to describe your accomplishments',
-          'Include specific metrics and numbers to showcase impact',
-          'Use industry-standard keywords from the job description',
-          'Ensure consistent formatting and spacing',
-          'Organize information in reverse chronological order'
-        ]
+    try {
+      const reader = new FileReader()
+      reader.onload = async (e) => {
+        const fileContent = e.target.result
+        
+        const results = await analyzeResumeATS(fileContent, jobDescription)
+        
+        const transformedResults = {
+          atsScore: results.overall_score,
+          overallFit: results.overall_fit,
+          matchedKeywords: results.matched_keywords || [],
+          missingKeywords: results.missing_keywords || [],
+          sections: {
+            keyword_match: { 
+              score: results.category_scores.keyword_match,
+              issues: []
+            },
+            experience_relevance: { 
+              score: results.category_scores.experience_relevance,
+              issues: []
+            },
+            skills_alignment: { 
+              score: results.category_scores.skills_alignment,
+              issues: []
+            },
+            formatting: { 
+              score: results.category_scores.formatting,
+              issues: results.format_issues || []
+            },
+            impact: { 
+              score: results.category_scores.impact,
+              issues: []
+            }
+          },
+          format_issues: results.format_issues || [],
+          improvement_suggestions: results.improvement_suggestions || [],
+          strengths: results.strengths || [],
+          recommendations: results.improvement_suggestions || []
+        }
+        
+        setAnalysisResults(transformedResults)
+        setLoading(false)
       }
-      setAnalysisResults(mockResults)
+      
+      reader.readAsText(uploadedFile)
+    } catch (error) {
+      alert('Failed to analyze resume. Please try again. Check console for details.')
       setLoading(false)
-    }, 2000)
+    }
   }
 
   const handleNewAnalysis = () => {
@@ -99,7 +144,7 @@ export default function ATSAnalyzerMain({ onClose, resumeData }) {
     setJobDescription('')
     setAnalyzeBuiltResume(false)
   }
-
+  
   return (
     <div className="ats-analyzer-main-page">
       <div className="ats-analyzer-nav">

@@ -1,6 +1,6 @@
 .ats-analyzer-upload-section {
   flex: 1;
-  padding: 3rem 2.5rem;
+  padding: 2rem 2.5rem;
   display: flex;
   align-items: stretch;
   justify-content: center;
@@ -17,15 +17,16 @@
 .ats-upload-partition {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  height: 100%;
+  gap: 2.5rem;
+  align-items: center;
+  min-height: auto;
 }
 
 .ats-partition-lhs {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  min-height: 100%;
+  min-height: auto;
 }
 
 .ats-partition-rhs {
@@ -44,7 +45,6 @@
 .ats-partition-lhs .ats-upload-box {
   display: flex;
   flex-direction: column;
-  height: 100%;
 }
 
 .ats-partition-rhs .ats-upload-box:first-child {
@@ -52,7 +52,6 @@
 }
 
 .ats-partition-rhs .ats-upload-box:last-of-type {
-  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
 }
@@ -63,12 +62,12 @@
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  padding: 2.5rem;
+  padding: 2rem 1.5rem;
   border: 2px dashed rgba(255, 255, 255, 0.15);
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
-  min-height: 250px;
+  min-height: 200px;
   background: rgba(99, 102, 241, 0.05);
   position: relative;
 }
@@ -145,7 +144,8 @@
 .ats-job-description-input {
   width: 100%;
   flex: 1;
-  min-height: 300px;
+  min-height: 200px;
+  max-height: 350px;
   padding: 1rem;
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
@@ -153,7 +153,7 @@
   color: #fff;
   font-family: inherit;
   font-size: 0.9rem;
-  resize: none;
+  resize: vertical;
   transition: all 0.3s ease;
 }
 
@@ -190,41 +190,7 @@
   justify-content: flex-start;
 }
 
-.ats-analyze-btn-lhs {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 2.5rem;
-  width: 100%;
-  justify-content: center;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.ats-analyze-btn-lhs:hover:not(.disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
-}
-
-.ats-analyze-btn-lhs:active:not(.disabled) {
-  transform: translateY(0);
-}
-
-.ats-analyze-btn-lhs.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.ats-analyze-btn-lhs.loading {
-  opacity: 0.8;
-}
-
+.ats-analyze-btn-lhs,
 .ats-analyze-btn {
   display: flex;
   align-items: center;
@@ -240,20 +206,29 @@
   transition: all 0.3s ease;
 }
 
+.ats-analyze-btn-lhs {
+  width: 100%;
+  justify-content: center;
+}
+
+.ats-analyze-btn-lhs:hover:not(.disabled),
 .ats-analyze-btn:hover:not(.disabled) {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
 }
 
+.ats-analyze-btn-lhs:active:not(.disabled),
 .ats-analyze-btn:active:not(.disabled) {
   transform: translateY(0);
 }
 
+.ats-analyze-btn-lhs.disabled,
 .ats-analyze-btn.disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
+.ats-analyze-btn-lhs.loading,
 .ats-analyze-btn.loading {
   opacity: 0.8;
 }
@@ -275,9 +250,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 1;
-  min-height: 600px;
-  padding: 2.5rem;
+  min-height: 200px;
+  padding: 2rem 1.5rem;
   border: 2px dashed rgba(255, 255, 255, 0.15);
   border-radius: 12px;
   background: rgba(99, 102, 241, 0.05);
@@ -303,7 +277,6 @@
 .ats-jd-box {
   display: flex;
   flex-direction: column;
-  flex: 1;
 }
 
 @media (max-width: 768px) {
