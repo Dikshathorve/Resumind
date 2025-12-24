@@ -11,7 +11,7 @@ const TEMPLATES = [
   {
     id: 'template2',
     name: 'Modern',
-    description: 'Sleek design with strategic use of color and modern font choices'
+    description: 'Professional black and white resume with clean formatting and bulleted points'
   },
   {
     id: 'template3',
@@ -20,8 +20,8 @@ const TEMPLATES = [
   },
   {
     id: 'template4',
-    name: 'Minimal',
-    description: 'Ultra-clean design that puts your content front and center'
+    name: 'Professional',
+    description: 'Professional multi-section layout with comprehensive formatting'
   }
 ]
 

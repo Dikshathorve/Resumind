@@ -6,7 +6,6 @@ const resumeSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
-      index: true,
     },
     projectsId: {
       type: String,
@@ -127,8 +126,6 @@ const resumeSchema = new mongoose.Schema(
 
 // Index for better query performance
 resumeSchema.index({ userId: 1, createdAt: -1 })
-resumeSchema.index({ projectsId: 1 })
-resumeSchema.index({ resumeName: 1 })
 
 export const Resume = mongoose.model('Resume', resumeSchema)
 export default Resume

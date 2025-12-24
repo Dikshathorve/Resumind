@@ -125,6 +125,9 @@ export default function ResumeTemplate1({ personal, summary, experiences, educat
                   {edu.fieldOfStudy && (
                     <p className="education-field-t1">{edu.fieldOfStudy}</p>
                   )}
+                  {edu.gpa && (
+                    <p className="education-gpa-t1">GPA: {edu.gpa}</p>
+                  )}
                 </div>
               )
             ))}
@@ -140,7 +143,7 @@ export default function ResumeTemplate1({ personal, summary, experiences, educat
                 <div key={idx} className="project-item-t1">
                   <div className="project-header-t1">
                     <div className="project-title-block-t1">
-                      <h3 className="project-name-t1">{proj.name || 'Project Name'}</h3>
+                      <h3 className="project-name-t1">{proj.name || ''}</h3>
                       {proj.type && <p className="project-type-t1">{proj.type}</p>}
                     </div>
                   </div>
@@ -156,12 +159,11 @@ export default function ResumeTemplate1({ personal, summary, experiences, educat
         {skills && skills.length > 0 && (
           <div className="resume-section-t1">
             <h2 className="section-title-t1">SKILLS</h2>
-            
-            <div className="skills-container-t1">
-              {skills.map((skill, idx) => (
-                <span key={idx} className="skill-item-t1">{skill}</span>
-              ))}
-            </div>
+            <ul className="skills-container-t1">
+              {skills && skills.length > 0 && (
+                <li className="skill-item-t1">{skills.join(', ')}</li>
+              )}
+            </ul>
           </div>
         )}
 
@@ -172,7 +174,24 @@ export default function ResumeTemplate1({ personal, summary, experiences, educat
             
             <div className="certifications-container-t1">
               {certifications.map((cert, idx) => (
-                <span key={idx} className="certification-item-t1">{typeof cert === 'string' ? cert : cert.certName}</span>
+                cert.certName && (
+                  <div key={idx} className="certification-item-t1">
+                    <h4 className="cert-name-t1">{typeof cert === 'string' ? cert : cert.certName}</h4>
+                    {cert.issuer && <p className="cert-issuer-t1">{cert.issuer}</p>}
+                    <div className="cert-dates-t1">
+                      {cert.issueDate && (
+                        <span className="cert-date-t1">
+                          Issue: {new Date(cert.issueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                        </span>
+                      )}
+                      {cert.expiryDate && (
+                        <span className="cert-date-t1">
+                          Expires: {new Date(cert.expiryDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )
               ))}
             </div>
           </div>

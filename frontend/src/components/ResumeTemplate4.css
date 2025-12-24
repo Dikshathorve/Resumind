@@ -192,25 +192,55 @@
 
 /* Skills */
 .skills-list-t4 {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  padding-left: 20px;
 }
 
-.skill-tag-t4 {
-  display: inline-block;
-  background: rgba(var(--primary-color), 0.08);
+.skill-item-t4 {
+  font-size: 14px;
   color: #1f2937;
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-size: 10px;
-  font-weight: 600;
-  border: 1px solid rgba(var(--primary-color), 0.2);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
+  margin-bottom: 4px;
+  line-height: 1.5;
+  word-wrap: break-word;
+  white-space: normal;
 }
 
 /* Certifications */
+.certs-list-t4 {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cert-item-t4 {
+  margin-bottom: 12px;
+  padding: 0;
+}
+
+.cert-item-t4 strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.cert-issuer-t4 {
+  font-size: 13px;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+}
+
+.cert-dates-t4 {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cert-date-t4 {
+  font-size: 12px;
+  color: #1f2937;
+  margin: 0;
+}
 .certs-list-t4 {
   list-style: none;
   padding: 0;
