@@ -34,9 +34,9 @@ export default function JobMatcher({ onClose, resumeData, resumeId = null }) {
     setLoading(true)
 
     try {
-      const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+      const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
       
-      const response = await fetch(`${apiBaseUrl}/api/analysis/job-matcher`, {
+      const response = await fetch(`${apiBaseUrl}/analysis/job-matcher`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -204,10 +204,10 @@ export default function JobMatcher({ onClose, resumeData, resumeId = null }) {
     if (resumeId) {
       try {
         setSaveStatus('saving')
-        const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+        const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
         
         // First, fetch the latest resume from DB to ensure we don't lose any fields
-        const getResponse = await fetch(`${apiBaseUrl}/api/resumes/${resumeId}`, {
+        const getResponse = await fetch(`${apiBaseUrl}/resumes/${resumeId}`, {
           method: 'GET',
           credentials: 'include',
           headers: {
@@ -246,7 +246,7 @@ export default function JobMatcher({ onClose, resumeData, resumeId = null }) {
           profileImage: latestResume.profileImage
         }
         
-        const response = await fetch(`${apiBaseUrl}/api/resumes/${resumeId}`, {
+        const response = await fetch(`${apiBaseUrl}/resumes/${resumeId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'

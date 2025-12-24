@@ -94,16 +94,7 @@ export default function ATSAnalyzerUpload({
 
           {/* Right Partition - 2 Step Process */}
           <div className="ats-partition-rhs">
-            <div style={{ marginBottom: '1rem' }}>
-              <h3 style={{ fontSize: '0.95rem', color: '#cbd5e1', marginBottom: '0.5rem' }}>
-                {hasBuiltResume ? 'Job Description (Required)' : 'Step 1: Upload Resume'}
-              </h3>
-              {hasBuiltResume && (
-                <p style={{ fontSize: '0.85rem', color: '#94a3b8', margin: '0.5rem 0 1rem 0' }}>
-                  Enter the job description to analyze your built resume
-                </p>
-              )}
-            </div>
+             
 
             {!hasBuiltResume && (
               <div className="ats-upload-box">

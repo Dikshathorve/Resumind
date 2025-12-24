@@ -128,21 +128,30 @@ export const enhanceExperienceDescription = async (experienceText) => {
     console.log('💼 Enhancing experience description...');
     console.log('   Input length:', experienceText.length, 'characters');
 
-    // System prompt focused on experience enhancement
-    const systemPrompt = `You are an expert resume writer specializing in professional experience sections. Enhance the job description to be:
-- Action-oriented with strong action verbs
-- Quantifiable with metrics and results where possible
-- ATS-friendly with relevant keywords
-- Concise (1-2 sentences per bullet point)
-- Impact-focused on achievements, not just duties
+    // System prompt with diverse action verb guidance
+    const systemPrompt = `You are an expert resume writer specializing in compelling professional experience descriptions.
 
-Return JSON with "enhanced" (improved description) and "improvements" (array of key improvements made).`;
+When enhancing, use VARIED action verbs and opening structures to avoid repetition:
+- Leadership: "Spearheaded", "Orchestrated", "Architected", "Championed"
+- Technical: "Engineered", "Developed", "Built", "Implemented", "Designed"
+- Collaboration: "Partnered with", "Collaborated with", "Led cross-functional teams"
+- Results: "Delivered", "Launched", "Executed", "Accelerated"
+- Optimization: "Streamlined", "Refined", "Enhanced", "Improved", "Optimized"
 
-    // User prompt - simple, no hardcoded values
-    const userPrompt = `Enhance this professional experience description:
+Requirements:
+- Vary action verbs across bullet points (never repeat the same verb in adjacent bullets)
+- Include quantifiable metrics and business impact
+- Natural ATS keywords (don't force corporate jargon)
+- 1-2 sentences per bullet point
+- Show progression and measurable outcomes
+
+Return JSON: {"enhanced":"improved description","improvements":["imp1","imp2","imp3"],"action_verbs_used":["verb1","verb2"]}`;
+
+    // User prompt with explicit diversity requirement
+    const userPrompt = `Enhance this professional experience description with VARIED action verbs and language:
 "${experienceText.trim()}"
 
-Make it more impactful with action verbs, metrics, and achievements.`;
+IMPORTANT: Use diverse opening verbs. Don't use "Developed" or "Spearheaded" multiple times. Make it compelling and metrics-driven.`;
 
     const response = await client.chat.completions.create({
       model: process.env.PROFESSION_MODEL || 'gpt-4o-mini',
@@ -156,9 +165,9 @@ Make it more impactful with action verbs, metrics, and achievements.`;
           content: userPrompt
         }
       ],
-      temperature: 0.7,
+      temperature: 0.8, // Higher for more creative action verb variation
       response_format: { type: 'json_object' },
-      max_tokens: 350
+      max_tokens: 400
     });
 
     const responseText = response.choices[0]?.message?.content?.trim();

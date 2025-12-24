@@ -13,6 +13,7 @@ import analysisRoutes from './routes/analysisRoutes.js'
 import aiSuggestionsRoutes from './routes/aiSuggestionsRoutes.js'
 import summaryAIRoutes from './routes/summaryAIRoutes.js'
 import experienceAIRoutes from './routes/experienceAIRoutes.js'
+import atsRoutes from './routes/atsRoutes.js'
 
 const app = express()
 
@@ -66,6 +67,7 @@ app.use('/api/analysis', analysisRoutes)
 app.use('/api/ai', aiSuggestionsRoutes)
 app.use('/api/ai', summaryAIRoutes)
 app.use('/api/ai', experienceAIRoutes)
+app.use('/api/ats', atsRoutes)
 
 // Health check
 app.get('/api/health', (req, res) => {

@@ -17,8 +17,8 @@ export default function AISuggestions({ isOpen, fieldType, currentValue, onApply
     if (fieldType === 'jobTitle' && currentValue && currentValue.trim()) {
       try {
         // Call backend API for profession recommendations
-        const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
-        const response = await fetch(`${apiBaseUrl}/api/ai/suggest/profession`, {
+        const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+        const response = await fetch(`${apiBaseUrl}/ai/suggest/profession`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -45,13 +45,13 @@ export default function AISuggestions({ isOpen, fieldType, currentValue, onApply
     // Check if this is professional summary field that needs API call
     if (fieldType === 'description' && currentValue && currentValue.trim()) {
       try {
-        const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+        const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
         
         // Determine if this is professional summary or experience description
         // Professional summary: no aiFieldIndex, Experience: has aiFieldIndex
         // We'll try summary first, and if it fails, try experience
         
-        let response = await fetch(`${apiBaseUrl}/api/ai/enhance/professional-summary`, {
+        let response = await fetch(`${apiBaseUrl}/ai/enhance/professional-summary`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -63,7 +63,7 @@ export default function AISuggestions({ isOpen, fieldType, currentValue, onApply
 
         // If professional summary API fails, try experience API
         if (!response.ok) {
-          response = await fetch(`${apiBaseUrl}/api/ai/enhance/experience`, {
+          response = await fetch(`${apiBaseUrl}/ai/enhance/experience`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'

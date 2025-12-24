@@ -106,8 +106,8 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
-        const response = await fetch(`${apiBaseUrl}/api/user/profile`, {
+        const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+        const response = await fetch(`${apiBaseUrl}/user/profile`, {
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json'
@@ -129,9 +129,9 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
     if (resumeId) {
       const loadResumeData = async () => {
         try {
-          const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+          const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
           
-          const response = await fetch(`${apiBaseUrl}/api/resumes/${resumeId}`, {
+          const response = await fetch(`${apiBaseUrl}/resumes/${resumeId}`, {
             method: 'GET',
             credentials: 'include',
             headers: {
@@ -234,7 +234,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
     setSaveMessage(null)
 
     try {
-      const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+      const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
       
       const resumeData = {
         personal,
@@ -249,7 +249,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
         profileImage: selectedTemplate === 'template3' ? profileImage : null
       }
 
-      const response = await fetch(`${apiBaseUrl}/api/resumes/${resumeId}`, {
+      const response = await fetch(`${apiBaseUrl}/resumes/${resumeId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'

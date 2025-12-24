@@ -22,20 +22,32 @@ export const enhanceProfessionalSummary = async (summaryText) => {
     console.log('✍️ Enhancing professional summary...');
     console.log('   Input length:', summaryText.length, 'characters');
 
-    // System prompt with persona guidance
-    const systemPrompt = `You are an expert resume writer. Enhance the professional summary to be:
-- Impactful and compelling
-- ATS-friendly with relevant keywords
+    // System prompt with diversity guidance
+    const systemPrompt = `You are an expert resume writer specializing in diverse, unique professional summaries. 
+
+When enhancing, AVOID repetitive opening phrases like "Results-driven". Instead, use varied sentence starters:
+- "Passionate about..." 
+- "Experienced in..."
+- "Skilled at crafting..."
+- "Known for designing..."
+- "Expert in building..."
+- Role-based: "Full-stack developer specializing in..."
+- Impact-based: "Dedicated to creating..."
+
+Enhance for:
+- Unique voice and personality (avoid generic corporate speak)
+- ATS-friendly keywords naturally woven in
 - 2-3 sentences maximum
-- Focused on value and achievements
+- Achievement-focused without overused phrases
+- Industry-specific language
 
-Return JSON: {"enhanced":"improved summary","improvements":["improvement1","improvement2","improvement3"]}`;
+Return JSON: {"enhanced":"improved summary","improvements":["improvement1","improvement2","improvement3"],"opening_style":"the opening approach used"}`;
 
-    // User prompt - simple, no hardcoded values
-    const userPrompt = `Enhance this professional summary:
+    // User prompt with explicit diversity guidance
+    const userPrompt = `Enhance this professional summary with a UNIQUE and VARIED opening (avoid "Results-driven" and other common phrases):
 "${summaryText.trim()}"
 
-Make it stronger and more professional.`;
+Make it distinctive, professional, and show personality while staying ATS-optimized.`;
 
     const response = await client.chat.completions.create({
       model: process.env.PROFESSION_MODEL || 'gpt-4o-mini',
@@ -49,9 +61,9 @@ Make it stronger and more professional.`;
           content: userPrompt
         }
       ],
-      temperature: 0.7,
+      temperature: 0.8, // Slightly higher for more creative variation in opening phrases
       response_format: { type: 'json_object' },
-      max_tokens: 300 // Tight limit for efficiency
+      max_tokens: 350
     });
 
     const responseText = response.choices[0]?.message?.content?.trim();
