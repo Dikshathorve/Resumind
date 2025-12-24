@@ -4,10 +4,9 @@ import html2pdf from 'html2pdf.js/dist/html2pdf.bundle.min'
 import './BuildResume.css'
 import AISuggestions from '../components/AISuggestions'
 import HeaderWithUser from '../components/HeaderWithUser'
+import ResumeTemplate_Minimal from '../components/ResumeTemplate_Minimal'
 import ResumeTemplate1 from '../components/ResumeTemplate1'
-import ResumeTemplate2 from '../components/ResumeTemplate2'
 import ResumeTemplate3 from '../components/ResumeTemplate3'
-import ResumeTemplate4 from '../components/ResumeTemplate4'
 import AccentColorPicker from '../components/AccentColorPicker'
 import TemplateSelector from '../components/TemplateSelector'
 
@@ -301,16 +300,14 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
     }
 
     switch (selectedTemplate) {
+      case 'minimal':
+        return <ResumeTemplate_Minimal {...templateProps} />
       case 'template1':
         return <ResumeTemplate1 {...templateProps} />
-      case 'template2':
-        return <ResumeTemplate2 {...templateProps} />
       case 'template3':
         return <ResumeTemplate3 {...templateProps} />
-      case 'template4':
-        return <ResumeTemplate4 {...templateProps} />
       default:
-        return <ResumeTemplate1 {...templateProps} />
+        return <ResumeTemplate_Minimal {...templateProps} />
     }
   }
 
@@ -349,7 +346,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
             <div className="form-group">
               <label>
                 <User size={18} />
-                User <span className="required">*</span>
+                Full Name <span className="required">*</span>
               </label>
               <input placeholder="Enter your full name" value={personal.fullName} onChange={e => setPersonal({...personal, fullName: e.target.value})} />
             </div>
@@ -357,7 +354,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
             <div className="form-group">
               <label>
                 <BriefcaseIcon size={18} />
-                Briefcase <span className="required">*</span>
+                Profession <span className="required">*</span>
               </label>
               <div className="input-with-ai">
                 <input placeholder="Enter your profession" value={personal.jobTitle} onChange={e => {
@@ -382,7 +379,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
             <div className="form-group">
               <label>
                 <Mail size={18} />
-                Mail <span className="required">*</span>
+                Email Address <span className="required">*</span>
               </label>
               <input placeholder="Enter your email address" type="email" value={personal.email} onChange={e => setPersonal({...personal, email: e.target.value})} />
             </div>
@@ -390,7 +387,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
             <div className="form-group">
               <label>
                 <Phone size={18} />
-                Phone
+                Phone Number
               </label>
               <input placeholder="Enter your phone number" value={personal.phone} onChange={e => setPersonal({...personal, phone: e.target.value})} />
             </div>
@@ -398,7 +395,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
             <div className="form-group">
               <label>
                 <MapPin size={18} />
-                Map Pin
+                Location
               </label>
               <input placeholder="Enter your location" value={personal.location} onChange={e => setPersonal({...personal, location: e.target.value})} />
             </div>
@@ -406,7 +403,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
             <div className="form-group">
               <label>
                 <Linkedin size={18} />
-                Linkedin
+                LinkedIn URL
               </label>
               <input placeholder="Enter your LinkedIn profile URL" value={personal.linkedin} onChange={e => setPersonal({...personal, linkedin: e.target.value})} />
             </div>
@@ -414,7 +411,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
             <div className="form-group">
               <label>
                 <Globe size={18} />
-                Globe
+                Website
               </label>
               <input placeholder="Enter your website URL" value={personal.website} onChange={e => setPersonal({...personal, website: e.target.value})} />
             </div>
@@ -492,7 +489,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
               <button 
                 className="add-btn"
                 onClick={() => {
-                  const newExp = { company: '', role: '', desc: '', startDate: '', endDate: '', currentlyWorking: false }
+                  const newExp = { company: '', jobTitle: '', description: '', startDate: '', endDate: '', currentlyWorking: false, location: '' }
                   setExperiences([...experiences, newExp])
                 }}
               >
@@ -541,10 +538,10 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
                       <input 
                         type="text"
                         placeholder="e.g., Senior Developer" 
-                        value={exp.role || ''} 
+                        value={exp.jobTitle || ''} 
                         onChange={e => {
                           const copy = [...experiences]
-                          copy[idx].role = e.target.value
+                          copy[idx].jobTitle = e.target.value
                           setExperiences(copy)
                         }} 
                       />
@@ -599,7 +596,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
                         className="ai-enhance-btn"
                         onClick={() => {
                           setAiFieldType('description')
-                          setAiFieldValue(exp.desc)
+                          setAiFieldValue(exp.description)
                           setAiFieldIndex(idx)
                           setAiSidebarOpen(true)
                         }}
@@ -610,10 +607,10 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
                     <textarea 
                       placeholder="Describe your key responsibilities and achievements..." 
                       rows={4} 
-                      value={exp.desc || ''} 
+                      value={exp.description || ''} 
                       onChange={e => {
                         const copy = [...experiences]
-                        copy[idx].desc = e.target.value
+                        copy[idx].description = e.target.value
                         setExperiences(copy)
                       }} 
                     />
@@ -905,7 +902,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
               <button 
                 className="add-btn"
                 onClick={() => {
-                  const newCert = { certName: '', issuer: '', issueDate: '', expiryDate: '', credentialUrl: '' }
+                  const newCert = { certName: '', issuer: '', issueDate: '', expiryDate: '' }
                   setCertifications([...certifications, newCert])
                 }}
               >
@@ -989,20 +986,6 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
                         }} 
                       />
                     </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Credential URL</label>
-                    <input 
-                      type="url"
-                      placeholder="https://example.com/credential" 
-                      value={cert.credentialUrl || ''} 
-                      onChange={e => {
-                        const copy = [...certifications]
-                        copy[idx].credentialUrl = e.target.value
-                        setCertifications(copy)
-                      }} 
-                    />
                   </div>
                 </div>
               ))

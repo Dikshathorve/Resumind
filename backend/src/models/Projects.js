@@ -13,7 +13,6 @@ const projectsSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
-      index: true,
       unique: true, // One projects document per user
     },
     projectsCount: {
@@ -44,9 +43,7 @@ const projectsSchema = new mongoose.Schema(
   }
 )
 
-// Index for faster queries
-projectsSchema.index({ userId: 1 })
-projectsSchema.index({ projectsId: 1 })
+// Index for faster queries (unique already creates an index on userId and projectsId)
 
 export const Projects = mongoose.model('Projects', projectsSchema)
 export default Projects

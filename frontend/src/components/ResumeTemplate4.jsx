@@ -83,15 +83,17 @@ export default function ResumeTemplate4({ personal, summary, experiences, educat
           <section className="template4-section">
             <h2 className="section-heading-t4">EDUCATION</h2>
             {education.map((edu, idx) => (
-              (edu.school || edu.degree) && (
+              (edu.institution || edu.degree) && (
                 <div key={idx} className="edu-item-t4">
-                  <h3 className="edu-school-t4">{edu.school || 'Institution'}</h3>
+                  <h3 className="edu-school-t4">{edu.institution || 'Institution'}</h3>
                   <p className="edu-degree-t4">{edu.degree || 'Degree'}</p>
+                  {edu.fieldOfStudy && <p className="edu-field-t4">{edu.fieldOfStudy}</p>}
+                  {edu.gpa && <p className="edu-gpa-t4">GPA: {edu.gpa}</p>}
                 </div>
               )
             ))}
           </section>
-        )}
+        )}}
 
         {/* Projects */}
         {projects && projects.length > 0 && projects.some(p => p.name || p.description) && (
@@ -113,11 +115,9 @@ export default function ResumeTemplate4({ personal, summary, experiences, educat
         {skills && skills.length > 0 && (
           <section className="template4-section">
             <h2 className="section-heading-t4">SKILLS</h2>
-            <div className="skills-list-t4">
-              {skills.map((skill, idx) => (
-                <span key={idx} className="skill-tag-t4">{skill}</span>
-              ))}
-            </div>
+            <ul className="skills-list-t4">
+              <li className="skill-item-t4">{skills.join(', ')}</li>
+            </ul>
           </section>
         )}
 
@@ -127,7 +127,24 @@ export default function ResumeTemplate4({ personal, summary, experiences, educat
             <h2 className="section-heading-t4">CERTIFICATIONS</h2>
             <ul className="certs-list-t4">
               {certifications.map((cert, idx) => (
-                <li key={idx} className="cert-item-t4">{typeof cert === 'string' ? cert : cert.certName}</li>
+                cert.certName && (
+                  <li key={idx} className="cert-item-t4">
+                    <strong>{typeof cert === 'string' ? cert : cert.certName}</strong>
+                    {cert.issuer && <p className="cert-issuer-t4">{cert.issuer}</p>}
+                    <div className="cert-dates-t4">
+                      {cert.issueDate && (
+                        <span className="cert-date-t4">
+                          Issue: {new Date(cert.issueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                        </span>
+                      )}
+                      {cert.expiryDate && (
+                        <span className="cert-date-t4">
+                          Expires: {new Date(cert.expiryDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                        </span>
+                      )}
+                    </div>
+                  </li>
+                )
               ))}
             </ul>
           </section>

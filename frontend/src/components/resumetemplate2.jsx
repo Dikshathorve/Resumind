@@ -141,11 +141,9 @@ export default function ResumeTemplate2({ personal, summary, experiences, educat
         {skills && skills.length > 0 && (
           <div className="resume-section-t2">
             <h2 className="section-title-t2">Skills</h2>
-            <div className="skills-container-t2">
-              {skills.map((skill, idx) => (
-                <span key={idx} className="skill-item-t2">{skill}</span>
-              ))}
-            </div>
+            <ul className="skills-container-t2">
+              <li className="skill-item-t2">{skills.join(', ')}</li>
+            </ul>
           </div>
         )}
 
@@ -155,7 +153,24 @@ export default function ResumeTemplate2({ personal, summary, experiences, educat
             <h2 className="section-title-t2">Certifications</h2>
             <div className="certifications-container-t2">
               {certifications.map((cert, idx) => (
-                <span key={idx} className="certification-item-t2">{typeof cert === 'string' ? cert : cert.certName}</span>
+                cert.certName && (
+                  <div key={idx} className="certification-item-t2">
+                    <h4 className="cert-name-t2">{typeof cert === 'string' ? cert : cert.certName}</h4>
+                    {cert.issuer && <p className="cert-issuer-t2">{cert.issuer}</p>}
+                    <div className="cert-dates-t2">
+                      {cert.issueDate && (
+                        <span className="cert-date-t2">
+                          Issue: {new Date(cert.issueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                        </span>
+                      )}
+                      {cert.expiryDate && (
+                        <span className="cert-date-t2">
+                          Expires: {new Date(cert.expiryDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )
               ))}
             </div>
           </div>

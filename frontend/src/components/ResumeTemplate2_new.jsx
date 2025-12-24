@@ -58,11 +58,9 @@ export default function ResumeTemplate2({ personal, summary, experiences, educat
         {skills && skills.length > 0 && (
           <div className="skills-section-t2">
             <h3>SKILLS</h3>
-            {skills.map((skill, idx) => (
-              <div key={idx} className="skill-item-t2">
-                <span>{skill}</span>
-              </div>
-            ))}
+            <ul className="skills-list-t2-new">
+              <li className="skill-item-t2">{skills.join(', ')}</li>
+            </ul>
           </div>
         )}
       </div>
@@ -123,7 +121,24 @@ export default function ResumeTemplate2({ personal, summary, experiences, educat
             <h2 className="section-heading-t2">CERTIFICATIONS</h2>
             <ul className="certs-list-t2">
               {certifications.map((cert, idx) => (
-                <li key={idx} className="cert-item-t2">{typeof cert === 'string' ? cert : cert.certName}</li>
+                cert.certName && (
+                  <li key={idx} className="cert-item-t2">
+                    <strong>{typeof cert === 'string' ? cert : cert.certName}</strong>
+                    {cert.issuer && <p className="cert-issuer-t2-new">{cert.issuer}</p>}
+                    <div className="cert-dates-t2-new">
+                      {cert.issueDate && (
+                        <span className="cert-date-t2-new">
+                          Issue: {new Date(cert.issueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                        </span>
+                      )}
+                      {cert.expiryDate && (
+                        <span className="cert-date-t2-new">
+                          Expires: {new Date(cert.expiryDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                        </span>
+                      )}
+                    </div>
+                  </li>
+                )
               ))}
             </ul>
           </div>

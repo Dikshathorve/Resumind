@@ -253,12 +253,17 @@
 
 /* ========== SKILLS ========== */
 .skills-container-t1 {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  padding-left: 20px;
 }
 
 .skill-item-t1 {
+  font-size: 14px;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+  line-height: 1.5;
+  word-wrap: break-word;
+  white-space: normal;
+}
   font-size: 12px;
   color: var(--text-dark);
   background: rgba(59, 130, 246, 0.15);
@@ -270,6 +275,41 @@
 }
 
 /* ========== CERTIFICATIONS ========== */
+.certifications-container-t1 {
+  padding: 0;
+}
+
+.certification-item-t1 {
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  padding-left: 0;
+  border: none;
+}
+
+.cert-name-t1 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0 0 4px 0;
+}
+
+.cert-issuer-t1 {
+  font-size: 13px;
+  color: var(--text-dark);
+  margin: 0 0 4px 0;
+}
+
+.cert-dates-t1 {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cert-date-t1 {
+  font-size: 12px;
+  color: var(--text-dark);
+  margin: 0;
+}
 .certifications-container-t1 {
   display: flex;
   flex-wrap: wrap;
