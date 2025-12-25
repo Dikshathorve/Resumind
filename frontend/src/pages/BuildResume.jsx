@@ -173,6 +173,7 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
   const handleDownload = async () => {
     if (!templateRef.current) {
       console.error('[Download] Template reference not found')
+      alert('Error: Could not find resume to download')
       return
     }
 
@@ -180,22 +181,17 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
       const element = templateRef.current
       const filename = `${personal.fullName || 'Resume'}_${new Date().toISOString().split('T')[0]}.pdf`
 
-      // Create a clone to avoid modifying the original
-      const clone = element.cloneNode(true)
-
       // HTML2PDF options for exact visual preservation
       const options = {
-        margin: 0, // No margins - preserve exact layout
+        margin: 0,
         filename: filename,
-        image: { type: 'jpeg', quality: 0.98 }, // High quality images
+        image: { type: 'jpeg', quality: 0.98 },
         html2canvas: {
-          scale: 2, // Higher scale for better quality
+          scale: 2,
           useCORS: true,
           allowTaint: true,
           backgroundColor: '#ffffff',
-          logging: false,
-          windowHeight: element.scrollHeight,
-          windowWidth: element.scrollWidth
+          logging: false
         },
         jsPDF: {
           orientation: 'portrait',
@@ -204,14 +200,12 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
           compress: true
         },
         pagebreak: {
-          mode: ['avoid-all', 'css', 'legacy'],
-          before: [],
-          after: []
+          mode: ['avoid-all', 'css', 'legacy']
         }
       }
 
       // Generate PDF from the template
-      html2pdf().set(options).from(clone).save()
+      await html2pdf().set(options).from(element).save()
 
       console.log('[Download] PDF generated successfully:', filename)
     } catch (error) {

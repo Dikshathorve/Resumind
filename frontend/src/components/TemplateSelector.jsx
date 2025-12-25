@@ -4,24 +4,19 @@ import './TemplateSelector.css'
 
 const TEMPLATES = [
   {
-    id: 'template1',
-    name: 'Classic',
-    description: 'A clean, traditional resume format with clear sections and professional typography'
-  },
-  {
     id: 'template2',
     name: 'Modern',
     description: 'Professional black and white resume with clean formatting and bulleted points'
   },
   {
+    id: 'template1',
+    name: 'Classic',
+    description: 'A clean, traditional resume format with clear sections and professional typography'
+  },
+  {
     id: 'template3',
     name: 'Minimal Image',
     description: 'Minimal design with a single image and clean typography'
-  },
-  {
-    id: 'template4',
-    name: 'Professional',
-    description: 'Professional multi-section layout with comprehensive formatting'
   }
 ]
 

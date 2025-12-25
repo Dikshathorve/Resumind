@@ -32,7 +32,7 @@ const resumeSchema = new mongoose.Schema(
     },
     templateType: {
       type: String,
-      enum: ['template1', 'template2', 'template3', 'template4'],
+      enum: ['template1', 'template2', 'template3'],
       default: 'template1',
     },
     personal: {

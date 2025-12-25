@@ -91,7 +91,7 @@ export default function ResumeTemplate3({ personal, summary, experiences, educat
 
             {summary && (
               <section className="content-section">
-                <h3 className="section-title-t3">PROFILE</h3>
+                <h3 className="section-title-t3">PROFESSIONAL SUMMARY</h3>
                 <p className="section-text-t3">{summary}</p>
               </section>
             )}
@@ -104,8 +104,8 @@ export default function ResumeTemplate3({ personal, summary, experiences, educat
                     <div key={idx} className="exp-item-t3">
                       <div className="exp-header">
                         <div>
-                          <h4 className="exp-title-t3">{exp.role || exp.title || 'Position'}</h4>
                           <p className="exp-company-t3">{exp.company || ''}</p>
+                          <h4 className="exp-title-t3">{exp.role || exp.title || 'Position'}</h4>
                         </div>
                         <div className="exp-date">{exp.startDate ? formatDate(exp.startDate) : ''}{(exp.startDate && (exp.endDate || exp.currentlyWorking)) && ' - '}{exp.currentlyWorking ? 'Present' : (exp.endDate ? formatDate(exp.endDate) : '')}</div>
                       </div>
@@ -133,7 +133,7 @@ export default function ResumeTemplate3({ personal, summary, experiences, educat
 
             {certifications && certifications.length > 0 && (
               <section className="content-section">
-                <h3 className="section-title-t3">EXTRA</h3>
+                <h3 className="section-title-t3">CERTIFICATIONS</h3>
                 <ul className="certs-list-t3">
                   {certifications.map((cert, idx) => (
                     cert.certName && (

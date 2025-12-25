@@ -39,6 +39,10 @@ export const config = {
   pdfMaxSize: parseInt(process.env.PDF_UPLOAD_MAX_SIZE) || 10485760, // 10MB
   uploadDir: process.env.UPLOAD_DIR || './uploads',
   tempDir: process.env.TEMP_DIR || './temp',
+
+  // OpenAI Configuration
+  openaiApiKey: process.env.OPENAI_API_KEY || '',
+  openaiModel: process.env.OPENAI_MODEL || 'gpt-3.5-turbo',
 }
 
 export default config

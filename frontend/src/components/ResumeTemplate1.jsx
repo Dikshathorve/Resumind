@@ -20,6 +20,9 @@ export default function ResumeTemplate1({ personal, summary, experiences, educat
       {/* Header Section */}
       <div className="template-header-t1">
         <h1 className="resume-name-t1">{personal.fullName || 'Your Name'}</h1>
+        {personal.jobTitle && (
+          <p className="profession-t1">{personal.jobTitle}</p>
+        )}
         
         {/* Contact Information */}
         <div className="contact-info-t1">
@@ -70,7 +73,9 @@ export default function ResumeTemplate1({ personal, summary, experiences, educat
         {summary && (
           <div className="resume-section-t1">
             <h2 className="section-title-t1">PROFESSIONAL SUMMARY</h2>
-            <p className="section-content-t1">{summary}</p>
+            <div className="summary-content-t1">
+              <p className="section-content-t1">{summary}</p>
+            </div>
           </div>
         )}
 
