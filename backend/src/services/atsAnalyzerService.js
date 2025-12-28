@@ -73,13 +73,23 @@ EVALUATION RUBRIC:
 - Formatting (0-15): ATS-friendliness and resume structure quality
 - Impact (0-10): Presence of quantifiable achievements and metrics
 
-INSTRUCTIONS:
-1. Analyze the resume strictly against the job description
-2. Score each category based on the rubric
-3. Identify ALL missing critical keywords from JD
-4. List specific format issues if any
-5. Provide 3-5 actionable improvement suggestions
-6. Return ONLY valid JSON, no additional text
+CRITICAL SCORING INSTRUCTIONS:
+1. Analyze the resume strictly against the job description with granular detail
+2. Calculate scores based on precise assessment, NOT rounded numbers
+3. MUST vary scores - NEVER use multiples of 5 exclusively (NO: 20, 25, 30, 15, 10)
+4. Use varied scoring like: 23, 18, 14, 9, 11 OR 27, 22, 17, 13, 8 OR 24, 19, 15, 11, 7
+5. Each score should reflect actual quality differences and evaluation details
+6. Consider partial points for partial achievements
+7. Score should NOT be round numbers - use numbers like 21, 24, 26, 17, 13, 9, 12, 18 etc
+8. Identify ALL missing critical keywords from JD with explanations
+9. List specific format issues if any exist
+10. Provide 3-5 actionable improvement suggestions
+11. Return ONLY valid JSON, no additional text
+
+SCORING EXAMPLES (GOOD):
+- High quality: keyword_match: 28, experience_relevance: 23, skills_alignment: 18, formatting: 14, impact: 9
+- Medium quality: keyword_match: 21, experience_relevance: 17, skills_alignment: 14, formatting: 11, impact: 7
+- Low quality: keyword_match: 12, experience_relevance: 10, skills_alignment: 8, formatting: 6, impact: 3
 
 RETURN FORMAT (JSON ONLY):
 {
@@ -126,11 +136,18 @@ Provide a comprehensive ATS analysis with detailed scoring. Return ONLY the JSON
         }
       ],
       temperature: 0.3,
+      max_tokens: 2000,
       response_format: { type: 'json_object' }
     });
 
     try {
       const analysisData = JSON.parse(response.choices[0].message.content);
+      
+      // Log token usage
+      const tokensUsed = response.usage.total_tokens;
+      const inputTokens = response.usage.prompt_tokens;
+      const outputTokens = response.usage.completion_tokens;
+      console.log(`✓ ATS Analysis Complete | Tokens: ${tokensUsed} (Input: ${inputTokens}, Output: ${outputTokens})`);
       
       return {
         success: true,

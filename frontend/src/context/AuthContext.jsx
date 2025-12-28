@@ -13,8 +13,31 @@ export function AuthProvider({ children }) {
     const storedUser = localStorage.getItem('user')
 
     if (storedAuth === 'true' && storedUser) {
-      setIsAuthenticated(true)
-      setUser(JSON.parse(storedUser))
+      // Verify session with backend to get fresh user data
+      fetch('http://localhost:5000/api/auth/verify', {
+        method: 'GET',
+        credentials: 'include',
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.user) {
+            setUser(data.user)
+            setIsAuthenticated(true)
+            localStorage.setItem('user', JSON.stringify(data.user))
+          } else {
+            // Session invalid, clear auth
+            setIsAuthenticated(false)
+            setUser(null)
+            localStorage.removeItem('user')
+            localStorage.removeItem('isAuthenticated')
+          }
+        })
+        .catch(err => {
+          console.error('Session verification failed:', err)
+          // Fallback to stored user data
+          setUser(JSON.parse(storedUser))
+          setIsAuthenticated(true)
+        })
     }
   }, [])
 

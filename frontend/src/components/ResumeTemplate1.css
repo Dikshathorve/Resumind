@@ -353,22 +353,6 @@
   color: var(--text-dark);
   margin: 0;
 }
-.certifications-container-t1 {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.certification-item-t1 {
-  font-size: 12px;
-  color: var(--text-dark);
-  background: rgba(59, 130, 246, 0.15);
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  padding: 5px 11px;
-  border-radius: 4px;
-  font-weight: 500;
-  white-space: nowrap;
-}
 
 /* ========== RESPONSIVE DESIGN ========== */
 @media (max-width: 768px) {

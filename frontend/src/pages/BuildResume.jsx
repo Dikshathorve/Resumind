@@ -294,14 +294,14 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
     }
 
     switch (selectedTemplate) {
-      case 'minimal':
+      case 'template2':
         return <ResumeTemplate_Minimal {...templateProps} />
       case 'template1':
         return <ResumeTemplate1 {...templateProps} />
       case 'template3':
         return <ResumeTemplate3 {...templateProps} />
       default:
-        return <ResumeTemplate_Minimal {...templateProps} />
+        return <ResumeTemplate1 {...templateProps} />
     }
   }
 
@@ -1072,9 +1072,6 @@ export default function BuildResume({ onClose, onATSAnalyzer, onJobMatcher, resu
           <div className="title-right">
             {saveMessage && <div className="save-success-message">{saveMessage}</div>}
             {saveError && <div className="save-error-message">{saveError}</div>}
-            <button className="btn-private" onClick={() => alert('Private mode')}>
-              🔒 Private
-            </button>
             <button 
               className="btn-save" 
               onClick={handleSaveChanges}

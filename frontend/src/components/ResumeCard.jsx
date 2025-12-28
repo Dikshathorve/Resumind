@@ -41,17 +41,6 @@ export default function ResumeCard({ resume, onDelete, onDuplicate, onDownload, 
               Download
             </button>
             <button
-              className="resume-menu-item"
-              onClick={(e) => {
-                e.stopPropagation()
-                onDuplicate?.(resume._id)
-                setShowMenu(false)
-              }}
-            >
-              <Copy size={18} />
-              Duplicate
-            </button>
-            <button
               className="resume-menu-item delete"
               onClick={(e) => {
                 e.stopPropagation()

@@ -1,9 +1,18 @@
 import { useState } from 'react'
 import './Header.css'
 import { Sparkles } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
 
-export default function Header({ onSignIn, onSignUp }) {
+export default function Header({ onSignIn, onSignUp, onLogout }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { isAuthenticated, user, logout } = useAuth()
+
+  const handleLogout = () => {
+    logout()
+    if (onLogout) {
+      onLogout()
+    }
+  }
 
   return (
     <header className="header">
@@ -21,8 +30,19 @@ export default function Header({ onSignIn, onSignUp }) {
           <a href="#faq">FAQ</a>
         </nav>
         <div className="header-actions">
-          <button className="login-button" onClick={onSignIn}>Sign In</button>
-          <button className="cta-button" onClick={onSignUp}>Sign Up</button>
+          {isAuthenticated && user ? (
+            <>
+              <span className="username-display">{user.fullName || user.email || 'User'}</span>
+              <button className="logout-button" onClick={handleLogout} title="Logout">
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <button className="login-button" onClick={onSignIn}>Sign In</button>
+              <button className="cta-button" onClick={onSignUp}>Sign Up</button>
+            </>
+          )}
         </div>
         <button className="hamburger" onClick={() => setIsMenuOpen(!isMenuOpen)}>
           <span></span>

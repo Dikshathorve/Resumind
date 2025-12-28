@@ -120,6 +120,7 @@ function App() {
             onStart={handleStartBuilder}
             onSignIn={() => setCurrentPage('landing-signin')}
             onSignUp={() => setCurrentPage('landing-signup')}
+            onLogout={() => setCurrentPage('landing')}
           />
         )}
         {currentPage === 'projects' && (
