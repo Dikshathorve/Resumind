@@ -2,9 +2,9 @@ import './ATSAnalyzerResults.css'
 import { CheckCircle, AlertCircle, TrendingUp, Zap, Download } from 'lucide-react'
 
 export default function ATSAnalyzerResults({ results, fileName, onNewAnalysis }) {
-  const getScoreColor = (score) => {
-    // Scores are out of 30
-    const percentage = (score / 30) * 100
+  const getScoreColor = (score, maxScore = 30) => {
+    // Calculate percentage based on actual maxScore
+    const percentage = (score / maxScore) * 100
     if (percentage >= 80) return 'excellent'
     if (percentage >= 60) return 'good'
     if (percentage >= 40) return 'fair'
@@ -37,7 +37,7 @@ SECTION ANALYSIS
 =====================================
 ${Object.entries(results.sections).map(([sectionName, sectionData]) => `
 ${sectionName.toUpperCase()}
-Score: ${sectionData.score}/30 (${((sectionData.score / 30) * 100).toFixed(1)}%)
+Score: ${sectionData.score}/${sectionData.maxScore} (${((sectionData.score / sectionData.maxScore) * 100).toFixed(1)}%)
 ${sectionData.issues.length > 0 ? `Issues:\n${sectionData.issues.map(i => `  - ${i}`).join('\n')}` : 'No issues found'}
 `).join('\n')}
 
@@ -134,14 +134,14 @@ For more details, visit your resume builder.
               <div key={sectionName} className="ats-section-card">
                 <div className="ats-section-card-header">
                   <h4 className="ats-capitalize">{sectionName}</h4>
-                  <div className={`ats-mini-score ${getScoreColor(sectionData.score)}`}>
-                    {sectionData.score}
+                  <div className={`ats-mini-score ${getScoreColor(sectionData.score, sectionData.maxScore)}`}>
+                    {sectionData.score}/{sectionData.maxScore}
                   </div>
                 </div>
                 <div className="ats-score-bar">
                   <div
                     className={`ats-score-fill ${getScoreColor(sectionData.score)}`}
-                    style={{ width: `${(sectionData.score / 30) * 100}%` }}
+                    style={{ width: `${(sectionData.score / sectionData.maxScore) * 100}%` }}
                   ></div>
                 </div>
                 {sectionData.issues.length > 0 ? (

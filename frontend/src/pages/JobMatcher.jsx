@@ -1,15 +1,15 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { ChevronLeft, Check } from 'lucide-react'
 import './JobMatcher.css'
 import HeaderWithUser from '../components/HeaderWithUser'
 import ResumeTemplate1 from '../components/ResumeTemplate1'
-import ResumeSelector from '../components/ResumeSelector'
+import ResumeTemplate_Minimal from '../components/ResumeTemplate_Minimal'
+import ResumeTemplate3 from '../components/ResumeTemplate3'
 import JDInput from '../components/JDInput'
 import SuggestionsList from '../components/SuggestionsList'
 
 export default function JobMatcher({ onClose, resumeData, resumeId = null }) {
   // Resume data state
-  const [selectedResumeType, setSelectedResumeType] = useState('current')
   const [currentResumeData, setCurrentResumeData] = useState(resumeData || {
     personal: {},
     summary: '',
@@ -24,9 +24,53 @@ export default function JobMatcher({ onClose, resumeData, resumeId = null }) {
   const [jd, setJd] = useState('')
   const [suggestions, setSuggestions] = useState([])
   const [loading, setLoading] = useState(false)
-  const [accentColor] = useState('#3B82F6')
+  const [accentColor, setAccentColor] = useState('#3B82F6')
+  const [selectedTemplate, setSelectedTemplate] = useState('template1')
+  const [profileImage, setProfileImage] = useState(null)
   const [saveStatus, setSaveStatus] = useState(null)
   const templateRef = useRef(null)
+
+  // Load resume data from database on component mount
+  useEffect(() => {
+    if (resumeId) {
+      const loadResumeData = async () => {
+        try {
+          const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+          const response = await fetch(`${apiBaseUrl}/resumes/${resumeId}`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+
+          if (response.ok) {
+            const data = await response.json()
+            if (data.resume) {
+              const resume = data.resume
+              setCurrentResumeData({
+                personal: resume.personal || {},
+                summary: resume.summary || '',
+                experiences: resume.experiences || [],
+                education: resume.education || [],
+                projects: resume.projects || [],
+                skills: resume.skills || [],
+                certifications: resume.certifications || []
+              })
+              setSelectedTemplate(resume.templateType || 'template1')
+              setAccentColor(resume.accentColor || '#3B82F6')
+              if (resume.profileImage) {
+                setProfileImage(resume.profileImage)
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error loading resume data:', error)
+        }
+      }
+      loadResumeData()
+    }
+  }, [resumeId])
 
   // Handle JD submission with AI analysis
   const handleJDSubmit = async (jobDescription) => {
@@ -297,12 +341,6 @@ export default function JobMatcher({ onClose, resumeData, resumeId = null }) {
         <div className="job-matcher-inner">
           {/* Left Panel - Controls & Suggestions */}
           <div className="matcher-left">
-            {/* Resume Selector */}
-            <ResumeSelector 
-              selectedType={selectedResumeType}
-              onTypeChange={setSelectedResumeType}
-            />
-
             {/* JD Input */}
             <JDInput 
               onSubmit={handleJDSubmit}
@@ -321,16 +359,44 @@ export default function JobMatcher({ onClose, resumeData, resumeId = null }) {
           {/* Right Panel - Resume Preview */}
           <div className="matcher-right">
             <div className="resume-preview-container" ref={templateRef}>
-              <ResumeTemplate1
-                personal={currentResumeData.personal}
-                summary={currentResumeData.summary}
-                experiences={currentResumeData.experiences}
-                education={currentResumeData.education}
-                projects={currentResumeData.projects}
-                skills={currentResumeData.skills}
-                certifications={currentResumeData.certifications}
-                accentColor={accentColor}
-              />
+              {selectedTemplate === 'template2' && (
+                <ResumeTemplate_Minimal
+                  personal={currentResumeData.personal}
+                  summary={currentResumeData.summary}
+                  experiences={currentResumeData.experiences}
+                  education={currentResumeData.education}
+                  projects={currentResumeData.projects}
+                  skills={currentResumeData.skills}
+                  certifications={currentResumeData.certifications}
+                  accentColor={accentColor}
+                  profileImage={profileImage}
+                />
+              )}
+              {selectedTemplate === 'template1' && (
+                <ResumeTemplate1
+                  personal={currentResumeData.personal}
+                  summary={currentResumeData.summary}
+                  experiences={currentResumeData.experiences}
+                  education={currentResumeData.education}
+                  projects={currentResumeData.projects}
+                  skills={currentResumeData.skills}
+                  certifications={currentResumeData.certifications}
+                  accentColor={accentColor}
+                />
+              )}
+              {selectedTemplate === 'template3' && (
+                <ResumeTemplate3
+                  personal={currentResumeData.personal}
+                  summary={currentResumeData.summary}
+                  experiences={currentResumeData.experiences}
+                  education={currentResumeData.education}
+                  projects={currentResumeData.projects}
+                  skills={currentResumeData.skills}
+                  certifications={currentResumeData.certifications}
+                  accentColor={accentColor}
+                  profileImage={profileImage}
+                />
+              )}
             </div>
           </div>
         </div>
