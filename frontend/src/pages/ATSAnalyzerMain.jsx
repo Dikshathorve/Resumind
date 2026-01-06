@@ -46,22 +46,27 @@ export default function ATSAnalyzerMain({ onClose, resumeData }) {
         sections: {
           keyword_match: { 
             score: results.category_scores.keyword_match,
+            maxScore: 30,
             issues: []
           },
           experience_relevance: { 
             score: results.category_scores.experience_relevance,
+            maxScore: 25,
             issues: []
           },
           skills_alignment: { 
             score: results.category_scores.skills_alignment,
+            maxScore: 20,
             issues: []
           },
           formatting: { 
             score: results.category_scores.formatting,
+            maxScore: 15,
             issues: results.format_issues || []
           },
           impact: { 
             score: results.category_scores.impact,
+            maxScore: 10,
             issues: []
           }
         },
@@ -102,22 +107,27 @@ export default function ATSAnalyzerMain({ onClose, resumeData }) {
           sections: {
             keyword_match: { 
               score: results.category_scores.keyword_match,
+              maxScore: 30,
               issues: []
             },
             experience_relevance: { 
               score: results.category_scores.experience_relevance,
+              maxScore: 25,
               issues: []
             },
             skills_alignment: { 
               score: results.category_scores.skills_alignment,
+              maxScore: 20,
               issues: []
             },
             formatting: { 
               score: results.category_scores.formatting,
+              maxScore: 15,
               issues: results.format_issues || []
             },
             impact: { 
               score: results.category_scores.impact,
+              maxScore: 10,
               issues: []
             }
           },
